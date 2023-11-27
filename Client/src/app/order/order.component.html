@@ -1,0 +1,30 @@
+<div fxLayout fxLayoutAlign="center center">
+    <mat-form-field fxFlex="40%">
+        <input matInput type="text" (keyup)="doFilter($any($event.target).value)" placeholder="Filter">
+    </mat-form-field>
+</div>
+<table mat-table [dataSource]="ordersData" matSort matSortStart="desc" (matSortChange)="customSort($event)">
+    <ng-container matColumnDef="orderId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> orderId</th>
+        <td mat-cell *matCellDef="let order"> {{order.orderId}} </td>
+    </ng-container>
+    <ng-container matColumnDef="customerId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> customerId</th>
+        <td mat-cell *matCellDef="let order"> {{order.customerId}} </td>
+    </ng-container>
+    <ng-container matColumnDef="orderDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> orderDate</th>
+        <td mat-cell *matCellDef="let order"> {{order.orderDate}} </td>
+    </ng-container>
+    <ng-container matColumnDef="totalPrice">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> totalPrice</th>
+        <td mat-cell *matCellDef="let order"> {{order.totalPrice}} </td>
+    </ng-container>
+
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<mat-paginator [pageSize]="10" [pageSizeOptions]="[2, 10, 20,30]">
+</mat-paginator>

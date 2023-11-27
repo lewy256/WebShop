@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.94-alpha">
+  <PropertyGroup>
+    <StartupCommand>npm start</StartupCommand>
+    <JavaScriptTestFramework>Jasmine</JavaScriptTestFramework>
+    <!-- Allows the build (or compile) script located on package.json to run on Build -->
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <!-- Command to create an optimized build of the project that's ready for publishing -->
+    <ProductionBuildCommand>npm run build</ProductionBuildCommand>
+    <!-- Folder where production build objects will be placed -->
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\Client</BuildOutputFolder>
+    <BuildCommand>
+    </BuildCommand>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\app\basket\interfaces\" />
+    <Folder Include="src\app\basket\mocks\" />
+    <Folder Include="src\app\basket\services\" />
+    <Folder Include="src\app\navigation\" />
+    <Folder Include="src\app\order\interfaces\" />
+    <Folder Include="src\app\order\services\" />
+    <Folder Include="src\app\product\models\" />
+    <Folder Include="src\app\product\interfaces\" />
+    <Folder Include="src\assets\" />
+  </ItemGroup>
+</Project>
