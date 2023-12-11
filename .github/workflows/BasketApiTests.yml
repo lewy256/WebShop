@@ -24,4 +24,5 @@ jobs:
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./Tests/TicketStore.Tests/TestResults/coverage.info 
+        path-to-lcov: ./Basket/tests/BasketApi.IntegrationTests/coverage.info 
+
