@@ -22,6 +22,8 @@ namespace OrderApi.Models
         public decimal TotalPrice { get; set; }
         public string? Notes { get; set; }
         public int? CouponId { get; set; }
+        public Guid RowKey {get;set; }
+
 
         public virtual Address Address { get; set; }
         public virtual Coupon Coupon { get; set; }

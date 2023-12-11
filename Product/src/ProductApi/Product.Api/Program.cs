@@ -35,17 +35,18 @@ builder.Services.ConfigureCosmosDB(builder.Configuration.GetSection("CosmosDb"))
 
 builder.Services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
+builder.Services.AddAuthentication();
+builder.Services.ConfigureJWT(builder.Configuration);
+
+builder.Services.ConfigureSwagger();
+
+builder.Services.AddCustomMediaTypes();
+
 
 var app = builder.Build();
 
 app.ConfigureExceptionHandler();
 
-
-// Configure the HTTP request pipeline.
-if(app.Environment.IsDevelopment()) {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 if(app.Environment.IsProduction()) {
     app.UseHsts();
@@ -59,7 +60,13 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions {
 });
 app.UseCors("CorsPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSwagger();
+app.UseSwaggerUI(s => {
+    s.SwaggerEndpoint("/swagger/v1/swagger.json", "Prodcut API v1");
+});
 
 app.MapControllers();
 

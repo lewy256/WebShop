@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OrderApi.Intefaces;
 using OrderApi.Models;
 using OrderApi.Services;
 
@@ -17,7 +16,6 @@ public static class ServiceExtensions {
     }
 
     public static void ConfigureServices(this IServiceCollection services) {
-        services.AddScoped<IOrderService, OrderService>();
         services.AddHostedService<ReceiverService>();
         services.AddSingleton<PublisherService>();
         services.AddSingleton<ProcessService>();

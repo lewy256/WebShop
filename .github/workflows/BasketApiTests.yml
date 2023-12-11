@@ -1,0 +1,27 @@
+name: Testing the BasketApi project
+
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore ./Basket/src/BasketApi/BasketApi.sln
+    - name: Build
+      run: dotnet build ./Basket/src/BasketApi/BasketApi.sln --no-restore
+    - name: Test
+      run: dotnet test ./Basket/src/BasketApi/BasketApi.sln --no-build --verbosity normal 
+        /p:CollectCoverage=true 
+        /p:CoverletOutput=TestResults/ 
+        /p:CoverletOutputFormat=lcov
+    - name: Publish coverage report to coveralls.io
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./Tests/TicketStore.Tests/TestResults/coverage.info 
