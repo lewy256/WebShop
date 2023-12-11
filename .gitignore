@@ -370,3 +370,8 @@ Client/.idea/
 /Client2
 /AngularProject1
 /qodana.yaml
+/Product/src/ProductApi/Product.Api/appsettings.json
+/Order/src/OrderApi/appsettings.json
+/Identity/src/IdentityApi/appsettings.json
+/Basket/src/BasketApi/BasketApi/appsettings.json
+/Product/src/ProductApi/Product.Api/appsettings.Development.json

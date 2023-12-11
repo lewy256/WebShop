@@ -7,10 +7,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 var logger = new LoggerConfiguration()
-    //.ReadFrom.Configuration(builder.Configuration)
-    // .Enrich.FromLogContext()
     .WriteTo.Console()
-    //.WriteTo.AzureApp()
     .CreateLogger();
 
 builder.Host.UseSerilog((ctx, lc) => lc

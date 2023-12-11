@@ -29,6 +29,7 @@ public class OrderApiFactory : WebApplicationFactory<Program>, IAsyncLifetime {
         });
     }
 
+
     public async Task InitializeAsync() {
         await _container.StartAsync();
         Client = CreateClient();

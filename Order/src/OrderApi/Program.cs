@@ -40,6 +40,9 @@ builder.Services.AddScoped<ValidationFilterAttribute>();
 
 builder.Services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddAutoMapper(typeof(Program));
+
 var app = builder.Build();
 
 app.ConfigureExceptionHandler();
@@ -65,7 +68,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MigrateDatabase();
+//app.MigrateDatabase();
 
 
 app.Run();

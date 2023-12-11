@@ -3,11 +3,12 @@
 namespace ProductApi.Interfaces;
 
 public interface IProductService {
-    Task<(IEnumerable<ProductDto> productsDto, MetaData metaData)> GetProductsAsync(int categoryId,
+    Task<(IEnumerable<ProductDto> productsDto, MetaData metaData)> GetProductsAsync(Guid categoryId,
         ProductParameters productParameters);
 
-    Task<(IEnumerable<ProductDto> productsDto, MetaData metaData)> GetProductsAsync(
-        ProductParameters productParameters);
+    /*    Task<(LinkResponse linkResponse, MetaData metaData)> GetProductsAsync(
+            Guid categoryId, ProductParameters productParameters);*/
+
 
     Task<ProductDto> GetProductByIdAsync(Guid productId);
     Task<ProductDto> CreateProductAsync(CreateProductDto productDto);
