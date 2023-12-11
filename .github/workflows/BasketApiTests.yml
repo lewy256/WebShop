@@ -16,7 +16,7 @@ jobs:
     - name: Build
       run: dotnet build ./Basket/src/BasketApi/BasketApi.sln --no-restore
     - name: Test
-      run: dotnet test ./Basket/src/BasketApi/BasketApi.sln --no-build --verbosity normal 
+      run: dotnet test ./Basket/tests/BasketApi.IntegrationTests/BasketApi.IntegrationTests.csproj
         /p:CollectCoverage=true 
         /p:CoverletOutput=TestResults/ 
         /p:CoverletOutputFormat=lcov
@@ -24,5 +24,5 @@ jobs:
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./Basket/tests/BasketApi.IntegrationTests/coverage.info 
+        path-to-lcov: ./Basket/tests/BasketApi.IntegrationTests/TestResults/coverage.info 
 
