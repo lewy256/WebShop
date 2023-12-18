@@ -16,13 +16,16 @@ namespace IdentityApi.Service;
 
 public class IdentityService {
     private readonly UserManager<User> _userManager;
-    private readonly IConfiguration _configuration;
+    private readonly JwtConfiguration _jwtConfiguration;
 
     private User? _user;
 
     public IdentityService(UserManager<User> userManager, IConfiguration configuration) {
         _userManager = userManager;
-        _configuration = configuration;
+
+        _jwtConfiguration = new JwtConfiguration();
+        configuration.Bind(_jwtConfiguration.Section, _jwtConfiguration);
+
     }
 
 
@@ -85,10 +88,8 @@ public class IdentityService {
     }
 
     private ClaimsPrincipal GetPrincipalFromExpiredToken(string token) {
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-
-        var secretName = jwtSettings["secretName"];
-        var keyVaultUri = jwtSettings["keyVaultUri"];
+        var secretName = _jwtConfiguration.SecretName;
+        var keyVaultUri = _jwtConfiguration.KeyVaultUri;
 
         var client = new SecretClient(new Uri(keyVaultUri), new DefaultAzureCredential(includeInteractiveCredentials: true));
         var secretResponse = client.GetSecret(secretName);
@@ -100,8 +101,8 @@ public class IdentityService {
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(secretResponse.Value.Value)),
             ValidateLifetime = true,
-            ValidIssuer = jwtSettings["validIssuer"],
-            ValidAudience = jwtSettings["validAudience"],
+            ValidIssuer = _jwtConfiguration.ValidIssuer,
+            ValidAudience = _jwtConfiguration.ValidAudience
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -118,10 +119,8 @@ public class IdentityService {
     }
 
     private SigningCredentials GetSigningCredentials() {
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-
-        var secretName = jwtSettings["secretName"];
-        var keyVaultUri = jwtSettings["keyVaultUri"];
+        var secretName = _jwtConfiguration.SecretName;
+        var keyVaultUri = _jwtConfiguration.KeyVaultUri;
 
         var client = new SecretClient(new Uri(keyVaultUri), new DefaultAzureCredential(includeInteractiveCredentials: true));
         var secretResponse = client.GetSecret(secretName);
@@ -146,14 +145,12 @@ public class IdentityService {
     }
 
     private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims) {
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-
         var tokenOptions = new JwtSecurityToken
         (
-            issuer: jwtSettings["validIssuer"],
-            audience: jwtSettings["validAudience"],
+            issuer: _jwtConfiguration.ValidIssuer,
+            audience: _jwtConfiguration.ValidAudience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["expires"])),
+            expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtConfiguration.Expires)),
             signingCredentials: signingCredentials
         );
 

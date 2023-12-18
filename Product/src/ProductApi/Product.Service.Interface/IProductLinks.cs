@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ProductApi.Model.LinkModels;
-using ProductApi.Shared.Model;
+using ProductApi.Shared.Model.ProductDtos;
 
 namespace ProductApi.Interfaces;
 public interface IProductLinks {

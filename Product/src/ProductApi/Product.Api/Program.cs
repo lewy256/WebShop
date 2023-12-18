@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using ProductApi.ActionFilters;
 using ProductApi.Extensions;
 using Serilog;
 
@@ -9,10 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 var logger = new LoggerConfiguration()
-    //.ReadFrom.Configuration(builder.Configuration)
-    // .Enrich.FromLogContext()
     .WriteTo.Console()
-    //.WriteTo.AzureApp()
     .CreateLogger();
 
 builder.Host.UseSerilog((ctx, lc) => lc
@@ -21,14 +17,12 @@ builder.Host.UseSerilog((ctx, lc) => lc
 
 builder.Services.ConfigureCors();
 
-builder.Services.AddScoped<ValidationFilterAttribute>();
-
-
 builder.Services.AddControllers(options => { options.ReturnHttpNotAcceptable = true; });
 
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//builder.Services.ConfigureRateLimitingOptions();
 
 builder.Services.ConfigureServices();
 builder.Services.ConfigureCosmosDB(builder.Configuration.GetSection("CosmosDb"));
@@ -42,10 +36,11 @@ builder.Services.ConfigureSwagger();
 
 builder.Services.AddCustomMediaTypes();
 
+builder.Services.ConfigureVersioning();
+
+//builder.Services.ConfigureOutputCaching(builder.Configuration.GetSection("Redis"));
 
 var app = builder.Build();
-
-app.ConfigureExceptionHandler();
 
 
 if(app.Environment.IsProduction()) {
@@ -58,7 +53,11 @@ app.UseHttpsRedirection();
 app.UseForwardedHeaders(new ForwardedHeadersOptions {
     ForwardedHeaders = ForwardedHeaders.All
 });
+
+//app.UseRateLimiter();
+
 app.UseCors("CorsPolicy");
+//app.UseOutputCache();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -66,6 +65,8 @@ app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI(s => {
     s.SwaggerEndpoint("/swagger/v1/swagger.json", "Prodcut API v1");
+    s.SwaggerEndpoint("/swagger/v2/swagger.json", "Test API v2");
+
 });
 
 app.MapControllers();

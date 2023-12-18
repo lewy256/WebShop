@@ -1,11 +1,13 @@
-﻿namespace ProductApi.Model.LinkModels;
+﻿using ProductApi.Model.Entities;
+
+namespace ProductApi.Model.LinkModels;
 
 public class LinkResponse {
     public bool HasLinks { get; set; }
-
-    /*    public LinkCollectionWrapper<Entity> LinkedEntities { get; set; }
-
-        public LinkResponse() {
-            LinkedEntities = new LinkCollectionWrapper<Entity>();
-        }*/
+    public List<Entity> ShapedEntities { get; set; }
+    public LinkCollectionWrapper<Entity> LinkedEntities { get; set; }
+    public LinkResponse() {
+        LinkedEntities = new LinkCollectionWrapper<Entity>();
+        ShapedEntities = new List<Entity>();
+    }
 }

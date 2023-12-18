@@ -1,99 +1,108 @@
-﻿using Mapster;
+﻿using FluentValidation;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
+using OneOf.Types;
 using ProductApi.Interfaces;
 using ProductApi.Model;
 using ProductApi.Model.Entities;
-using ProductApi.Model.Exceptions;
+using ProductApi.Model.LinkModels;
+using ProductApi.Model.Responses;
 using ProductApi.Shared.Model;
+using ProductApi.Shared.Model.ProductDtos;
 
 namespace ProductApi.Service;
 
 public class ProductService : IProductService {
     private readonly ProductContext _productContext;
+    private readonly IProductLinks _productLinks;
+    private readonly IValidator<CreateProductDto> _createValidator;
+    private readonly IValidator<UpdateProductDto> _updateValidator;
+    private readonly IValidator<ProductParameters> _parametersValidator;
 
-
-    public ProductService(ProductContext productContext) {
+    public ProductService(ProductContext productContext, IProductLinks productLinks,
+        IValidator<CreateProductDto> createValidator,
+        IValidator<UpdateProductDto> updateValidator,
+        IValidator<ProductParameters> parametersValidator) {
         _productContext = productContext;
+        _productLinks = productLinks;
+        _createValidator = createValidator;
+        _updateValidator = updateValidator;
+        _parametersValidator = parametersValidator;
     }
 
 
-    /*   [HttpGet]
-       [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
-       public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
-       [FromQuery] EmployeeParameters employeeParameters) {
-           var linkParams = new LinkParameters(employeeParameters, HttpContext);
-           var pagedResult = await _service.EmployeeService.GetEmployeesAsync(companyId,
-           linkParams, trackChanges: false);
-           Response.Headers.Add("X-Pagination",
-           JsonSerializer.Serialize(pagedResult.metaData));
-           return Ok(pagedResult.employees);
-       }*/
+    public async Task<ProductGetAllResponse> GetProductsAsync(Guid categoryId, LinkProductParameters linkParameters) {
+        var validationResult = await _parametersValidator.ValidateAsync(linkParameters.ProductParameters);
 
+        if(!validationResult.IsValid) {
+            return new ValidationFailed(validationResult.Errors);
+        }
 
-    public async Task<(IEnumerable<ProductDto> productsDto, MetaData metaData)> GetProductsAsync(Guid categoryId,
-        ProductParameters productParameters) {
-        if(!productParameters.ValidPriceRange) throw new MaxPriceRangeBadRequestException();
+        var category = await _productContext.Category.AsNoTracking().SingleOrDefaultAsync(c => c.Id.Equals(categoryId));
 
-
-        await CheckIfCategoryExists(categoryId);
+        if(category is null) {
+            return new NotFoundResponse(categoryId, nameof(category));
+        }
 
         var products = await _productContext.Product
-            .Where(p => p.CategoryId.Equals(categoryId) && p.Price >= productParameters.MinPrice &&
-                        p.Price <= productParameters.MaxPrice)
-            .Skip((productParameters.PageNumber - 1) * productParameters.PageSize)
-            .Take(productParameters.PageSize)
+            .Where(p => p.CategoryId.Equals(categoryId) && p.Price >= linkParameters.ProductParameters.MinPrice &&
+                        p.Price <= linkParameters.ProductParameters.MaxPrice)
+            .Skip((linkParameters.ProductParameters.PageNumber - 1) * linkParameters.ProductParameters.PageSize)
+            .Take(linkParameters.ProductParameters.PageSize)
             .ToListAsync();
 
         var productsDto = products.Adapt<IEnumerable<ProductDto>>();
+
 
         var count = await _productContext.Product
             .Where(p => p.CategoryId.Equals(categoryId))
             .CountAsync();
 
+        var links = _productLinks.TryGenerateLinks(productsDto, linkParameters.ProductParameters.Fields, categoryId, linkParameters.Context);
 
-        return (productsDto: productsDto, metaData: new MetaData() {
-            CurrentPage = productParameters.PageNumber,
-            PageSize = productParameters.PageSize,
+        return (linkResponse: links, metaData: new MetaData() {
+            CurrentPage = linkParameters.ProductParameters.PageNumber,
+            PageSize = linkParameters.ProductParameters.PageSize,
             TotalCount = count
         });
     }
 
-    public async Task<ProductDto> GetProductByIdAsync(Guid productId) {
-        var product = await GetProductAndCheckIfItExists(productId, false);
+    public async Task<ProductGetResponse> GetProductByIdAsync(Guid categoryId, Guid productId) {
+        var category = await _productContext.Category.AsNoTracking().SingleOrDefaultAsync(c => c.Id.Equals(categoryId));
+
+        if(category is null) {
+            return new NotFoundResponse(categoryId, nameof(category));
+        }
+
+        var product = await _productContext.Product.AsNoTracking().SingleOrDefaultAsync(p => p.Id.Equals(productId));
+
+        if(product is null) {
+            return new NotFoundResponse(productId, nameof(product));
+        }
 
         var productDto = product.Adapt<ProductDto>();
 
         return productDto;
     }
 
-    public async Task<(IEnumerable<ProductDto> productsDto, MetaData metaData)> GetProductsAsync(
-        ProductParameters productParameters) {
-        if(!productParameters.ValidPriceRange) throw new MaxPriceRangeBadRequestException();
+    public async Task<ProductCreateResponse> CreateProductAsync(Guid categoryId, CreateProductDto productDto) {
+        var validationResult = await _createValidator.ValidateAsync(productDto);
 
+        if(!validationResult.IsValid) {
+            return new ValidationFailed(validationResult.Errors);
+        }
 
-        var products = await _productContext.Product
-            .Where(p => p.Price >= productParameters.MinPrice && p.Price <= productParameters.MaxPrice)
-            .Skip((productParameters.PageNumber - 1) * productParameters.PageSize)
-            .Take(productParameters.PageSize)
-            .ToListAsync();
+        var category = await _productContext.Category.AsNoTracking().SingleOrDefaultAsync(c => c.Id.Equals(categoryId));
 
-        var productsDto = products.Adapt<IEnumerable<ProductDto>>();
+        if(category is null) {
+            return new NotFoundResponse(categoryId, nameof(category));
+        }
 
-        var count = await _productContext.Product
-            .CountAsync();
-
-
-        return (productsDto: productsDto, metaData: new MetaData() {
-            CurrentPage = productParameters.PageNumber,
-            PageSize = productParameters.PageSize,
-            TotalCount = count
-        });
-    }
-
-    public async Task<ProductDto> CreateProductAsync(CreateProductDto productDto) {
         var product = productDto.Adapt<Product>();
 
         product.Id = Guid.NewGuid();
+        product.CategoryId = category.Id;
+        product.CategoryName = category.CategoryName;
 
         await _productContext.AddAsync(product);
         await _productContext.SaveChangesAsync();
@@ -103,43 +112,50 @@ public class ProductService : IProductService {
         return productToReturn;
     }
 
-    public async Task UpdateProductAsync(Guid productId, UpdateProductDto productDto) {
-        var product = await GetProductAndCheckIfItExists(productId, true);
+    public async Task<ProductUpdateResponse> UpdateProductAsync(Guid categoryId, Guid productId, UpdateProductDto productDto) {
+        var validationResult = await _updateValidator.ValidateAsync(productDto);
+
+        if(!validationResult.IsValid) {
+            return new ValidationFailed(validationResult.Errors);
+        }
+
+
+        var category = await _productContext.Category.AsNoTracking().SingleOrDefaultAsync(c => c.Id.Equals(categoryId));
+
+        if(category is null) {
+            return new NotFoundResponse(categoryId, nameof(category));
+        }
+
+        var product = await _productContext.Product.SingleOrDefaultAsync(p => p.Id.Equals(productId));
+
+        if(product is null) {
+            return new NotFoundResponse(productId, nameof(product));
+        }
 
         productDto.Adapt(product);
 
         await _productContext.SaveChangesAsync();
+
+        return new Success();
     }
 
-    public async Task DeleteProductAsync(Guid productId) {
-        var product = await GetProductAndCheckIfItExists(productId, false);
+    public async Task<ProductDeleteResponse> DeleteProductAsync(Guid categoryId, Guid productId) {
+        var category = await _productContext.Category.AsNoTracking().SingleOrDefaultAsync(c => c.Id.Equals(categoryId));
+
+        if(category is null) {
+            return new NotFoundResponse(categoryId, nameof(category));
+        }
+
+        var product = await _productContext.Product.AsNoTracking().SingleOrDefaultAsync(p => p.Id.Equals(productId));
+
+        if(product is null) {
+            return new NotFoundResponse(productId, nameof(product));
+        }
 
         _productContext.Product.Remove(product);
 
         await _productContext.SaveChangesAsync();
+
+        return new Success();
     }
-
-
-    private async Task CheckIfCategoryExists(Guid categoryId) {
-        var category = await _productContext.Category.SingleOrDefaultAsync(c => c.Id.Equals(categoryId));
-
-        if(category is null) throw new CategoryNotFoundException(categoryId);
-    }
-
-    private async Task<Product> GetProductAndCheckIfItExists(Guid productId, bool trackChanges) {
-        var product = trackChanges
-            ? await _productContext.Product
-                .SingleOrDefaultAsync(p => p.Id.Equals(productId))
-            : await _productContext.Product
-                .AsNoTracking()
-                .SingleOrDefaultAsync(p => p.Id.Equals(productId));
-
-        if(product is null) throw new ProductNotFoundException(productId);
-
-        return product;
-    }
-
-    /*  public Task<(LinkResponse linkResponse, MetaData metaData)> GetProductsAsync(Guid cateogryId, ProductParameters productParameters) {
-          throw new NotImplementedException();
-      }*/
 }

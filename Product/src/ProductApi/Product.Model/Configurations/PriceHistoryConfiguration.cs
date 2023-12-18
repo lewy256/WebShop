@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ProductApi.Model.Entities;
 
 namespace ProductApi.Model.Configurations;
-public partial class PriceHistoryConfiguration : IEntityTypeConfiguration<ProductPriceHistory> {
-    public void Configure(EntityTypeBuilder<ProductPriceHistory> entity) {
+public partial class PriceHistoryConfiguration : IEntityTypeConfiguration<PriceHistory> {
+    public void Configure(EntityTypeBuilder<PriceHistory> entity) {
         entity.ToContainer("ReviewsAndProductPrices")
             .HasPartitionKey(p => p.ProductId)
             .HasDiscriminator();
@@ -24,7 +24,7 @@ public partial class PriceHistoryConfiguration : IEntityTypeConfiguration<Produc
         entity.Property(p => p.EndDate)
             .ToJsonProperty("endDate");
 
-        entity.Property(p => p.Price)
+        entity.Property(p => p.PriceValue)
             .ToJsonProperty("price");
 
         entity.Property(p => p.Discriminator)
@@ -34,5 +34,5 @@ public partial class PriceHistoryConfiguration : IEntityTypeConfiguration<Produc
         OnConfigurePartial(entity);
     }
 
-    partial void OnConfigurePartial(EntityTypeBuilder<ProductPriceHistory> entity);
+    partial void OnConfigurePartial(EntityTypeBuilder<PriceHistory> entity);
 }

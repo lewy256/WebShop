@@ -3,6 +3,7 @@
 public class Product {
     public string ProductName { get; set; }
     public int SerialNumber { get; set; }
+    public string ImageName { get; set; }
     public decimal Price { get; set; }
     public int Stock { get; set; }
     public Guid CategoryId { get; set; }

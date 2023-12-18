@@ -55,9 +55,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityApi.IntegrationTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderApi.Application", "Order\src\OrderApi\OrderApi.Application\OrderApi.Application.csproj", "{21480D79-10BF-432D-9159-CE926B55A298}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderApi.Domain", "Order\src\OrderApi\OrderApi.Domain\OrderApi.Domain.csproj", "{D58315D8-BA21-42B2-8B9B-635E7A63D386}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderApi.Domain", "Order\src\OrderApi\OrderApi.Domain\OrderApi.Domain.csproj", "{D58315D8-BA21-42B2-8B9B-635E7A63D386}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderApi.Infrastructure", "Order\src\OrderApi\OrderApi.Infrastructure\OrderApi.Infrastructure.csproj", "{06826575-8522-4CDE-92F4-D03B22F576AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderApi.Infrastructure", "Order\src\OrderApi\OrderApi.Infrastructure\OrderApi.Infrastructure.csproj", "{06826575-8522-4CDE-92F4-D03B22F576AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateway", "ApiGateway", "{F9E19275-BB9E-4AA8-A11B-55BB863CF4FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\ApiGateway\ApiGateway.csproj", "{42107A77-87BD-411E-83D0-A2EC22AA0EED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,6 +133,10 @@ Global
 		{06826575-8522-4CDE-92F4-D03B22F576AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06826575-8522-4CDE-92F4-D03B22F576AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06826575-8522-4CDE-92F4-D03B22F576AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42107A77-87BD-411E-83D0-A2EC22AA0EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42107A77-87BD-411E-83D0-A2EC22AA0EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42107A77-87BD-411E-83D0-A2EC22AA0EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42107A77-87BD-411E-83D0-A2EC22AA0EED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -157,6 +165,7 @@ Global
 		{21480D79-10BF-432D-9159-CE926B55A298} = {58D80A72-0866-4B50-B00E-E2CEEFFE0597}
 		{D58315D8-BA21-42B2-8B9B-635E7A63D386} = {58D80A72-0866-4B50-B00E-E2CEEFFE0597}
 		{06826575-8522-4CDE-92F4-D03B22F576AF} = {58D80A72-0866-4B50-B00E-E2CEEFFE0597}
+		{42107A77-87BD-411E-83D0-A2EC22AA0EED} = {F9E19275-BB9E-4AA8-A11B-55BB863CF4FC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DF71C6F9-1834-4F3E-9F2F-5C620AB59F16}

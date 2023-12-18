@@ -9,8 +9,8 @@ public partial class ProductContext : DbContext {
 
     public DbSet<Product> Product { get; set; }
     public DbSet<Category> Category { get; set; }
-    public DbSet<ProductReview> ProductReview { get; set; }
-    public DbSet<ProductPriceHistory> ProductPriceHistory { get; set; }
+    public DbSet<Review> Review { get; set; }
+    public DbSet<PriceHistory> PriceHistory { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
 

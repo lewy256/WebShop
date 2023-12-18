@@ -2,7 +2,7 @@
 
 namespace ProductApi.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/products/{productId}/priceHistories")]
 [ApiController]
 public class PriceHistoryController : ControllerBase {
 }

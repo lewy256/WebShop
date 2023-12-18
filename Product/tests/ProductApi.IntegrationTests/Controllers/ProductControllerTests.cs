@@ -1,7 +1,8 @@
 ﻿using Bogus;
 using FluentAssertions;
 using Mapster;
-using ProductApi.Shared.Model;
+using ProductApi.Shared.Model.PriceDtos;
+using ProductApi.Shared.Model.ReviewDtos;
 using System.Net;
 using System.Net.Http.Json;
 using Xunit;
@@ -11,8 +12,8 @@ namespace ProductApi.IntegrationTests.Controllers;
 public class ProductControllerTests : IClassFixture<ProductApiFactory> {
     private readonly HttpClient _client;
 
-    private readonly Faker<CreateProductDto> _productGenerator =
-        new Faker<CreateProductDto>()
+    private readonly Faker<CreateReviewDto> _productGenerator =
+        new Faker<CreateReviewDto>()
             .RuleFor(x => x.Name, f => f.Commerce.ProductName())
             .RuleFor(x => x.ProductNumber, f => f.Random.Int(0, 10))
             .RuleFor(x => x.Price, f => f.Random.Decimal(0.00M, 100_000M))
@@ -35,10 +36,10 @@ public class ProductControllerTests : IClassFixture<ProductApiFactory> {
     [Fact]
     public async Task CreateProduct_WithValidModel_ReturnsCreatedStatus() {
         var createProductDto = _productGenerator.Generate();
-        var expectedResponse = createProductDto.Adapt<ProductDto>();
+        var expectedResponse = createProductDto.Adapt<PriceDto>();
 
         var postResponse = await _client.PostAsJsonAsync("/api/Product", createProductDto);
-        var productResponse = await postResponse.Content.ReadFromJsonAsync<ProductDto>();
+        var productResponse = await postResponse.Content.ReadFromJsonAsync<PriceDto>();
 
         postResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         productResponse.Should().BeEquivalentTo(expectedResponse, opt => opt.Excluding(x => x.Id));
@@ -49,10 +50,10 @@ public class ProductControllerTests : IClassFixture<ProductApiFactory> {
     public async Task GetProduct_WithValidId_ReturnsOkResult() {
         var createProductDto = _productGenerator.Generate();
         var postResponse = await _client.PostAsJsonAsync("/api/Product", createProductDto);
-        var expectedResponse = await postResponse.Content.ReadFromJsonAsync<ProductDto>();
+        var expectedResponse = await postResponse.Content.ReadFromJsonAsync<PriceDto>();
 
         var getResponse = await _client.GetAsync($"/api/Product/{expectedResponse.Id}");
-        var productResponse = await getResponse.Content.ReadFromJsonAsync<ProductDto>();
+        var productResponse = await getResponse.Content.ReadFromJsonAsync<PriceDto>();
 
         getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         productResponse.Should().BeEquivalentTo(expectedResponse);
@@ -64,7 +65,7 @@ public class ProductControllerTests : IClassFixture<ProductApiFactory> {
         var createProductDto = _productGenerator.Generate();
         var postResponse = await _client.PostAsJsonAsync("/api/Product", createProductDto);
 
-        var product = await postResponse.Content.ReadFromJsonAsync<ProductDto>();
+        var product = await postResponse.Content.ReadFromJsonAsync<PriceDto>();
         var deleteResponse = await _client.DeleteAsync($"/api/Product/{product.Id}");
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);

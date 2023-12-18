@@ -32,6 +32,9 @@ namespace ProductApi.Model.Configurations {
             entity.Property(p => p.SerialNumber)
                 .ToJsonProperty("serialNumber");
 
+            entity.Property(p => p.ImageName)
+                .ToJsonProperty("imageName");
+
             entity.Property(p => p.Size)
                 .ToJsonProperty("size");
 

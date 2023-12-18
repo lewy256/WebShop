@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ProductApi.Model.Entities;
 
 namespace ProductApi.Model.Configurations;
-public partial class ReviewConfiguration : IEntityTypeConfiguration<ProductReview> {
-    public void Configure(EntityTypeBuilder<ProductReview> entity) {
+public partial class ReviewConfiguration : IEntityTypeConfiguration<Review> {
+    public void Configure(EntityTypeBuilder<Review> entity) {
         entity.ToContainer("ReviewsAndProductPrices")
             .HasPartitionKey(p => p.ProductId)
             .HasDiscriminator();
@@ -29,5 +29,5 @@ public partial class ReviewConfiguration : IEntityTypeConfiguration<ProductRevie
         OnConfigurePartial(entity);
     }
 
-    partial void OnConfigurePartial(EntityTypeBuilder<ProductReview> entity);
+    partial void OnConfigurePartial(EntityTypeBuilder<Review> entity);
 }

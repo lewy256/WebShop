@@ -4,21 +4,102 @@
         <name>ProductApi</name>
     </assembly>
     <members>
-        <member name="M:ProductApi.Controllers.ProductController.GetProduct(System.Guid)">
+        <member name="M:ProductApi.Controllers.CategoryController.GetCategories">
             <summary>
-            Gets the list of all products by category
+            Gets the list of all products by category.
             </summary>
-            <returns>The products list</returns>
+            <param name="categoryId">The ID of the category for products to retrieve.</param>
+            <returns>A list of products.</returns>
+            <response code="200">Returns the list of products.</response>
         </member>
-        <member name="M:ProductApi.Controllers.ProductController.CreateProduct(ProductApi.Shared.Model.CreateProductDto)">
+        <member name="M:ProductApi.Controllers.CategoryController.GetCateogry(System.Guid)">
             <summary>
-            Creates a newly created company
+            Retrieves a specific product by its unique identifier.
             </summary>
-            <param name="company"></param>
-            <returns>A newly created company</returns>
+            <param name="id">The ID of the product to retrieve.</param>
+            <returns>The requested product.</returns>
+            <response code="200">Returns the requested product.</response>
+            <response code="404">If the product with the given ID is not found.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.CategoryController.CreateCategory(ProductApi.Model.Entities.Category)">
+            <summary>
+            Creates a new category
+            </summary>
+            <param name="category"></param>
+            <returns>A newly created category</returns>
             <response code="201">Returns the newly created item</response>
             <response code="400">If the item is null</response>
             <response code="422">If the model is invalid</response>
+        </member>
+        <member name="M:ProductApi.Controllers.CategoryController.UpdateCategory(System.Guid,ProductApi.Model.Entities.Category)">
+            <summary>
+            Updates a specific product by its unique identifier.
+            </summary>
+            <param name="id">The ID of the product to update.</param>
+            <param name="product">The updated product information.</param>
+            <returns>The updated product.</returns>
+            <response code="204">If the product is successfully updated.</response>
+            <response code="400">If the updated product is null or the ID in the URL does not match the ID in the payload.</response>
+            <response code="404">If the product with the given ID is not found.</response>
+            <response code="422">If the model is invalid or the product information is incomplete.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.CategoryController.DeleteCategory(System.Guid)">
+            <summary>
+            Deletes a specific product by its unique identifier.
+            </summary>
+            <param name="id">The ID of the product to delete.</param>
+            <returns>No content if successful, otherwise returns an error message.</returns>
+            <response code="204">If the product is successfully deleted.</response>
+            <response code="404">If the product with the given ID is not found.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.ProductController.GetProductsForCategory(System.Guid,ProductApi.Shared.Model.ProductDtos.ProductParameters)">
+            <summary>
+            Gets the list of all products by category.
+            </summary>
+            <param name="categoryId">The ID of the category for products to retrieve.</param>
+            <returns>A list of products.</returns>
+            <response code="200">Returns the list of products.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.ProductController.GetProductForCategory(System.Guid,System.Guid)">
+            <summary>
+            Retrieves a specific product by its unique identifier.
+            </summary>
+            <param name="productId">The ID of the product to retrieve.</param>
+            <param name="categoryId">The ID of the category for product to retrieve.</param>
+            <returns>The requested product.</returns>
+            <response code="200">Returns the requested product.</response>
+            <response code="404">If the product with the given ID is not found.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.ProductController.CreateProductForCategory(System.Guid,ProductApi.Shared.Model.ProductDtos.CreateProductDto)">
+            <summary>
+            Creates a new product
+            </summary>
+            <param name="product"></param>
+            <returns>A newly created product</returns>
+            <response code="201">Returns the newly created item</response>
+            <response code="400">If the item is null</response>
+            <response code="422">If the model is invalid</response>
+        </member>
+        <member name="M:ProductApi.Controllers.ProductController.UpdateProductForCategory(System.Guid,System.Guid,ProductApi.Shared.Model.ProductDtos.UpdateProductDto)">
+            <summary>
+            Updates a specific product by its unique identifier.
+            </summary>
+            <param name="productId">The ID of the product to update.</param>
+            <param name="product">The updated product information.</param>
+            <returns>The updated product.</returns>
+            <response code="200">Returns the updated product.</response>
+            <response code="400">If the updated product is null or the ID in the URL does not match the ID in the payload.</response>
+            <response code="404">If the product with the given ID is not found.</response>
+            <response code="422">If the model is invalid or the product information is incomplete.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.ProductController.DeleteProductForCategory(System.Guid,System.Guid)">
+            <summary>
+            Deletes a specific product by its unique identifier.
+            </summary>
+            <param name="productId">The ID of the product to delete.</param>
+            <returns>No content if successful, otherwise returns an error message.</returns>
+            <response code="204">If the product is successfully deleted.</response>
+            <response code="404">If the product with the given ID is not found.</response>
         </member>
     </members>
 </doc>
