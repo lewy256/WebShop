@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>ProductApi.Service</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.1" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+    <PackageReference Include="OneOf" Version="3.0.263" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProductApi.Interfaces\ProductApi.Interfaces.csproj" />
+    <ProjectReference Include="..\ProductApi.Models\ProductApi.Models.csproj" />
+    <ProjectReference Include="..\ProductApi.Service.Interfaces\ProductApi.Service.Interfaces.csproj" />
+    <ProjectReference Include="..\ProductApi.Shared.Models\ProductApi.Shared.Models.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,7 +1,10 @@
+using FluentValidation;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using ProductApi.Extensions;
 using Serilog;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +25,13 @@ builder.Services.AddControllers(options => { options.ReturnHttpNotAcceptable = t
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//builder.Services.ConfigureRateLimitingOptions();
+builder.Services.ConfigureRateLimitingOptions();
 
 builder.Services.ConfigureServices();
-builder.Services.ConfigureCosmosDB(builder.Configuration.GetSection("CosmosDb"));
+
+builder.Services.AddValidatorsFromAssembly(Assembly.Load("ProductApi.Services"));
+
+builder.Services.ConfigureCosmosDB(builder.Configuration);
 
 builder.Services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
@@ -38,7 +44,9 @@ builder.Services.AddCustomMediaTypes();
 
 builder.Services.ConfigureVersioning();
 
-//builder.Services.ConfigureOutputCaching(builder.Configuration.GetSection("Redis"));
+builder.Services.AddFluentValidationRulesToSwagger();
+
+builder.Services.ConfigureOutputCaching(builder.Configuration);
 
 var app = builder.Build();
 
@@ -54,10 +62,15 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions {
     ForwardedHeaders = ForwardedHeaders.All
 });
 
-//app.UseRateLimiter();
+if(app.Environment.IsProduction()) {
+    app.UseRateLimiter();
+}
 
 app.UseCors("CorsPolicy");
-//app.UseOutputCache();
+
+if(app.Environment.IsProduction()) {
+    app.UseOutputCache();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

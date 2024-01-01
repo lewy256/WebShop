@@ -1,4 +1,4 @@
-name: Testing the BasketApi project
+name: tests
 
 on:
   workflow_dispatch:
@@ -12,16 +12,8 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore ./Basket/src/BasketApi/BasketApi.sln
+      run: dotnet restore ./Basket/src/BasketApi/BasketApi/BasketApi.csproj
     - name: Build
-      run: dotnet build ./Basket/src/BasketApi/BasketApi.sln --no-restore
+      run: dotnet build ./Basket/src/BasketApi/BasketApi/BasketApi.csproj
     - name: Test
       run: dotnet test ./Basket/tests/BasketApi.IntegrationTests/BasketApi.IntegrationTests.csproj
-        /p:CollectCoverage=true 
-        /p:CoverletOutput=TestResults/ 
-        /p:CoverletOutputFormat=lcov
-    - name: Publish coverage report to coveralls.io
-      uses: coverallsapp/github-action@v2
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./Basket/tests/BasketApi.IntegrationTests/TestResults/coverage.info 

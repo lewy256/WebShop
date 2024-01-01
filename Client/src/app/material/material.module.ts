@@ -12,6 +12,9 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {MatBadgeModule} from "@angular/material/badge";
 
 @NgModule({
   declarations: [],
@@ -28,7 +31,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatSortModule,
     MatFormFieldModule,
     MatInputModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSlideToggleModule,
+    MatAutocompleteModule,
+    MatBadgeModule
   ],
   exports: [
     MatTabsModule,
@@ -42,7 +48,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatSortModule,
     MatFormFieldModule,
     MatInputModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSlideToggleModule,
+    MatAutocompleteModule,
+    MatBadgeModule
   ]
 })
 export class MaterialModule { }

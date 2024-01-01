@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OrderApi.Consumer;
 using OrderApi.Models;
-using OrderApi.Services;
 
 namespace OrderApi.Extensions;
 
@@ -16,9 +16,9 @@ public static class ServiceExtensions {
     }
 
     public static void ConfigureServices(this IServiceCollection services) {
-        services.AddHostedService<ReceiverService>();
-        services.AddSingleton<PublisherService>();
-        services.AddSingleton<ProcessService>();
+        services.AddHostedService<Receiver>();
+        services.AddSingleton<Publisher>();
+        services.AddSingleton<Process>();
     }
 
     public static void ConfigureDbContext(this IServiceCollection services, IConfiguration configuration) {

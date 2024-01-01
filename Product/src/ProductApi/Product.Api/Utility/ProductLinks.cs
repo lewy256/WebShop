@@ -1,7 +1,9 @@
-﻿using Microsoft.Net.Http.Headers;
+﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using ProductApi.Interfaces;
 using ProductApi.Model.Entities;
 using ProductApi.Model.LinkModels;
+using ProductApi.Model.LinkModels.Products;
 using ProductApi.Shared.Model.ProductDtos;
 
 namespace ProductApi.Utility;
@@ -15,12 +17,21 @@ public class ProductLinks : IProductLinks {
         _dataShaper = dataShaper;
     }
 
-    public LinkResponse TryGenerateLinks(IEnumerable<ProductDto> productsDto, string fields, Guid categoryId,
+    public ProductLinkResponse TryGenerateLinks(IEnumerable<ProductDto> productsDto, string fields, Guid categoryId,
         HttpContext httpContext) {
+
+        if(fields.IsNullOrEmpty() && !ShouldGenerateLinks(httpContext)) {
+            return new ProductLinkResponse() {
+                IsShaped = false,
+                Products = productsDto
+            };
+        }
+
         var shapedProducts = ShapeData(productsDto, fields);
 
-        if(ShouldGenerateLinks(httpContext))
+        if(ShouldGenerateLinks(httpContext)) {
             return ReturnLinkdedProducts(productsDto, fields, categoryId, httpContext, shapedProducts);
+        }
 
         return ReturnShapedProducts(shapedProducts);
     }
@@ -36,10 +47,10 @@ public class ProductLinks : IProductLinks {
         return mediaType.SubTypeWithoutSuffix.EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase);
     }
 
-    private LinkResponse ReturnShapedProducts(List<Entity> shapedProducts) =>
-        new LinkResponse { ShapedEntities = shapedProducts };
+    private ProductLinkResponse ReturnShapedProducts(List<Entity> shapedProducts) =>
+        new ProductLinkResponse { IsShaped = true, ShapedEntities = shapedProducts };
 
-    private LinkResponse ReturnLinkdedProducts(IEnumerable<ProductDto> productsDto,
+    private ProductLinkResponse ReturnLinkdedProducts(IEnumerable<ProductDto> productsDto,
         string fields, Guid categoryId, HttpContext httpContext, List<Entity> shapedProducts) {
         var productDtoList = productsDto.ToList();
 
@@ -51,7 +62,7 @@ public class ProductLinks : IProductLinks {
         var productCollection = new LinkCollectionWrapper<Entity>(shapedProducts);
         var linkedProducts = CreateLinksForProducts(httpContext, productCollection);
 
-        return new LinkResponse { HasLinks = true, LinkedEntities = linkedProducts };
+        return new ProductLinkResponse { IsShaped = true, HasLinks = true, LinkedEntities = linkedProducts };
     }
 
     private List<Link> CreateLinksForProduct(HttpContext httpContext, Guid categoryId, Guid productid, string fields = "") {

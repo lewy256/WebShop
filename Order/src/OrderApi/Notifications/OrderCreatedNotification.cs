@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Mediator;
 using OrderApi.Shared.OrderDtos;
 
 namespace OrderApi.Notifications;

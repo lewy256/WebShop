@@ -1,5 +1,64 @@
-<div fxLayout="row wrap" fxLayoutAlign="center center" class="layout-wrapper"> 
-  <div fxFlex="80%" fxFlex.lt-md="100%" class="flex-wrapper"> 
-    <ng-content></ng-content> 
-  </div> 
-</div>
+<mat-toolbar class="app-toolbar" color="primary">
+  <button mat-icon-button class="example-icon" (click)="sidenav.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <button routerLink="" mat-icon-button class="example-icon">
+    <mat-icon>shop</mat-icon>
+  </button>
+  <span routerLink="">Web Shop</span>
+  <form class="example-form ">
+<!--    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>Assignee</mat-label>
+      <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option.name}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>-->
+
+<!--      <mat-form-field>
+   &lt;!&ndash;     <input matInput type="text" (keyup)="[doFilter($any($event.target).value)]" placeholder="Filter">&ndash;&gt;
+        <input matInput type="text" placeholder="Filter" #box>
+      </mat-form-field>
+      <app-product [doFilter]="(box.value)" >  </app-product>-->
+    <mat-form-field>
+      <input matInput type="text" (keyup)="setFilterData($any($event.target).value)" placeholder="Filter">
+      <!-- <input matInput type="text" placeholder="Filter" #box>-->
+    </mat-form-field>
+  </form>
+  <span class="example-spacer"></span>
+  <button routerLink="/basket" mat-icon-button class="example-icon">
+    <mat-icon matBadge="8" matBadgePosition="above" matBadgeColor="accent" >shopping_cart</mat-icon>
+  </button>
+  <button mat-icon-button [matMenuTriggerFor]="menu" >
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button routerLink="/account"  mat-menu-item>
+      <span>Account</span>
+    </button>
+    <button routerLink="/order" mat-menu-item >
+      <span>Orders</span>
+    </button>
+  </mat-menu>
+  <mat-icon class="mr-8">brightness_5</mat-icon>
+  <mat-slide-toggle [formControl]="toggleControl" class="mr-8">
+  </mat-slide-toggle>
+  <mat-icon>bedtime</mat-icon>
+</mat-toolbar>
+<mat-sidenav-container hasBackdrop="false">
+  <mat-sidenav #sidenav mode="push">
+    <button mat-raised-button (click)="sidenav.toggle()">
+      X
+    </button>
+    <!--<h1>Categories</h1>-->
+   <!-- <app-product (sendCategories)="getData($event)"></app-product>-->
+    <mat-nav-list>
+      <a mat-list-item (click)="setData(category.id!);clickMenu()"  *ngFor="let category of categories">{{category.categoryName}}</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+      <ng-content ></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

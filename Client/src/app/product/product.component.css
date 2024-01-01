@@ -9,3 +9,25 @@ th.mat-header-cell {
   text-align: left;
   max-width: 300px;
 }
+/*.example-container {
+  width: 400px;
+  height: 200px;
+  margin: 12px;
+  border: 1px solid #555;
+}*/
+mat-drawer-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+.example-card {
+  max-width: 400px;
+}
+
+.example-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
+

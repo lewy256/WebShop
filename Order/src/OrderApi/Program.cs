@@ -1,28 +1,26 @@
+using Carter;
+using FluentValidation;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Options;
-using OrderApi.ActionFilters;
 using OrderApi.Extensions;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddControllers(options => {
-    options.ReturnHttpNotAcceptable = true;
-    options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
-});
+//builder.Services.AddControllers(options => {
+//    options.ReturnHttpNotAcceptable = true;
+//    options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+//});
 
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var logger = new LoggerConfiguration()
-    //.ReadFrom.Configuration(builder.Configuration)
-    // .Enrich.FromLogContext()
     .WriteTo.Console()
-    //.WriteTo.AzureApp()
     .CreateLogger();
 
 builder.Host.UseSerilog((ctx, lc) => lc
@@ -30,22 +28,21 @@ builder.Host.UseSerilog((ctx, lc) => lc
 
 builder.Services.ConfigureCors();
 
-builder.Services.ConfigureServices();
+//builder.Services.ConfigureServices();
 
-builder.Services.AddAuthentication();
+//builder.Services.AddAuthentication();
 
 builder.Services.ConfigureDbContext(builder.Configuration);
 
-builder.Services.AddScoped<ValidationFilterAttribute>();
 
-builder.Services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
+//builder.Services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+
+builder.Services.AddCarter();
 
 var app = builder.Build();
-
-app.ConfigureExceptionHandler();
 
 if(app.Environment.IsDevelopment()) {
     app.UseSwagger();
@@ -63,13 +60,16 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions {
 app.UseCors("CorsPolicy");
 
 
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
-app.MapControllers();
+//app.MapControllers();
 
 //app.MigrateDatabase();
 
+app.MapCarter();
+
+app.UseHttpsRedirection();
 
 app.Run();
 

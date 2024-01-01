@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>d09a4752-8bfe-4fb9-8f70-441701c10ce1</UserSecretsId>
   </PropertyGroup>
 	
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,6 +26,7 @@
     <PackageReference Include="Azure.Identity" Version="1.10.4" />
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.1" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.5.0" />
+    <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
@@ -35,14 +37,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Product.Model\ProductApi.Models.csproj" />
-    <ProjectReference Include="..\Product.Service.Interface\ProductApi.Interfaces.csproj" />
-    <ProjectReference Include="..\Product.Service\ProductApi.Services.csproj" />
+    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Properties\ServiceDependencies\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\PublishProfiles\" />
-    <Folder Include="Properties\ServiceDependencies\" />
+    <ProjectReference Include="..\ProductApi.Interfaces\ProductApi.Interfaces.csproj" />
+    <ProjectReference Include="..\ProductApi.Models\ProductApi.Models.csproj" />
+    <ProjectReference Include="..\ProductApi.Service.Interfaces\ProductApi.Service.Interfaces.csproj" />
+    <ProjectReference Include="..\ProductApi.Services\ProductApi.Services.csproj" />
+    <ProjectReference Include="..\ProductApi.Shared.Models\ProductApi.Shared.Models.csproj" />
   </ItemGroup>
 	
 

@@ -375,3 +375,6 @@ Client/.idea/
 /Identity/src/IdentityApi/appsettings.json
 /Basket/src/BasketApi/BasketApi/appsettings.json
 /Product/src/ProductApi/Product.Api/appsettings.Development.json
+/Product/tests/ProductApi.IntegrationTests/Properties/launchSettings.json
+/Blob/src/BlobApi/appsettings.json
+/ApiGateway/ApiGateway/appsettings.json

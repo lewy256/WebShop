@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProductApi.Models\ProductApi.Models.csproj" />
+    <ProjectReference Include="..\ProductApi.Shared.Models\ProductApi.Shared.Models.csproj" />
+  </ItemGroup>
+
+
+</Project>
