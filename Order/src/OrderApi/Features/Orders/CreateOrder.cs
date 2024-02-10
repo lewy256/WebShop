@@ -1,76 +1,98 @@
 ﻿using Carter;
 using FluentValidation;
 using Mapster;
+using MassTransit;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OneOf;
+using OneOf.Types;
+using OrderApi.Contracts;
 using OrderApi.Models;
 using OrderApi.Responses;
-using OrderApi.Shared.OrderDtos;
-using static OrderApi.Features.Orders.CreateOrder;
+using OrderApi.Shared;
+using System.Security.Claims;
 
 namespace OrderApi.Features.Orders;
 
 public static class CreateOrder {
-    public sealed record CreateOrderCommand(CreateOrderDto Order) : IRequest<OrderCreateResponse>;
+    public class Command : IRequest<OrderCreateResponse> {
+        public DateTime OrderDate { get; set; }
+        public int PaymentMethodId { get; set; }
+        public int AddressId { get; set; }
+        public int ShipMethodId { get; set; }
+        public decimal TotalPrice { get; set; }
+        public string? Notes { get; set; }
+        public int? CouponId { get; set; }
+    }
 
-    public class CreateOrderValidator : AbstractValidator<CreateOrderDto> {
-        public CreateOrderValidator() {
-            RuleFor(x => x.Notes)
-                .NotEmpty();
+    public class Validator : AbstractValidator<Command> {
+        public Validator() {
+
         }
     }
 
-    internal sealed class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OrderCreateResponse> {
+    internal sealed class Handler : IRequestHandler<Command, OrderCreateResponse> {
         private readonly OrderContext _context;
-        private readonly IValidator<CreateOrderDto> _validator;
+        private readonly IValidator<Command> _validator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public CreateOrderHandler(OrderContext context, IValidator<CreateOrderDto> validator) {
+        public Handler(OrderContext context, IValidator<Command> validator, IHttpContextAccessor httpContextAccessor, IPublishEndpoint publishEndpoint) {
             _context = context;
             _validator = validator;
+            _httpContextAccessor = httpContextAccessor;
+            _publishEndpoint = publishEndpoint;
         }
 
-        public async ValueTask<OrderCreateResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken) {
-            if(request.Order is null) {
-                return new BadRequestResponse();
-            }
-
-            var validationResult = await _validator.ValidateAsync(request.Order);
+        public async ValueTask<OrderCreateResponse> Handle(Command request, CancellationToken cancellationToken) {
+            var validationResult = await _validator.ValidateAsync(request);
 
             if(!validationResult.IsValid) {
 
                 var vaildationFailed = validationResult.Errors.Adapt<IEnumerable<ValidationError>>();
 
-                return new ValidationFailed(vaildationFailed);
+                return new ValidationResponse(vaildationFailed);
             }
 
-            var order = request.Order.Adapt<Order>();
+            var order = request.Adapt<Order>();
 
-            await _context.AddAsync(order);
-            await _context.SaveChangesAsync(cancellationToken);
+            var userId = new Guid(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            order.CustomerId = userId;
 
-            var orderDto = order.Adapt<OrderDto>();
 
-            return orderDto;
 
+
+            return new Success();
         }
     }
 }
 
 public class CreateOrderEndpoint : ICarterModule {
     public void AddRoutes(IEndpointRouteBuilder app) {
-        app.MapPost("api/orders", async (CreateOrderDto order, ISender sender) => {
-            var command = new CreateOrderCommand(order);
+        app.MapPost("api/orders",
+        [Authorize(Roles = "Administrator, Customer")]
+        [ProducesResponseType(typeof(OrderDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        async ([FromBody] OrderRequest? request, ISender sender) => {
+            if(request is null) {
+                return Results.BadRequest(new BadRequestResponse());
+            }
+
+            var command = request.Adapt<CreateOrder.Command>();
 
             var results = await sender.Send(command);
 
             return results.Match(
-                order => Results.CreatedAtRoute("GetOrderById", new { orderId = order.OrderId }, order),
-                validationFailed => Results.UnprocessableEntity(validationFailed),
-                _ => Results.BadRequest());
-        });
+                _ => Results.Accepted(),
+                validationFailed => Results.UnprocessableEntity(validationFailed));
+
+        }).WithName(nameof(CreateOrder)).WithTags(nameof(Order));
     }
 }
 
 [GenerateOneOf]
-public partial class OrderCreateResponse : OneOfBase<OrderDto, ValidationFailed, BadRequestResponse> {
+public partial class OrderCreateResponse : OneOfBase<Success, ValidationResponse> {
 }

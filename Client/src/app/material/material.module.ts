@@ -15,6 +15,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatBadgeModule} from "@angular/material/badge";
+import {MatCardModule} from "@angular/material/card";
+import {MatGridListModule} from "@angular/material/grid-list";
 
 @NgModule({
   declarations: [],
@@ -34,7 +36,9 @@ import {MatBadgeModule} from "@angular/material/badge";
     MatPaginatorModule,
     MatSlideToggleModule,
     MatAutocompleteModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatCardModule,
+    MatGridListModule
   ],
   exports: [
     MatTabsModule,
@@ -51,7 +55,8 @@ import {MatBadgeModule} from "@angular/material/badge";
     MatPaginatorModule,
     MatSlideToggleModule,
     MatAutocompleteModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatCardModule
   ]
 })
 export class MaterialModule { }

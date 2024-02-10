@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using ProductApi.Shared.Model.ProductDtos;
+using ProductApi.Shared.Model.ProductDtos.V2;
 
 namespace ProductApi.Model.LinkModels.Products;
 

@@ -1,4 +1,4 @@
-﻿using IdentityApi.Models.Configuration;
+﻿using IdentityApi.Models.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

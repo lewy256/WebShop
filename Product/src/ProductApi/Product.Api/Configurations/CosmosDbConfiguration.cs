@@ -1,8 +1,8 @@
 ﻿namespace ProductApi.Configurations;
 
 public class CosmosDbConfiguration {
-    public string Section { get; set; } = "CosmosDB";
-    public string AccountEndpoint { get; set; }
-    public string AccountKey { get; set; }
-    public string DatabaseName { get; set; }
+    public const string Section = "CosmosDB";
+    public string AccountEndpoint { get; init; }
+    public string AccountKey { get; init; }
+    public string DatabaseName { get; init; }
 }

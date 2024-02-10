@@ -1,8 +1,8 @@
 ﻿namespace ProductApi.Shared.Model.PriceHistoryDtos;
 
 public record PriceHistoryDto {
-    public Guid Id { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public decimal PriceValue { get; set; }
+    public Guid Id { get; init; }
+    public DateTime StartDate { get; init; }
+    public DateTime EndDate { get; init; }
+    public decimal PriceValue { get; init; }
 }

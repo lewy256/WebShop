@@ -1,5 +1,4 @@
 ﻿using ProductApi.Model.Entities;
-using ProductApi.Shared.Model.ProductDtos;
 using System.Linq.Expressions;
 
 namespace ProductApi.Service.Extensions;
@@ -15,7 +14,15 @@ public static class ProductExtensions {
         return products.Where(e => e.ProductName.ToLower().Contains(lowerCaseTerm));
     }
 
-    public static IQueryable<Product> FilterProducts(this IQueryable<Product> products, ProductParameters productParameters) {
+    public static IQueryable<Product> FilterProducts(this IQueryable<Product> products, Shared.Model.ProductDtos.V1.ProductParameters productParameters) {
+        if(productParameters.MinPrice is not null && productParameters.MaxPrice is not null) {
+            return products.Where(r => r.Price >= productParameters.MinPrice && r.Price <= productParameters.MaxPrice);
+        }
+
+        return products;
+    }
+
+    public static IQueryable<Product> FilterProducts(this IQueryable<Product> products, Shared.Model.ProductDtos.V2.ProductParameters productParameters) {
         if(productParameters.MinPrice is not null && productParameters.MaxPrice is not null) {
             return products.Where(r => r.Price >= productParameters.MinPrice && r.Price <= productParameters.MaxPrice);
         }

@@ -17,6 +17,9 @@ public partial class ReviewConfiguration : IEntityTypeConfiguration<Review> {
             .ToJsonProperty("productId")
             .HasConversion<string>();
 
+        entity.Property(p => p.UserName)
+             .ToJsonProperty("userName");
+
         entity.Property(p => p.Description)
             .ToJsonProperty("description");
 

@@ -1,8 +1,8 @@
 ﻿namespace ProductApi.Configurations;
 
 public class JwtConfiguration {
-    public string Section { get; set; } = "JwtSettings";
-    public string? ValidIssuer { get; set; }
-    public string? ValidAudience { get; set; }
-    public string? Expires { get; set; }
+    public const string Section = "JwtSettings";
+    public string? ValidIssuer { get; init; }
+    public string? ValidAudience { get; init; }
+    public string? Expires { get; init; }
 }

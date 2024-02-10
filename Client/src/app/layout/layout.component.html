@@ -7,21 +7,21 @@
   </button>
   <span routerLink="">Web Shop</span>
   <form class="example-form ">
-<!--    <mat-form-field class="example-full-width" appearance="fill">
-      <mat-label>Assignee</mat-label>
-      <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-          {{option.name}}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>-->
+    <!--    <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Assignee</mat-label>
+          <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+              {{option.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>-->
 
-<!--      <mat-form-field>
-   &lt;!&ndash;     <input matInput type="text" (keyup)="[doFilter($any($event.target).value)]" placeholder="Filter">&ndash;&gt;
-        <input matInput type="text" placeholder="Filter" #box>
-      </mat-form-field>
-      <app-product [doFilter]="(box.value)" >  </app-product>-->
+    <!--      <mat-form-field>
+       &lt;!&ndash;     <input matInput type="text" (keyup)="[doFilter($any($event.target).value)]" placeholder="Filter">&ndash;&gt;
+            <input matInput type="text" placeholder="Filter" #box>
+          </mat-form-field>
+          <app-product [doFilter]="(box.value)" >  </app-product>-->
     <mat-form-field>
       <input matInput type="text" (keyup)="setFilterData($any($event.target).value)" placeholder="Filter">
       <!-- <input matInput type="text" placeholder="Filter" #box>-->
@@ -53,12 +53,12 @@
       X
     </button>
     <!--<h1>Categories</h1>-->
-   <!-- <app-product (sendCategories)="getData($event)"></app-product>-->
+    <!-- <app-product (sendCategories)="getData($event)"></app-product>-->
     <mat-nav-list>
       <a mat-list-item (click)="setData(category.id!);clickMenu()"  *ngFor="let category of categories">{{category.categoryName}}</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-      <ng-content ></ng-content>
+    <ng-content ></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>

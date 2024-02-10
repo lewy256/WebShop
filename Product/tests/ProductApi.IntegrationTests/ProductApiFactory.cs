@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization.Policy;
+﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -7,13 +8,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ProductApi.Model;
+using ProductApi.Service.Configurations;
+using Testcontainers.Azurite;
 using Testcontainers.CosmosDb;
 using Xunit;
 
 namespace ProductApi.IntegrationTests;
 
 public class ProductApiFactory : WebApplicationFactory<Program>, IAsyncLifetime {
-    private readonly CosmosDbContainer _container = new CosmosDbBuilder()
+    private readonly CosmosDbContainer _cosmosContainer = new CosmosDbBuilder()
         .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator")
         .WithName("azure-cosmos-emulator")
         .WithEnvironment("AZURE_COSMOS_EMULATOR_ARGS", "/Port=8081")
@@ -21,8 +24,14 @@ public class ProductApiFactory : WebApplicationFactory<Program>, IAsyncLifetime 
         .WithEnvironment("AZURE_COSMOS_EMULATOR_PARTITION_COUNT", "30")
         .WithEnvironment("AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE", "127.0.0.1")
         .WithEnvironment("AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE", "true")
-        .WithCleanUp(true)
         .Build();
+
+    private readonly AzuriteContainer _storageContainer = new AzuriteBuilder()
+        .WithImage("mcr.microsoft.com/azure-storage/azurite")
+        .WithName("azurite")
+        .Build();
+
+    private string _blobContainerName { get; init; } = "images";
 
     protected override void ConfigureWebHost(IWebHostBuilder builder) {
         builder.ConfigureTestServices(services => {
@@ -33,36 +42,35 @@ public class ProductApiFactory : WebApplicationFactory<Program>, IAsyncLifetime 
 
             services.AddDbContext<ProductContext>(options => {
                 options.UseCosmos(
-                    "https://localhost:8081/",
-                    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+                    _cosmosContainer.GetConnectionString(),
                     "Shop",
                     (clientOptions) => {
                         clientOptions.HttpClientFactory(() => {
-                            HttpMessageHandler httpMessageHandler = new HttpClientHandler() {
-                                //ServerCertificateCustomValidationCallback = (_, _, _, _) => true
-                                ServerCertificateCustomValidationCallback =
-                                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-                            };
-
-                            return new HttpClient(httpMessageHandler);
+                            return _cosmosContainer.HttpClient;
                         });
                         clientOptions.ConnectionMode(ConnectionMode.Gateway);
                     }
                 );
             });
+
+            services.Configure<AzureBlobStorageConfiguration>(opts => {
+                opts.ConnectionString = _storageContainer.GetConnectionString();
+                opts.Container = _blobContainerName;
+            });
         });
-        //builder.UseEnvironment("Development");
         Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
     }
 
     public async Task InitializeAsync() {
-        await _container.StartAsync();
-        using var scope = Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ProductContext>();
-        await context.Database.EnsureCreatedAsync();
+        await _storageContainer.StartAsync();
+        await _cosmosContainer.StartAsync();
+
+        var blobServiceClient = new BlobServiceClient(_storageContainer.GetConnectionString());
+        await blobServiceClient.CreateBlobContainerAsync(_blobContainerName);
     }
 
     async Task IAsyncLifetime.DisposeAsync() {
-        await _container.DisposeAsync();
+        await _cosmosContainer.DisposeAsync();
+        await _storageContainer.DisposeAsync();
     }
 }

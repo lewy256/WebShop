@@ -4,6 +4,7 @@ public class Product {
     public Guid Id { get; set; }
     public string ProductName { get; set; }
     public string SerialNumber { get; set; }
+    public List<Image> Images { get; set; }
     public decimal Price { get; set; }
     public int Stock { get; set; }
     public Guid CategoryId { get; set; }

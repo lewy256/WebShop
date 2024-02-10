@@ -1,14 +1,13 @@
 ﻿using OneOf;
 using OneOf.Types;
-using ProductApi.Model.LinkModels.Reviews;
-using ProductApi.Model.Responses;
 using ProductApi.Shared.Model;
+using ProductApi.Shared.Model.Responses;
 using ProductApi.Shared.Model.ReviewDtos;
 
 namespace ProductApi.Service.Interfaces;
 
 public interface IReviewService {
-    Task<ReviewtGetAllResponse> GetReviewsAsync(Guid productId, LinkReviewParameters linkParameters);
+    Task<ReviewtGetAllResponse> GetReviewsAsync(Guid productId, ReviewParameters reviewParameters);
     Task<ReviewGetResponse> GetReviewByIdAsync(Guid productId, Guid reviewId);
     Task<ReviewCreateResponse> CreateReviewAsync(Guid productId, CreateReviewDto reviewDto);
     Task<ReviewUpdateResponse> UpdateReviewAsync(Guid productId, Guid reviewId, UpdateReviewDto reviewDto);
@@ -17,11 +16,11 @@ public interface IReviewService {
 
 
 [GenerateOneOf]
-public partial class ReviewUpdateResponse : OneOfBase<Success, NotFoundResponse, ValidationFailed> {
+public partial class ReviewUpdateResponse : OneOfBase<Success, NotFoundResponse, ValidationResponse> {
 }
 
 [GenerateOneOf]
-public partial class ReviewCreateResponse : OneOfBase<ReviewDto, NotFoundResponse, ValidationFailed> {
+public partial class ReviewCreateResponse : OneOfBase<ReviewDto, NotFoundResponse, ValidationResponse> {
 }
 
 [GenerateOneOf]
@@ -33,5 +32,5 @@ public partial class ReviewGetResponse : OneOfBase<ReviewDto, NotFoundResponse> 
 }
 
 [GenerateOneOf]
-public partial class ReviewtGetAllResponse : OneOfBase<(ReviewLinkResponse linkResponse, MetaData metaData), NotFoundResponse, ValidationFailed> {
+public partial class ReviewtGetAllResponse : OneOfBase<(IEnumerable<ReviewDto> reviews, MetaData metaData), NotFoundResponse, ValidationResponse> {
 }

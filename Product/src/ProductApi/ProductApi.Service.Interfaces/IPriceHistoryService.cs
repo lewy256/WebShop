@@ -1,13 +1,12 @@
 ﻿using OneOf;
 using OneOf.Types;
-using ProductApi.Model.LinkModels.PriceHistory;
-using ProductApi.Model.Responses;
 using ProductApi.Shared.Model;
 using ProductApi.Shared.Model.PriceHistoryDtos;
+using ProductApi.Shared.Model.Responses;
 
 namespace ProductApi.Service.Interfaces;
 public interface IPriceHistoryService {
-    Task<PriceHistoryGetAllResponse> GetPricesHistoryAsync(Guid productId, LinkPriceHistoryParameters priceParameters);
+    Task<PriceHistoryGetAllResponse> GetPricesHistoryAsync(Guid productId, PriceHistoryParameters priceHistoryParameters);
     Task<PriceHistoryGetResponse> GetPriceHistoryByIdAsync(Guid productId, Guid priceHistoryId);
     Task<PriceHistoryCreateResponse> CreatePriceHistoryAsync(Guid productId, CreatePriceHistoryDto priceDto);
     Task<PriceHistoryUpdateResponse> UpdatePriceHistoryAsync(Guid productId, Guid priceHistoryId, UpdatePriceHistoryDto priceDto);
@@ -15,11 +14,11 @@ public interface IPriceHistoryService {
 }
 
 [GenerateOneOf]
-public partial class PriceHistoryUpdateResponse : OneOfBase<Success, NotFoundResponse, ValidationFailed> {
+public partial class PriceHistoryUpdateResponse : OneOfBase<Success, NotFoundResponse, ValidationResponse> {
 }
 
 [GenerateOneOf]
-public partial class PriceHistoryCreateResponse : OneOfBase<PriceHistoryDto, NotFoundResponse, ValidationFailed> {
+public partial class PriceHistoryCreateResponse : OneOfBase<PriceHistoryDto, NotFoundResponse, ValidationResponse> {
 }
 
 [GenerateOneOf]
@@ -30,6 +29,7 @@ public partial class PriceHistoryDeleteResponse : OneOfBase<Success, NotFoundRes
 public partial class PriceHistoryGetResponse : OneOfBase<PriceHistoryDto, NotFoundResponse> {
 }
 
+
 [GenerateOneOf]
-public partial class PriceHistoryGetAllResponse : OneOfBase<(PriceHistoryLinkResponse linkResponse, MetaData metaData), NotFoundResponse, ValidationFailed> {
+public partial class PriceHistoryGetAllResponse : OneOfBase<(IEnumerable<PriceHistoryDto> pricesHistory, MetaData metaData), NotFoundResponse, ValidationResponse> {
 }

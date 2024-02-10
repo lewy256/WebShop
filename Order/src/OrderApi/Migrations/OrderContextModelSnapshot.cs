@@ -17,18 +17,21 @@ namespace OrderApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.15")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("OrderApi.Models.Address", b =>
                 {
                     b.Property<int>("AddressId")
-                        .HasColumnType("int")
-                        .HasColumnName("AddressID");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
 
                     b.Property<string>("AddressLine1")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -37,30 +40,41 @@ namespace OrderApi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("City")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Country")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PostalCode")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("AddressId");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Address");
                 });
@@ -68,8 +82,10 @@ namespace OrderApi.Migrations
             modelBuilder.Entity("OrderApi.Models.Coupon", b =>
                 {
                     b.Property<int>("CouponId")
-                        .HasColumnType("int")
-                        .HasColumnName("CouponID");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CouponId"));
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
@@ -80,6 +96,7 @@ namespace OrderApi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -88,64 +105,46 @@ namespace OrderApi.Migrations
                     b.ToTable("Coupon");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.Customer", b =>
-                {
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int")
-                        .HasColumnName("CustomerID");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("CustomerId");
-
-                    b.ToTable("Customer");
-                });
-
             modelBuilder.Entity("OrderApi.Models.Order", b =>
                 {
                     b.Property<int>("OrderId")
-                        .HasColumnType("int")
-                        .HasColumnName("OrderID");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<int>("AddressId")
-                        .HasColumnType("int")
-                        .HasColumnName("AddressID");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CouponId")
-                        .HasColumnType("int")
-                        .HasColumnName("CouponID");
+                        .HasColumnType("int");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int")
-                        .HasColumnName("CustomerID");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Notes")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("OrderDate")
-                        .HasColumnType("datetime");
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OrderName")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("int")
-                        .HasColumnName("PaymentMethodID");
+                        .HasColumnType("int");
 
                     b.Property<int>("ShipMethodId")
-                        .HasColumnType("int")
-                        .HasColumnName("ShipMethodID");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(13,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OrderId");
 
                     b.HasIndex("AddressId");
 
                     b.HasIndex("CouponId");
-
-                    b.HasIndex("CustomerId");
 
                     b.HasIndex("PaymentMethodId");
 
@@ -157,19 +156,19 @@ namespace OrderApi.Migrations
             modelBuilder.Entity("OrderApi.Models.OrderItem", b =>
                 {
                     b.Property<int>("OrderItemId")
-                        .HasColumnType("int")
-                        .HasColumnName("OrderItemID");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderItemId"));
 
                     b.Property<int>("OrderId")
-                        .HasColumnType("int")
-                        .HasColumnName("OrderID");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(13,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ProductID");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -184,10 +183,13 @@ namespace OrderApi.Migrations
             modelBuilder.Entity("OrderApi.Models.PaymentMethod", b =>
                 {
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("int")
-                        .HasColumnName("PaymentMethodID");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentMethodId"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -199,64 +201,43 @@ namespace OrderApi.Migrations
             modelBuilder.Entity("OrderApi.Models.ShipMethod", b =>
                 {
                     b.Property<int>("ShipMethodId")
-                        .HasColumnType("int")
-                        .HasColumnName("ShipMethodID");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeliveryTime")
-                        .HasColumnType("datetime");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShipMethodId"));
+
+                    b.Property<DateTime>("DeliveryTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("nchar(10)")
-                        .IsFixedLength();
+                        .HasColumnType("nvarchar(10)");
 
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(13,2)");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ShipMethodId");
 
                     b.ToTable("ShipMethod");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.SpecCustomerAddress", b =>
-                {
-                    b.Property<int>("SpecCustomerAddressId")
-                        .HasColumnType("int")
-                        .HasColumnName("SpecCustomerAddressID");
-
-                    b.Property<int?>("AddressId")
-                        .HasColumnType("int")
-                        .HasColumnName("AddressID");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int")
-                        .HasColumnName("CustomerID");
-
-                    b.HasKey("SpecCustomerAddressId");
-
-                    b.HasIndex("AddressId");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("SpecCustomerAddress");
-                });
-
             modelBuilder.Entity("OrderApi.Models.SpecOrderStatus", b =>
                 {
                     b.Property<int>("SpecOrderStatusId")
-                        .HasColumnType("int")
-                        .HasColumnName("SpecOrderStatusID");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int")
-                        .HasColumnName("OrderID");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SpecOrderStatusId"));
 
-                    b.Property<DateTime?>("StatusDate")
-                        .HasColumnType("datetime");
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("StatusId")
-                        .HasColumnType("int")
-                        .HasColumnName("StatusID");
+                    b.Property<DateTime>("StatusDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
 
                     b.HasKey("SpecOrderStatusId");
 
@@ -270,13 +251,15 @@ namespace OrderApi.Migrations
             modelBuilder.Entity("OrderApi.Models.Status", b =>
                 {
                     b.Property<int>("StatusId")
-                        .HasColumnType("int")
-                        .HasColumnName("StatusID");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusId"));
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("nchar(10)")
-                        .IsFixedLength();
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("StatusId");
 
@@ -288,37 +271,25 @@ namespace OrderApi.Migrations
                     b.HasOne("OrderApi.Models.Address", "Address")
                         .WithMany("Order")
                         .HasForeignKey("AddressId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Order_Address");
+                        .IsRequired();
 
                     b.HasOne("OrderApi.Models.Coupon", "Coupon")
                         .WithMany("Order")
-                        .HasForeignKey("CouponId")
-                        .HasConstraintName("FK_Order_Coupon");
-
-                    b.HasOne("OrderApi.Models.Customer", "Customer")
-                        .WithMany("Order")
-                        .HasForeignKey("CustomerId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Order_Customer");
+                        .HasForeignKey("CouponId");
 
                     b.HasOne("OrderApi.Models.PaymentMethod", "PaymentMethod")
                         .WithMany("Order")
                         .HasForeignKey("PaymentMethodId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Order_PaymentMethod");
+                        .IsRequired();
 
                     b.HasOne("OrderApi.Models.ShipMethod", "ShipMethod")
                         .WithMany("Order")
                         .HasForeignKey("ShipMethodId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Order_ShipMethod");
+                        .IsRequired();
 
                     b.Navigation("Address");
 
                     b.Navigation("Coupon");
-
-                    b.Navigation("Customer");
 
                     b.Navigation("PaymentMethod");
 
@@ -331,27 +302,9 @@ namespace OrderApi.Migrations
                         .WithMany("OrderItem")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_OrderItem_Order");
+                        .IsRequired();
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("OrderApi.Models.SpecCustomerAddress", b =>
-                {
-                    b.HasOne("OrderApi.Models.Address", "Address")
-                        .WithMany("SpecCustomerAddress")
-                        .HasForeignKey("AddressId")
-                        .HasConstraintName("FK_SpecCustomerAddress_Address");
-
-                    b.HasOne("OrderApi.Models.Customer", "Customer")
-                        .WithMany("SpecCustomerAddress")
-                        .HasForeignKey("CustomerId")
-                        .HasConstraintName("FK_SpecCustomerAddress_Customer");
-
-                    b.Navigation("Address");
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("OrderApi.Models.SpecOrderStatus", b =>
@@ -360,12 +313,13 @@ namespace OrderApi.Migrations
                         .WithMany("SpecOrderStatus")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("FK_SpecOrderStatus_Order");
+                        .IsRequired();
 
                     b.HasOne("OrderApi.Models.Status", "Status")
                         .WithMany("SpecOrderStatus")
                         .HasForeignKey("StatusId")
-                        .HasConstraintName("FK_SpecOrderStatus_Status");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Order");
 
@@ -375,20 +329,11 @@ namespace OrderApi.Migrations
             modelBuilder.Entity("OrderApi.Models.Address", b =>
                 {
                     b.Navigation("Order");
-
-                    b.Navigation("SpecCustomerAddress");
                 });
 
             modelBuilder.Entity("OrderApi.Models.Coupon", b =>
                 {
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("OrderApi.Models.Customer", b =>
-                {
-                    b.Navigation("Order");
-
-                    b.Navigation("SpecCustomerAddress");
                 });
 
             modelBuilder.Entity("OrderApi.Models.Order", b =>

@@ -9,12 +9,10 @@ namespace ProductApi.IntegrationTests {
         public Task<AuthenticateResult> AuthenticateAsync(AuthorizationPolicy policy, HttpContext context) {
             var claimsPrincipal = new ClaimsPrincipal();
 
-            //claimsPrincipal.AddIdentity(new ClaimsIdentity(
-            //    new[]
-            //    {
-            //        new Claim(ClaimTypes.NameIdentifier, "1"),
-            //        new Claim(ClaimTypes.Role, "Admin"),
-            //    }));
+            claimsPrincipal.AddIdentity(new ClaimsIdentity([
+                new Claim(ClaimTypes.Name, "lewy256"),
+                new Claim(ClaimTypes.Role, "Administrator")
+            ]));
 
             var ticket = new AuthenticationTicket(claimsPrincipal, "Test");
             var result = AuthenticateResult.Success(ticket);

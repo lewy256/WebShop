@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -22,17 +24,28 @@ public class OrderApiFactory : WebApplicationFactory<Program>, IAsyncLifetime {
 
     protected override void ConfigureWebHost(IWebHostBuilder builder) {
         builder.ConfigureTestServices(services => {
+            services.AddMassTransitTestHarness();
             services.RemoveAll<DbContextOptions<OrderContext>>();
             services.RemoveAll<OrderContext>();
+
             services.AddDbContext<OrderContext>(x =>
             x.UseSqlServer(_container.GetConnectionString()));
+
+            services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
         });
+
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
     }
 
 
     public async Task InitializeAsync() {
         await _container.StartAsync();
         Client = CreateClient();
+
+        await using var scope = Services.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<OrderContext>();
+        await context.Database.EnsureCreatedAsync();
+
         _respawner = await Respawner.CreateAsync(_container.GetConnectionString());
     }
 

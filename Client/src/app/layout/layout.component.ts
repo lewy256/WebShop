@@ -5,8 +5,9 @@ import {Observable, startWith} from "rxjs";
 import {map} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 import {CategoryDto, ProductApiService} from "../services/product.api.service";
-import {environment} from "../product/environment/environment";
+import {environment} from "../../environments/environment";
 import {SharedService} from "../services/shared.service";
+
 interface User {
   name: string;
 }
@@ -17,7 +18,7 @@ interface User {
 })
 
 export class LayoutComponent implements OnInit {
- // @Output() public sidenavToggle = new EventEmitter();
+  // @Output() public sidenavToggle = new EventEmitter();
 
   toggleControl = new FormControl(false);
   @HostBinding('class') className = '';
@@ -50,7 +51,7 @@ export class LayoutComponent implements OnInit {
       .subscribe(res=>{
         this.categories=res
       })
-   // this.sendCategories.emit(this.categories);
+    // this.sendCategories.emit(this.categories);
   }
 
   myControl = new FormControl<string | User>('');
@@ -69,11 +70,11 @@ export class LayoutComponent implements OnInit {
   }
   ngOnInit(): void {
     this.getCategories();
- /*   if(localStorage.getItem('mode') === 'darkMode'){
-      const darkClassName = 'darkMode';
-      this.className =  'darkMode'
-      this.overlay.getContainerElement().classList.add(darkClassName);
-    }*/
+    /*   if(localStorage.getItem('mode') === 'darkMode'){
+         const darkClassName = 'darkMode';
+         this.className =  'darkMode'
+         this.overlay.getContainerElement().classList.add(darkClassName);
+       }*/
 
     this.toggleControl.valueChanges.subscribe((darkMode) => {
       const darkClassName = 'darkMode';
@@ -95,8 +96,8 @@ export class LayoutComponent implements OnInit {
       }),
     );
   }
-/*  public onToggleSidenav = () => {
-    this.sidenavToggle.emit();
-  }*/
+  /*  public onToggleSidenav = () => {
+      this.sidenavToggle.emit();
+    }*/
 
 }

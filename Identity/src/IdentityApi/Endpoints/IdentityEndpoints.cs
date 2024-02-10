@@ -1,36 +1,39 @@
-﻿using IdentityApi.Models.Shared;
-using IdentityApi.Service;
+﻿using IdentityApi.Service;
+using IdentityApi.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApi.Endpoints;
 
 public static class IdentityEndpoints {
     public static void MapIdentityEndpoints(this IEndpointRouteBuilder app) {
-        var group = app.MapGroup("api/identity");
+        var group = app.MapGroup("api/identity").WithTags("Identity");
 
+        group.MapPost("",
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        async ([FromBody] RegistrationUserDto? userForRegistration, IdentityService identityService) => {
+            var results = await identityService.RegisterUser(userForRegistration);
 
-        group.MapPost("", async ([FromBody] RegistrationUserDto userForRegistration, IdentityService identityService) => {
-            var result = await identityService.RegisterUser(userForRegistration);
-            if(!result.Succeeded) {
-                /* foreach(var error in result.Errors) {
-                     ModelState.TryAddModelError(error.Code, error.Description);
-                 }*/
-                // return Results.BadRequest(ModelState);
-                return Results.BadRequest();
-            }
-
-            return Results.Created();
+            return results.Match(
+                _ => Results.Created(),
+                validationFailed => Results.UnprocessableEntity(validationFailed),
+                modelIsNull => Results.BadRequest(modelIsNull));
         }).WithName("RegisterUser");
 
-        group.MapPost("login", async ([FromBody] AuthenticationUserDto user, IdentityService identityService) => {
-            if(!await identityService.ValidateUser(user))
-                return Results.Unauthorized();
+        group.MapPost("login",
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        async ([FromBody] AuthenticationUserDto? user, IdentityService identityService) => {
+            var results = await identityService.ValidateUser(user);
 
-            var tokenDto = await identityService.CreateToken(populateExp: true);
-
-            return Results.Ok(tokenDto);
+            return results.Match(
+               tokenDto => Results.Ok(tokenDto),
+               validationFailed => Results.UnprocessableEntity(validationFailed),
+               _ => Results.Unauthorized(),
+                modelIsNull => Results.BadRequest(modelIsNull));
         }).WithName("LoginUser");
-
-
     }
 }

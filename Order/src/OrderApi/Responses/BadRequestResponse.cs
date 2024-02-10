@@ -1,9 +1,7 @@
 ﻿namespace OrderApi.Responses;
 
-public class BadRequestResponse {
-    public string Message { get; }
-
-    public BadRequestResponse() {
-        Message = $"Object is null.";
+public class BadRequestResponse : ApiBaseResponse {
+    public BadRequestResponse(string message = "Object is null.")
+       : base(StatusCodes.Status400BadRequest, message) {
     }
 }

@@ -1,12 +1,12 @@
 ﻿namespace ProductApi.Shared.Model.ProductDtos;
 
 public record CreateProductDto {
-    public string ProductName { get; set; }
-    public string SerialNumber { get; set; }
-    public decimal Price { get; set; }
-    public int Stock { get; set; }
-    public string Description { get; set; }
-    public string Color { get; set; }
-    public int Weight { get; set; }
-    public string Size { get; set; }
+    public string ProductName { get; init; }
+    public string SerialNumber { get; init; }
+    public decimal Price { get; init; }
+    public int Stock { get; init; }
+    public string Description { get; init; }
+    public string Color { get; init; }
+    public int Weight { get; init; }
+    public string Size { get; init; }
 }

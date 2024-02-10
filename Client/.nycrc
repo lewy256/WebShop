@@ -1,0 +1,28 @@
+{
+  "extends": "@istanbuljs/nyc-config-typescript",
+  "all": true,
+  "exclude": [
+    "./coverage/**",
+    "./coverage-jest/**",
+    "./jest.config.ts",
+    "./setup-jest.ts",
+    "cypress/**",
+    "./dist/**",
+    "**/*.spec.ts",
+    "./src/main.ts",
+    "./src/test.ts",
+    "**/*.conf.js",
+    "/app/dist/*",
+    "/app/coverage/**",
+    "/app/cypress/**",
+    "/app/dist/**",
+    "**/*.spec.ts",
+    "/app/src/main.ts",
+    "/app/src/test.ts",
+    "**/*.conf.js",
+    "/app/cypress.config.ts",
+    "**/main.ts",
+    "/app/server.js"
+  ],
+  "reporter": ["lcov", "cobertura", "text-summary", "json"]
+}

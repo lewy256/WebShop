@@ -4,7 +4,7 @@
         <name>ProductApi</name>
     </assembly>
     <members>
-        <member name="M:ProductApi.Controllers.CategoryController.GetCategories">
+        <member name="M:ProductApi.Controllers.V1.CategoryController.GetCategories">
             <summary>
             Gets the list of all categories.
             </summary>
@@ -16,7 +16,7 @@
             <returns>A list of categories.</returns>
             <response code="200">Returns the list of categories.</response>
         </member>
-        <member name="M:ProductApi.Controllers.CategoryController.GetCategory(System.Guid)">
+        <member name="M:ProductApi.Controllers.V1.CategoryController.GetCategory(System.Guid)">
             <summary>
             Retrieves a specific category by its unique identifier.
             </summary>
@@ -30,7 +30,7 @@
             <response code="200">Returns the requested category.</response>
             <response code="404">If the category with the given ID is not found.</response>
         </member>
-        <member name="M:ProductApi.Controllers.CategoryController.CreateCategory(ProductApi.Shared.Model.CategoryDtos.CreateCategoryDto)">
+        <member name="M:ProductApi.Controllers.V1.CategoryController.CreateCategory(ProductApi.Shared.Model.CategoryDtos.CreateCategoryDto)">
             <summary>
             Creates a new category
             </summary>
@@ -49,7 +49,7 @@
             <response code="422">If the model is invalid.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.CategoryController.UpdateCategory(System.Guid,ProductApi.Shared.Model.CategoryDtos.UpdateCategoryDto)">
+        <member name="M:ProductApi.Controllers.V1.CategoryController.UpdateCategory(System.Guid,ProductApi.Shared.Model.CategoryDtos.UpdateCategoryDto)">
             <summary>
             Updates a specific category by its unique identifier.
             </summary>
@@ -70,7 +70,7 @@
             <response code="422">If the model is invalid or the category information is incomplete.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.CategoryController.DeleteCategory(System.Guid)">
+        <member name="M:ProductApi.Controllers.V1.CategoryController.DeleteCategory(System.Guid)">
             <summary>
             Deletes a specific category by its unique identifier.
             </summary>
@@ -85,19 +85,52 @@
             <response code="404">If the category with the given ID is not found.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.CategoryController.GetCategoryOptions">
+        <member name="M:ProductApi.Controllers.V1.CategoryController.GetCategoryOptions">
             <summary>
             Returns an Allow header containing the allowable HTTP methods.
             </summary>
         </member>
-        <member name="M:ProductApi.Controllers.PriceHistoryController.GetPricesHistoryForProduct(System.Guid,ProductApi.Shared.Model.PriceHistoryDtos.PriceHistoryParameters)">
+        <member name="M:ProductApi.Controllers.V1.FileController.UploadFiles(System.Guid)">
+            <summary>
+            Uploads new files.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                POST api/products/844288e4-630d-42e7-9667-243bc655569f/files
+                body: files to upload
+            </remarks>
+            <param name="productId">The ID of the category for product.</param>
+            <returns>The newly created files' information.</returns>
+            <response code="201">Returns the newly created files names.</response>
+            <response code="404">If the product with the given ID is not found.</response>
+            <response code="415">If the header is incorrect.</response>
+            <response code="401">If the request lacks valid authentication credentials.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.V1.FileController.DeleteFile(System.Guid,System.Guid)">
+            <summary>
+            Deletes a specific file by its unique identifier.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                DELETE api/products/844288e4-630d-42e7-9667-243bc655569f/files
+            </remarks>
+            <param name="productId">The ID of the product.</param>
+            <param name="fileId">The ID of the file.</param>
+            <returns>No content if successful, otherwise returns an error message.</returns>
+            <response code="204">If the file is successfully deleted.</response>
+            <response code="404">If the file or product with the given ID is not found.</response>
+            <response code="401">If the request lacks valid authentication credentials.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.V1.PriceHistoryController.GetPricesHistoryForProduct(System.Guid,ProductApi.Shared.Model.PriceHistoryDtos.PriceHistoryParameters)">
             <summary>
             Retrieves the list of the entire price history.
             </summary>
             <remarks>
             Sample request:
             
-                GET api/products/d7840956-951b-4079-9e99-c09c1726d5d2/pricesHistory
+                GET api/products/d7840956-951b-4079-9e99-c09c1726d5d2/prices-history
             </remarks>
             <param name="productId">The ID of the product for prices to retrieve.</param>
             <param name="priceHistoryParameters">The container holds specific parameters for the price history.</param>
@@ -106,14 +139,14 @@
             <response code="404">If the product with the given ID is not found.</response>
             <response code="422">If the price history parameters validation fails.</response>
         </member>
-        <member name="M:ProductApi.Controllers.PriceHistoryController.GetPriceHistoryForProduct(System.Guid,System.Guid)">
+        <member name="M:ProductApi.Controllers.V1.PriceHistoryController.GetPriceHistoryForProduct(System.Guid,System.Guid)">
             <summary>
             Retrieves the list of the entire price history for a product based on its product ID.
             </summary>
             <remarks>
             Sample request:
             
-                GET api/products/d7840956-951b-4079-9e99-c09c1726d5d2/pricesHistory/fd28518a-cfad-48d3-85fb-1119bfbbba31
+                GET api/products/d7840956-951b-4079-9e99-c09c1726d5d2/prices-history/fd28518a-cfad-48d3-85fb-1119bfbbba31
             </remarks>
             <param name="productId">The ID of the product for pirce history to retrieve.</param>
             <param name="priceHistoryId">The ID of the category price history.</param>
@@ -121,14 +154,14 @@
             <response code="200">Returns the requested price history.</response>
             <response code="404">If the price history or product with the given ID is not found.</response>
         </member>
-        <member name="M:ProductApi.Controllers.PriceHistoryController.CreatePriceHistoryForProduct(System.Guid,ProductApi.Shared.Model.PriceHistoryDtos.CreatePriceHistoryDto)">
+        <member name="M:ProductApi.Controllers.V1.PriceHistoryController.CreatePriceHistoryForProduct(System.Guid,ProductApi.Shared.Model.PriceHistoryDtos.CreatePriceHistoryDto)">
             <summary>
             Creates a new price.
             </summary>
             <remarks>
             Sample request:
             
-                POST api/products/d7840956-951b-4079-9e99-c09c1726d5d2/pricesHistory
+                POST api/products/d7840956-951b-4079-9e99-c09c1726d5d2/prices-history
                 {        
                   "startDate": "11/20/2023",
                   "endDate": "12/20/2023",
@@ -143,14 +176,14 @@
             <response code="422">f the model is invalid or the price history information is incomplete.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.PriceHistoryController.UpdatePriceHistoryForProduct(System.Guid,System.Guid,ProductApi.Shared.Model.PriceHistoryDtos.UpdatePriceHistoryDto)">
+        <member name="M:ProductApi.Controllers.V1.PriceHistoryController.UpdatePriceHistoryForProduct(System.Guid,System.Guid,ProductApi.Shared.Model.PriceHistoryDtos.UpdatePriceHistoryDto)">
             <summary>
             Updates a specific price by its unique identifier.
             </summary>
             <remarks>
             Sample request:
             
-                PUT api/products/d7840956-951b-4079-9e99-c09c1726d5d2/pricesHistory
+                PUT api/products/d7840956-951b-4079-9e99-c09c1726d5d2/prices-history
                 {        
                   "startDate": "11/20/2023",
                   "endDate": "12/20/2023",
@@ -167,14 +200,14 @@
             <response code="422">If the model is invalid or the price history information is incomplete.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.PriceHistoryController.DeletePriceHistoryForProduct(System.Guid,System.Guid)">
+        <member name="M:ProductApi.Controllers.V1.PriceHistoryController.DeletePriceHistoryForProduct(System.Guid,System.Guid)">
             <summary>
             Deletes a specific price by its unique identifier.
             </summary>
             <remarks>
             Sample request:
             
-                DELETE api/products/d7840956-951b-4079-9e99-c09c1726d5d2/pricesHistory/844288e4-630d-42e7-9667-243bc655569f
+                DELETE api/products/d7840956-951b-4079-9e99-c09c1726d5d2/prices-history/844288e4-630d-42e7-9667-243bc655569f
             </remarks>
             <param name="productId">The ID of the product for prices.</param>
             <param name="priceHistoryId">The ID of the price history to delete.</param>
@@ -183,12 +216,12 @@
             <response code="404">If the price history or product with the given ID is not found.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.PriceHistoryController.GetPriceHistoryOptions">
+        <member name="M:ProductApi.Controllers.V1.PriceHistoryController.GetPriceHistoryOptions">
             <summary>
             Returns an Allow header containing the allowable HTTP methods.
             </summary>
         </member>
-        <member name="M:ProductApi.Controllers.ProductController.GetProductsForCategory(System.Guid,ProductApi.Shared.Model.ProductDtos.ProductParameters)">
+        <member name="M:ProductApi.Controllers.V1.ProductController.GetProductsForCategory(System.Guid,ProductApi.Shared.Model.ProductDtos.V1.ProductParameters)">
             <summary>
             Gets the list of all products by category.
             </summary>
@@ -204,7 +237,7 @@
             <response code="404">If the category with the given ID is not found.</response>
             <response code="422">If the product parameters validation fails</response>
         </member>
-        <member name="M:ProductApi.Controllers.ProductController.GetProductForCategory(System.Guid,System.Guid)">
+        <member name="M:ProductApi.Controllers.V1.ProductController.GetProductForCategory(System.Guid,System.Guid)">
             <summary>
             Retrieves a specific product by its unique identifier.
             </summary>
@@ -219,7 +252,7 @@
             <response code="200">Returns the requested product.</response>
             <response code="404">If the cateogry or product with the given ID is not found.</response>
         </member>
-        <member name="M:ProductApi.Controllers.ProductController.CreateProductForCategory(System.Guid,ProductApi.Shared.Model.ProductDtos.CreateProductDto)">
+        <member name="M:ProductApi.Controllers.V1.ProductController.CreateProductForCategory(System.Guid,ProductApi.Shared.Model.ProductDtos.CreateProductDto)">
             <summary>
             Creates a new product.
             </summary>
@@ -230,7 +263,6 @@
                 {        
                   "productName": "Andrew",
                   "serialNumber": "123456",
-                  "imageName": "39073329-6714-461b-b05c-59108bfbfce2",
                   "price": "44.44",
                   "stock": "44",
                   "description": "Lorem ipsum dolor sit amet, consectetur adipiscing",
@@ -247,7 +279,7 @@
             <response code="422">If the model is invalid or the product information is incomplete.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.ProductController.UpdateProductForCategory(System.Guid,System.Guid,ProductApi.Shared.Model.ProductDtos.UpdateProductDto)">
+        <member name="M:ProductApi.Controllers.V1.ProductController.UpdateProductForCategory(System.Guid,System.Guid,ProductApi.Shared.Model.ProductDtos.UpdateProductDto)">
             <summary>
             Updates a specific product by its unique identifier.
             </summary>
@@ -258,7 +290,6 @@
                 {        
                   "productName": "Andrew",
                   "serialNumber": "123456",
-                  "imageName": "39073329-6714-461b-b05c-59108bfbfce2",
                   "price": "44.44",
                   "stock": "44",
                   "description": "Lorem ipsum dolor sit amet, consectetur adipiscing",
@@ -277,7 +308,7 @@
             <response code="422">If the model is invalid or the product information is incomplete.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.ProductController.DeleteProductForCategory(System.Guid,System.Guid)">
+        <member name="M:ProductApi.Controllers.V1.ProductController.DeleteProductForCategory(System.Guid,System.Guid)">
             <summary>
             Deletes a specific product by its unique identifier.
             </summary>
@@ -293,12 +324,12 @@
             <response code="404">If the product or category with the given ID is not found.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.ProductController.GetProductOptions">
+        <member name="M:ProductApi.Controllers.V1.ProductController.GetProductOptions">
             <summary>
             Returns an Allow header containing the allowable HTTP methods.
             </summary>
         </member>
-        <member name="M:ProductApi.Controllers.ReviewController.GetReviewsForProduct(System.Guid,ProductApi.Shared.Model.ReviewDtos.ReviewParameters)">
+        <member name="M:ProductApi.Controllers.V1.ReviewController.GetReviewsForProduct(System.Guid,ProductApi.Shared.Model.ReviewDtos.ReviewParameters)">
             <summary>
             Gets the list of all reviews by product.
             </summary>
@@ -314,7 +345,7 @@
             <response code="404">If the product with the given ID is not found.</response>
             <response code="422">If the review parameters validation fails.</response>
         </member>
-        <member name="M:ProductApi.Controllers.ReviewController.GetReviewForProduct(System.Guid,System.Guid)">
+        <member name="M:ProductApi.Controllers.V1.ReviewController.GetReviewForProduct(System.Guid,System.Guid)">
             <summary>
             Retrieves a specific review by its unique identifier.
             </summary>
@@ -329,7 +360,7 @@
             <response code="200">Returns the requested review.</response>
             <response code="404">If the review or product with the given ID is not found.</response>
         </member>
-        <member name="M:ProductApi.Controllers.ReviewController.CreateReviewForProduct(System.Guid,ProductApi.Shared.Model.ReviewDtos.CreateReviewDto)">
+        <member name="M:ProductApi.Controllers.V1.ReviewController.CreateReviewForProduct(System.Guid,ProductApi.Shared.Model.ReviewDtos.CreateReviewDto)">
             <summary>
             Creates a new review.
             </summary>
@@ -350,7 +381,7 @@
             <response code="422">If the model is invalid or the review information is incomplete.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.ReviewController.UpdateReviewForProduct(System.Guid,System.Guid,ProductApi.Shared.Model.ReviewDtos.UpdateReviewDto)">
+        <member name="M:ProductApi.Controllers.V1.ReviewController.UpdateReviewForProduct(System.Guid,System.Guid,ProductApi.Shared.Model.ReviewDtos.UpdateReviewDto)">
             <summary>
             Updates a specific review by its unique identifier.
             </summary>
@@ -373,7 +404,7 @@
             <response code="422">If the model is invalid or the review information is incomplete.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.ReviewController.DeleteReviewForProduct(System.Guid,System.Guid)">
+        <member name="M:ProductApi.Controllers.V1.ReviewController.DeleteReviewForProduct(System.Guid,System.Guid)">
             <summary>
             Deletes a specific review by its unique identifier.
             </summary>
@@ -389,12 +420,12 @@
             <response code="404">If the review or product with the given ID is not found.</response>
             <response code="401">If the request lacks valid authentication credentials.</response>
         </member>
-        <member name="M:ProductApi.Controllers.ReviewController.GetReviewOptions">
+        <member name="M:ProductApi.Controllers.V1.ReviewController.GetReviewOptions">
             <summary>
             Returns an Allow header containing the allowable HTTP methods.
             </summary>
         </member>
-        <member name="M:ProductApi.Controllers.RootController.GetRoot(System.String)">
+        <member name="M:ProductApi.Controllers.V1.RootController.GetRoot(System.String)">
             <summary>
             Retrieves the root information of the API.
             </summary>

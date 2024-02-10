@@ -1,6 +1,0 @@
-@BlobApi_HostAddress = http://localhost:5062
-
-GET {{BlobApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

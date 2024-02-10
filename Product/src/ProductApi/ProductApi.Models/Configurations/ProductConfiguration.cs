@@ -14,6 +14,11 @@ namespace ProductApi.Model.Configurations {
                 .ToJsonProperty("categoryId")
                 .HasConversion<string>();
 
+            entity.OwnsMany(p => p.Images)
+                .ToJsonProperty("images")
+                .Property(p => p.Id)
+                .ToJsonProperty("id");
+
             entity.Property(p => p.Stock)
                 .ToJsonProperty("stock");
 
@@ -39,8 +44,8 @@ namespace ProductApi.Model.Configurations {
                 .ToJsonProperty("weight");
 
             entity.Property(x => x.Id)
-                .ToJsonProperty("id")
-                .HasConversion<string>();
+            .ToJsonProperty("id")
+            .HasConversion<string>();
 
             OnConfigurePartial(entity);
         }

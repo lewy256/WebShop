@@ -1,14 +1,14 @@
 ﻿using OneOf;
 using OneOf.Types;
-using ProductApi.Model.LinkModels.Products;
-using ProductApi.Model.Responses;
 using ProductApi.Shared.Model;
 using ProductApi.Shared.Model.ProductDtos;
+using ProductApi.Shared.Model.ProductDtos.V1;
+using ProductApi.Shared.Model.Responses;
 
 namespace ProductApi.Service.Interfaces;
 
 public interface IProductService {
-    Task<ProductGetAllResponse> GetProductsAsync(Guid categoryId, LinkProductParameters linkParameters);
+    Task<ProductGetAllResponse> GetProductsAsync(Guid categoryId, ProductParameters productParameters);
     Task<ProductGetResponse> GetProductByIdAsync(Guid categoryId, Guid productId);
     Task<ProductCreateResponse> CreateProductAsync(Guid categoryId, CreateProductDto productDto);
     Task<ProductUpdateResponse> UpdateProductAsync(Guid categoryId, Guid productId, UpdateProductDto productDto);
@@ -18,11 +18,11 @@ public interface IProductService {
 
 
 [GenerateOneOf]
-public partial class ProductUpdateResponse : OneOfBase<Success, NotFoundResponse, ValidationFailed> {
+public partial class ProductUpdateResponse : OneOfBase<Success, NotFoundResponse, ValidationResponse> {
 }
 
 [GenerateOneOf]
-public partial class ProductCreateResponse : OneOfBase<ProductDto, NotFoundResponse, ValidationFailed> {
+public partial class ProductCreateResponse : OneOfBase<ProductDto, NotFoundResponse, ValidationResponse> {
 }
 
 [GenerateOneOf]
@@ -34,5 +34,5 @@ public partial class ProductGetResponse : OneOfBase<ProductDto, NotFoundResponse
 }
 
 [GenerateOneOf]
-public partial class ProductGetAllResponse : OneOfBase<(ProductLinkResponse linkResponse, MetaData metaData), NotFoundResponse, ValidationFailed> {
+public partial class ProductGetAllResponse : OneOfBase<(IEnumerable<ProductDto> products, MetaData metaData), NotFoundResponse, ValidationResponse> {
 }
