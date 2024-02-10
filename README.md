@@ -8,7 +8,7 @@ Project is created with:
 #### .NET 8
 * MassTransit, Serilog, Yarp, OneOf, Mapster, FluentValidation, Carter,
   Entity Framework Core, Azure Storage, Azure Key Vault, AspNetCore.HealthChecks, Mediator, Azure App Configuration
-* Integrations tests: xUnit, Testcontainers, Respwan, FluentAssertions, Bogus
+* Integrations tests: xUnit, Testcontainers, Respwan, FluentAssertions, Bogus, Stryker Mutator
 #### Angular:
 * Angular Material
 * E2E tests: Cypress
