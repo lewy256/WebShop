@@ -55,11 +55,7 @@ builder.Services.ConfigureVersioning();
 
 builder.Services.AddFluentValidationRulesToSwagger();
 
-builder.Services.ConfigureMassTransit(builder.Configuration);
-
 builder.Services.ConfigureOutputCaching(builder.Configuration);
-
-
 
 var app = builder.Build();
 
@@ -71,7 +67,6 @@ if(!app.Environment.IsDevelopment()) {
 if(app.Environment.IsProduction()) {
     app.UseHsts();
 }
-
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();

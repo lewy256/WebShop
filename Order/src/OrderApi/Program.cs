@@ -34,8 +34,6 @@ builder.Services.ConfigureMassTransit(builder.Configuration);
 
 builder.Services.AddCarter();
 
-builder.Services.ConfigureServices(builder.Configuration);
-
 builder.Services.ConfigureSwagger();
 
 builder.Services.AddFluentValidationRulesToSwagger();
@@ -71,6 +69,8 @@ app.UseSwaggerUI(s => {
 app.MapCarter();
 
 app.UseHttpsRedirection();
+
+app.MigrateDatabase();
 
 app.Run();
 

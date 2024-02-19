@@ -1,0 +1,124 @@
+version: '3.4'
+
+services:
+  productapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=3150
+    ports:
+      - "3150:3150"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - proxy
+    depends_on:
+      - cosmosdb
+      - redis
+      - azurite
+    
+  orderapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=3160
+    ports:
+      - "3160:3160"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - proxy
+    depends_on:
+      - sqlserver
+
+  identityapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=3170
+    ports:
+      - "3170:3170"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - proxy
+    depends_on:
+      - sqlserver
+
+  basketapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=3180
+    ports:
+      - "3180:3180"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - proxy
+    depends_on:
+      - redis
+
+  reverseproxy:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=3211
+    ports:
+      - "3211:3211"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - proxy
+
+  redis:
+    image: redis:7.2
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - proxy
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    restart: always
+    ports:
+      - "10000:10000"
+    networks:
+      - proxy
+
+  cosmosdb:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+    tty: true
+    restart: always
+    mem_limit: 4G
+    environment:
+      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=31
+      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+    ports:
+        - '8081:8081'
+    networks:
+      - proxy
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: always
+    ports:
+      - "3221:1433"
+    environment:
+      SA_PASSWORD: "Passw@rd"
+      ACCEPT_EULA: "Y"
+    networks:
+      - proxy
+
+  webapp:
+    ports:
+      - 8080:80
+    networks:
+      - proxy
+
+
+networks:
+  proxy:
+    name: proxy  
+    driver: bridge

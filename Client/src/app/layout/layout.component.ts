@@ -4,9 +4,10 @@ import {OverlayContainer} from "@angular/cdk/overlay";
 import {Observable, startWith} from "rxjs";
 import {map} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
-import {CategoryDto, ProductApiService} from "../services/product.api.service";
+import {Category, ProductApiService} from "../services/product-api.service";
 import {environment} from "../../environments/environment";
 import {SharedService} from "../services/shared.service";
+import {MatSlideToggleChange} from "@angular/material/slide-toggle";
 
 interface User {
   name: string;
@@ -18,24 +19,17 @@ interface User {
 })
 
 export class LayoutComponent implements OnInit {
-  // @Output() public sidenavToggle = new EventEmitter();
-
-  toggleControl = new FormControl(false);
-  @HostBinding('class') className = '';
-
-
-
-  private api: ProductApiService;
+  private productService: ProductApiService;
 
   constructor(private overlay: OverlayContainer,private http: HttpClient, private sharedService:SharedService) {
-    this.api=new ProductApiService(this.http,environment.urlAddress);
+    this.productService=new ProductApiService(this.http,environment.urlAddress);
   }
 
-  public setData(category:string){
+  setData(category:string){
     this.sharedService.setData(category);
   }
 
-  public setFilterData(data:string){
+  setFilterData(data:string){
     this.sharedService.setFilterData(data);
   }
 
@@ -44,10 +38,10 @@ export class LayoutComponent implements OnInit {
   }
 
 
-  categories:CategoryDto[]= [];
+  categories:Category[]= [];
 
-  public getCategories(){
-    this.api.getCategories()
+  getCategories(){
+    this.productService.getCategories()
       .subscribe(res=>{
         this.categories=res
       })
@@ -68,26 +62,38 @@ export class LayoutComponent implements OnInit {
 
     return this.options.filter(option => option.name.toLowerCase().includes(filterValue));
   }
-  ngOnInit(): void {
-    this.getCategories();
-    /*   if(localStorage.getItem('mode') === 'darkMode'){
-         const darkClassName = 'darkMode';
-         this.className =  'darkMode'
-         this.overlay.getContainerElement().classList.add(darkClassName);
-       }*/
 
-    this.toggleControl.valueChanges.subscribe((darkMode) => {
-      const darkClassName = 'darkMode';
+  @Output() sidenavToggle = new EventEmitter();
+  toggleControl = new FormControl(false);
+  @HostBinding('class') className = '';
 
+  private setTheme():void{
+    const darkMode:string = 'darkMode';
+    let savedMode:string=localStorage.getItem('mode') as string;
 
-      this.className = darkMode ? darkClassName : '';
-      if (darkMode) {
-        this.overlay.getContainerElement().classList.add(darkClassName);
-        //localStorage.setItem('mode', 'darkMode')
-      } else {
-        this.overlay.getContainerElement().classList.remove(darkClassName);
+    if(savedMode===darkMode){
+      this.overlay.getContainerElement().classList.add(darkMode);
+      this.className=darkMode;
+      this.toggleControl.setValue(true);
+    }
+
+    this.toggleControl.valueChanges.subscribe((isActive:boolean|null):void => {
+      this.className = isActive ? darkMode : '';
+      if (isActive) {
+        this.overlay.getContainerElement().classList.add(darkMode);
+        localStorage.setItem('mode', 'darkMode');
+      } else{
+        this.overlay.getContainerElement().classList.remove(darkMode);
+        localStorage.setItem('mode', 'none');
       }
     });
+
+  }
+
+  ngOnInit(): void {
+    this.setTheme();
+    this.getCategories();
+
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(''),
       map(value => {
@@ -96,8 +102,5 @@ export class LayoutComponent implements OnInit {
       }),
     );
   }
-  /*  public onToggleSidenav = () => {
-      this.sidenavToggle.emit();
-    }*/
 
 }

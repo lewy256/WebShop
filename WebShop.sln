@@ -72,7 +72,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderApi.UnitTests", "Order
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReverseProxy", "ReverseProxy", "{6D8D91DD-09B3-4DA2-959B-D9AEC7857B53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReverseProxy", "ReverseProxy\ReverseProxy\ReverseProxy.csproj", "{0D3E9363-8022-40A6-8C69-180D2F76E872}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReverseProxy", "ReverseProxy\ReverseProxy\ReverseProxy.csproj", "{0D3E9363-8022-40A6-8C69-180D2F76E872}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9354DCF2-49E4-49F2-BD03-EF5BDADA3ECE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -144,6 +146,10 @@ Global
 		{0D3E9363-8022-40A6-8C69-180D2F76E872}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D3E9363-8022-40A6-8C69-180D2F76E872}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D3E9363-8022-40A6-8C69-180D2F76E872}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9354DCF2-49E4-49F2-BD03-EF5BDADA3ECE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9354DCF2-49E4-49F2-BD03-EF5BDADA3ECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9354DCF2-49E4-49F2-BD03-EF5BDADA3ECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9354DCF2-49E4-49F2-BD03-EF5BDADA3ECE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,9 +4,8 @@ import { ReviewComponent } from './review/review.component';
 import { PriceHistoryComponent } from './price-history/price-history.component';
 import { ProductComponent } from './product/product.component';
 import { CategoryComponent } from './category/category.component';
+import {ProductRoutingModule} from "./product-routing.module";
 import {MaterialModule} from "../material/material.module";
-
-
 
 @NgModule({
   declarations: [
@@ -15,9 +14,10 @@ import {MaterialModule} from "../material/material.module";
     ProductComponent,
     CategoryComponent
   ],
-    imports: [
-        CommonModule,
-        MaterialModule
-    ]
+  imports: [
+    CommonModule,
+    ProductRoutingModule,
+    MaterialModule
+  ]
 })
 export class ProductModule { }

@@ -42,10 +42,6 @@ public class OrderApiFactory : WebApplicationFactory<Program>, IAsyncLifetime {
         await _container.StartAsync();
         Client = CreateClient();
 
-        await using var scope = Services.CreateAsyncScope();
-        var context = scope.ServiceProvider.GetRequiredService<OrderContext>();
-        await context.Database.EnsureCreatedAsync();
-
         _respawner = await Respawner.CreateAsync(_container.GetConnectionString());
     }
 

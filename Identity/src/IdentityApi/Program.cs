@@ -57,6 +57,8 @@ app.MapHealthChecks("/health", new HealthCheckOptions {
 
 app.UseHttpsRedirection();
 
+app.MigrateDatabase();
+
 app.Run();
 
 public partial class Program { }

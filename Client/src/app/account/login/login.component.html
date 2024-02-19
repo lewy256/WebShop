@@ -1,0 +1,24 @@
+<form class="login-container" [formGroup]="loginForm">
+  <h2>Please sign in</h2>
+  <div class="login-field">
+    <mat-form-field>
+      <mat-label>User name</mat-label>
+      <input matInput type="text" formControlName="userName">
+      <mat-error *ngIf="loginForm.hasError">
+        User name is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+      <mat-error *ngIf="loginForm.hasError">
+        Please enter a valid <strong>password</strong>
+      </mat-error>
+      <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+  <button mat-raised-button color="primary" (click)="login()" [disabled]="!loginForm.valid">Sign in</button>
+</form>
+

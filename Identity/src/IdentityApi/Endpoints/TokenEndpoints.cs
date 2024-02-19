@@ -9,7 +9,7 @@ public static class TokenEndpoints {
         var group = app.MapGroup("api/token").WithTags("Token");
 
         group.MapPost("",
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TokenDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         async ([FromBody] TokenDto? tokenDto, IdentityService identityService) => {

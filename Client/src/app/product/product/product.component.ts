@@ -2,11 +2,24 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator'
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {CategoryDto, ProductApiService, ProductDto, ReviewDto} from "../../services/product.api.service";
+import {
+  Category,
+  CreateCategoryDto,
+  ProductApiService,
+  ProductDto,
+  ReviewDto
+} from "../../services/product-api.service";
 import {MatDrawer} from "@angular/material/sidenav";
 import {environment} from "../../../environments/environment";
 import {SharedService} from "../../services/shared.service";
 import {AfterViewInit, Component, OnInit, ViewChild} from "@angular/core";
+import {
+  AuthenticationUserDto,
+  IAuthenticationUserDto,
+  IdentityApiService,
+  TokenDto
+} from "../../services/identity-api.service";
+import {Observable} from "rxjs";
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
@@ -18,10 +31,19 @@ export class ProductComponent implements OnInit, AfterViewInit {
   @ViewChild((MatSort) as any) sort: MatSort | undefined;
   // @ViewChild((MatPaginator) as any) paginator: MatPaginator | undefined;
 
-  private api: ProductApiService;
+  private productService: ProductApiService;
 
-  constructor(private http: HttpClient, private sharedService:SharedService) {
-    this.api=new ProductApiService(this.http,environment.urlAddress);
+  public accessToken:string | null | undefined="";
+
+  constructor(private httpClient: HttpClient, private sharedService:SharedService) {
+    this.productService=new ProductApiService(this.httpClient,environment.urlAddress);
+
+    // this.identityApi.loginUser(new AuthenticationUserDto({userName:"kowalski16",password:"96RnP9}16XHl"}))
+    //   .subscribe(x=>this.accessToken=x.accessToken);
+
+    // if(typeof this.accessToken==="string"){
+    //   this.api.setAuthToken(this.accessToken);
+    // }
 
     this.sharedService.data$.subscribe((data)=>
       this.getAllProducts(data));
@@ -29,6 +51,22 @@ export class ProductComponent implements OnInit, AfterViewInit {
     this,sharedService.filterData$.subscribe((data)=>
       this.doFilter(data));
 
+  }
+
+  public getAllProducts(categoryId:string):void  {
+    this.productService.getProductsForCategory(categoryId)
+      .subscribe(res => {
+        this.dataSource.data=res as ProductDto[]
+        this.cardData=res;
+      })
+  }
+
+  public getAllProductsByCategoryId(categoryId:string):void  {
+    this.productService.getProductsForCategory(categoryId)
+      .subscribe(res => {
+        this.dataSource.data=res as ProductDto[]
+        this.cardData=res;
+      })
   }
 
   @ViewChild('drawer') public drawer!: MatDrawer;
@@ -43,14 +81,11 @@ export class ProductComponent implements OnInit, AfterViewInit {
 
   public cardData:ProductDto[]=[];
 
-  public getAllProducts = (categoryId:string) => {
-    this.api.getProductsForCategory(categoryId)
-      .subscribe(res => {
-        this.dataSource.data=res as ProductDto[]
-        this.cardData=res;
-      })
-
+  public myFunc():void{
+      console.log(this.accessToken)
   }
+
+
   @ViewChild(MatPaginator,{static:true}) public paginator!:MatPaginator
   ngAfterViewInit(): void {
     this.cardData.sort = ((this.sort) as any);
@@ -76,21 +111,5 @@ export class ProductComponent implements OnInit, AfterViewInit {
 
   }
 
-
-
-  /*  public redirectToDelete = (id: string) => {
-      this.productService.delete(`api/Product/${id}`)
-      .subscribe(
-        (val) => {
-            console.log("DELETE call successful value returned in body",
-                        val);
-        },
-        response => {
-            console.log("DELETE call in error", response);
-        },
-        () => {
-            console.log("The DELETE observable is now completed.");
-        });;
-    }*/
 
 }

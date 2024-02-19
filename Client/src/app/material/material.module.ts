@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import {MatDrawerContainer, MatSidenavModule} from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,11 +12,12 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatBadgeModule} from "@angular/material/badge";
 import {MatCardModule} from "@angular/material/card";
 import {MatGridListModule} from "@angular/material/grid-list";
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [],
@@ -38,7 +39,8 @@ import {MatGridListModule} from "@angular/material/grid-list";
     MatAutocompleteModule,
     MatBadgeModule,
     MatCardModule,
-    MatGridListModule
+    MatGridListModule,
+    MatSelectModule
   ],
   exports: [
     MatTabsModule,
@@ -56,7 +58,9 @@ import {MatGridListModule} from "@angular/material/grid-list";
     MatSlideToggleModule,
     MatAutocompleteModule,
     MatBadgeModule,
-    MatCardModule
+    MatCardModule,
+    MatDrawerContainer,
+    MatSelectModule
   ]
 })
 export class MaterialModule { }

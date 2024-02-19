@@ -22,7 +22,7 @@ public static class IdentityEndpoints {
         }).WithName("RegisterUser");
 
         group.MapPost("login",
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TokenDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

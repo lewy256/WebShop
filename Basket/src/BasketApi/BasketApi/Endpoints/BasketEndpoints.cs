@@ -10,7 +10,7 @@ public static class BasketEndpoints {
         var group = app.MapGroup("api/basket").WithTags("Basket");
 
         group.MapGet("{id}",
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BasketDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         async (Guid id, BasketService basketService) => {
             var results = await basketService.GetBasketAsync(id);
@@ -22,7 +22,7 @@ public static class BasketEndpoints {
         }).WithName("GetBasketAsync");
 
         group.MapPost("",
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BasketDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         async ([FromBody] CreateBasketDto? basket, BasketService basketService) => {

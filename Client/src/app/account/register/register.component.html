@@ -1,0 +1,57 @@
+<div class="register-container">
+  <h2>Please sign up</h2>
+  <div class="register-field">
+    <table><tr>
+      <td><mat-form-field>
+        <mat-label>First name</mat-label>
+        <input matInput>
+      </mat-form-field></td>
+      <td><mat-form-field>
+        <mat-label>Last name</mat-label>
+        <input matInput>
+      </mat-form-field></td>
+    </tr></table>
+    <table><tr>
+      <td><mat-form-field>
+        <mat-label>User name</mat-label>
+        <input matInput>
+      </mat-form-field></td>
+      <td><form>
+        <mat-form-field class="full-width">
+          <mat-label>Email</mat-label>
+          <input type="email" matInput [formControl]="emailFormControl" placeholder="Ex. pat@example.com">
+          <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+            Please enter a valid email address
+          </mat-error>
+          <mat-error *ngIf="emailFormControl.hasError('required')">
+            Email is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </form></td>
+    </tr></table>
+    <form>
+      <mat-form-field class="full-width">
+        <mat-label>Telephone</mat-label>
+        <span matPrefix>+48 &nbsp;</span>
+        <input type="tel" matInput placeholder="555-555-123">
+        <mat-icon matSuffix>mode_edit</mat-icon>
+      </mat-form-field>
+    </form>
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input matInput [type]="hide ? 'password' : 'text'">
+      <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Roles</mat-label>
+      <mat-select>
+        <mat-option *ngFor="let role of roles" [value]="role.value">
+          {{role.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <button mat-raised-button color="primary">Sign up</button>
+</div>

@@ -4,7 +4,8 @@
 
 @include mat.core();
 
-$angular-primary: mat.define-palette(mat.$indigo-palette, 500, 100, 900);
+$angular-primary: mat.define-palette(mat.$blue-palette, 700, 100, 900);
+$angular-primary-dark: mat.define-palette(mat.$indigo-palette, 500, 100, 900);
 $angular-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
 $angular-warn: mat.define-palette(mat.$red-palette);
@@ -24,7 +25,7 @@ $angular-default-theme: mat.define-light-theme(
 $angular-dark-theme: mat.define-dark-theme(
     (
       color: (
-        primary: $angular-primary,
+        primary: $angular-primary-dark,
         accent: $angular-accent,
         warn: $angular-warn,
       ),

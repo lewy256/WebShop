@@ -4,8 +4,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-	<PublishProfile>DefaultContainer</PublishProfile>
 	<UserSecretsId>5effc9b8-b78e-48b3-8b7d-d8dcda61b613</UserSecretsId>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<DockerfileContext>..\..\..\..</DockerfileContext>
+	<DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,7 +28,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.NET.Build.Containers" Version="8.0.101" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="OneOf" Version="3.0.263" />
     <PackageReference Include="OneOf.SourceGenerator" Version="3.0.263" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />

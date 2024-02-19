@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+  productapi:
+    image: ${DOCKER_REGISTRY-}productapi
+    build:
+      context: .
+      dockerfile: Product/src/ProductApi/Product.Api/Dockerfile
+
+  orderapi:
+    image: ${DOCKER_REGISTRY-}orderapi
+    build:
+      context: .
+      dockerfile: Order/src/OrderApi/Dockerfile
+
+  identityapi:
+    image: ${DOCKER_REGISTRY-}identityapi
+    build:
+      context: .
+      dockerfile: Identity/src/IdentityApi/Dockerfile
+
+  basketapi:
+    image: ${DOCKER_REGISTRY-}basketapi
+    build:
+      context: .
+      dockerfile: Basket/src/BasketApi/BasketApi/Dockerfile
+
+  reverseproxy:
+    image: ${DOCKER_REGISTRY-}reverseproxy
+    build:
+      context: .
+      dockerfile: ReverseProxy/ReverseProxy/Dockerfile
+
+  webapp:
+    image: ${DOCKER_REGISTRY-}webapp
+    build:
+      context: .
+      dockerfile: Client/Dockerfile

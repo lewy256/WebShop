@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OrderApi.Configurations;
-using OrderApi.Consumers;
 using OrderApi.Models;
 using System.Text;
 
@@ -53,22 +52,6 @@ public static class ServiceExtensions {
                     },
                 new List<string>()
                 }
-            });
-        });
-    }
-
-    public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration) {
-        var azureServiceBusConfiguration = new AzureServiceBusConfiguration();
-
-        configuration.Bind(AzureServiceBusConfiguration.Section, azureServiceBusConfiguration);
-
-        services.AddMassTransit(busConfigurator => {
-            busConfigurator.SetKebabCaseEndpointNameFormatter();
-
-            busConfigurator.AddConsumer<BasketCreatedConsumer>();
-            busConfigurator.UsingAzureServiceBus((context, configurator) => {
-                configurator.Host(azureServiceBusConfiguration.ConnectionString);
-                configurator.ConfigureEndpoints(context);
             });
         });
     }

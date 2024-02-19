@@ -1,7 +1,7 @@
 # E-commerce web app
 [![Build Status](https://dev.azure.com/lewy256/WebShop/_apis/build/status%2FWebShop.git%20(2)?branchName=azure-pipelines2)](https://dev.azure.com/lewy256/WebShop/_build/latest?definitionId=4&branchName=azure-pipelines2)
 
-This is an e-commerce web application project divided into modules.
+This is an e-commerce web application project divided into microservices.
 
 ## Technologies
 Project is created with:
@@ -18,4 +18,10 @@ Project is created with:
 #### Continuous integration:
 * Azure DevOps
 
+### Run this project locally
+```
+docker compose up
+```
+#### Or on Azure
+![Deploy to Azure](https://aka.ms/deploytoazurebutton)
 

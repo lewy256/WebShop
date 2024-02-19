@@ -34,10 +34,6 @@ public class IdentityApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await _container.StartAsync();
         Client = CreateClient();
 
-        using var scope = Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<IdentitytContext>();
-        await context.Database.EnsureCreatedAsync();
-
         _respawner = await Respawner.CreateAsync(_container.GetConnectionString(), new RespawnerOptions {
             TablesToIgnore = ["AspNetRoles"]
         });

@@ -1,12 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
+import { BasketComponent } from './basket/basket.component';
+import {MaterialModule} from "../material/material.module";
+import {BasketRoutingModule} from "./basket-routing.module";
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    BasketComponent
+  ],
   imports: [
-    CommonModule
+    CommonModule,
+    MaterialModule,
+    BasketRoutingModule
   ]
 })
 export class BasketModule { }

@@ -35,7 +35,7 @@
     <mat-icon>account_circle</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    <button routerLink="/account"  mat-menu-item>
+    <button routerLink="/account/login"  mat-menu-item>
       <span>Account</span>
     </button>
     <button routerLink="/order" mat-menu-item >
@@ -59,6 +59,6 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <ng-content ></ng-content>
+    <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>
