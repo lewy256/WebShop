@@ -1,5 +1,5 @@
 # E-commerce web app
-[![Build Status](https://dev.azure.com/lewy256/WebShop/_apis/build/status%2FWebShop.git%20(2)?branchName=azure-pipelines2)](https://dev.azure.com/lewy256/WebShop/_build/latest?definitionId=4&branchName=azure-pipelines2)
+[![Build Status](https://dev.azure.com/lewy256/WebShop/_apis/build/status%2FRun%20Basket%20Api%20tests?branchName=master)](https://dev.azure.com/lewy256/WebShop/_build/latest?definitionId=36&branchName=master)
 
 This is an e-commerce web application project divided into microservices.
 
