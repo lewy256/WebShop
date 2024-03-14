@@ -77,11 +77,7 @@ public class UpdateAddressEndpoint : ICarterModule {
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        async (int id, [FromBody] AddressRequest? request, ISender sender) => {
-            if(request is null) {
-                return Results.BadRequest(new BadRequestResponse());
-            }
-
+        async (int id, [FromBody] AddressRequest request, ISender sender) => {
             var command = request.Adapt<UpdateAddress.Command>();
 
             command.Id = id;

@@ -1,0 +1,48 @@
+<mat-drawer-container class="product-container">
+  <mat-drawer mode="side" opened class="filter-content" style="max-height: 300px">
+    <p>
+      <mat-form-field appearance="outline"  floatLabel="always">
+        <mat-label>Price from</mat-label>
+        <input matInput type="number" class="example-right-align" placeholder="0">
+        <span matTextPrefix>$&nbsp;</span>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Price to</mat-label>
+        <input matInput type="number" class="example-right-align" placeholder="0">
+        <span matTextPrefix>$&nbsp;</span>
+      </mat-form-field>
+    </p>
+
+  </mat-drawer>
+  <mat-drawer-content>
+    <div class="responsive-grid">
+      <mat-card *ngFor="let product of products()" matSort matSortStart="desc">
+        <mat-card-header>
+          <mat-card-title>{{ product.productName }} </mat-card-title>
+          <mat-card-subtitle>{{ product.price}}$</mat-card-subtitle>
+        </mat-card-header>
+        <br />
+        <div style="display: flex; max-width: max-content;">
+          <img mat-card-image src="assets/images/neom-El92hmAt91o-unsplash.jpg" style="padding-right: 10px"  alt="image" />
+          <img mat-card-image src="assets/images/neom-El92hmAt91o-unsplash.jpg"  alt="image" />
+        </div>
+
+        <mat-card-content>
+          <br />
+          <p>
+            {{ product.description }}
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button (click)="addToBasket(product)" mat-button>Add to basket</button>
+          <button mat-button>Reviews</button>
+          <button mat-button>Price history</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    <mat-paginator [pageSize]="2" [pageSizeOptions]="[2, 10, 20,30]" #paginator>
+    </mat-paginator>
+  </mat-drawer-content>
+</mat-drawer-container>

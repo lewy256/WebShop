@@ -9,16 +9,19 @@ public static class ExceptionMiddlewareExtensions {
     public static void UseCustomExceptionHandler(this WebApplication app) {
         app.UseExceptionHandler(appError => {
             appError.Run(async context => {
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 context.Response.ContentType = "application/json";
-
                 var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-                if(contextFeature is not null) {
+                if(contextFeature != null) {
                     Log.Error($"Something went wrong: {contextFeature.Error}");
 
-                    await context.Response.WriteAsJsonAsync(
-                        new InternalServerErrorResponse("Internal Server Error.")
-                    );
+                    if(contextFeature.Error is BadHttpRequestException) {
+                        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        await context.Response.WriteAsJsonAsync(new BadRequestResponse("The JSON value is not in a supported format."));
+                    }
+                    else {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        await context.Response.WriteAsJsonAsync(new InternalServerErrorResponse("Internal Server Error."));
+                    }
                 }
             });
         });

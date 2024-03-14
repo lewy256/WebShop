@@ -12,13 +12,12 @@ public static class TokenEndpoints {
         [ProducesResponseType(typeof(TokenDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        async ([FromBody] TokenDto? tokenDto, IdentityService identityService) => {
+        async ([FromBody] TokenDto tokenDto, IdentityService identityService) => {
             var results = await identityService.RefreshToken(tokenDto);
 
             return results.Match(
                 refreshedToken => Results.Ok(refreshedToken),
                 validationFailed => Results.UnprocessableEntity(validationFailed),
-                tokenInvalid => Results.BadRequest(tokenInvalid),
                 modelIsNull => Results.BadRequest(modelIsNull));
         }).WithName("RefreshToken");
     }

@@ -2,14 +2,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
+  position: fixed;
+  width: 100%;
+  overflow-y:auto;
   height: 100vh;
+  background-image: url(src/assets/images/neom-El92hmAt91o-unsplash.jpg);
+
 }
 .register-field{
   display: flex;
   flex-direction: column;
 }
+.error-text{
+  color: red;
+  white-space: pre-wrap;
+}
 
-.full-width {
-  width: 100%;
+.form-card{
+  align-items: center;
+}
+
+.hint-color{
+  color: dodgerblue;
+}
+
+.form-field-margin{
+  margin-bottom: 20px
 }

@@ -1,46 +1,59 @@
-<mat-toolbar class="app-toolbar" color="primary">
+<mat-toolbar class="app-toolbar" color="primary" >
   <button mat-icon-button class="example-icon" (click)="sidenav.toggle()">
+
     <mat-icon>menu</mat-icon>
   </button>
-  <button routerLink="" mat-icon-button class="example-icon">
+  <button routerLink="/product" mat-icon-button>
     <mat-icon>shop</mat-icon>
   </button>
-  <span routerLink="">Web Shop</span>
-  <form class="example-form ">
-    <!--    <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>Assignee</mat-label>
-          <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-              {{option.name}}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>-->
+  <span routerLink="/product">Web Shop</span>
+  <form [formGroup]="searchForm" (submit)="setSearchQuery()" class="search-bar">
 
-    <!--      <mat-form-field>
-       &lt;!&ndash;     <input matInput type="text" (keyup)="[doFilter($any($event.target).value)]" placeholder="Filter">&ndash;&gt;
-            <input matInput type="text" placeholder="Filter" #box>
-          </mat-form-field>
-          <app-product [doFilter]="(box.value)" >  </app-product>-->
-    <mat-form-field>
-      <input matInput type="text" (keyup)="setFilterData($any($event.target).value)" placeholder="Filter">
-      <!-- <input matInput type="text" placeholder="Filter" #box>-->
-    </mat-form-field>
+    <input type="search" formControlName="query" placeholder="search for anything" class="">
+
+    <button routerLink="/product" mat-flat-button color="accent" class="search-btn" type="submit">
+      <div class="icon-container">
+        <mat-icon>search</mat-icon>
+      </div>
+    </button>
   </form>
-  <span class="example-spacer"></span>
-  <button routerLink="/basket" mat-icon-button class="example-icon">
-    <mat-icon matBadge="8" matBadgePosition="above" matBadgeColor="accent" >shopping_cart</mat-icon>
-  </button>
+  <p *ngIf="!isAuthenticated()">
+    <span routerLink="/account/login">Hello, sign in</span>
+  </p>
+  <p *ngIf="isAuthenticated()">
+    <span>Hello, {{userName}}</span>
+  </p>
   <button mat-icon-button [matMenuTriggerFor]="menu" >
     <mat-icon>account_circle</mat-icon>
   </button>
+  <button routerLink="/basket" mat-icon-button>
+    <mat-icon matBadge={{itemCount}} matBadgePosition="above" matBadgeColor="accent" >shopping_cart</mat-icon>
+  </button>
+
   <mat-menu #menu="matMenu">
-    <button routerLink="/account/login"  mat-menu-item>
-      <span>Account</span>
+    <div *ngIf="!isAuthenticated()">
+      <button routerLink="/account/login"  mat-menu-item>
+        <span>Login</span>
+      </button>
+      <button routerLink="/account/register"  mat-menu-item>
+        <span>Register</span>
+      </button>
+    </div>
+    <div *ngIf="isAuthenticated()">
+      <button routerLink="/account/logout" mat-menu-item>
+        <span>Logout</span>
+      </button>
+      <button routerLink="/account" mat-menu-item >
+        <span>Account</span>
+      </button>
+      <button routerLink="/order" mat-menu-item>
+        <span>Orders</span>
+      </button>
+    </div>
+    <button routerLink="/product/create-product"  mat-menu-item>
+      <span>Create product</span>
     </button>
-    <button routerLink="/order" mat-menu-item >
-      <span>Orders</span>
-    </button>
+
   </mat-menu>
   <mat-icon class="mr-8">brightness_5</mat-icon>
   <mat-slide-toggle [formControl]="toggleControl" class="mr-8">
@@ -48,17 +61,17 @@
   <mat-icon>bedtime</mat-icon>
 </mat-toolbar>
 <mat-sidenav-container hasBackdrop="false">
-  <mat-sidenav #sidenav mode="push">
-    <button mat-raised-button (click)="sidenav.toggle()">
-      X
-    </button>
+  <mat-sidenav #sidenav mode="push" class="content-padding">
+<!--    <button mat-raised-button (click)="sidenav.toggle()">-->
+<!--      X-->
+<!--    </button>-->
     <!--<h1>Categories</h1>-->
     <!-- <app-product (sendCategories)="getData($event)"></app-product>-->
-    <mat-nav-list>
-      <a mat-list-item (click)="setData(category.id!);clickMenu()"  *ngFor="let category of categories">{{category.categoryName}}</a>
+    <mat-nav-list >
+      <a mat-list-item routerLink="product" (click)="setCategoryId(category.id!)"  *ngFor="let category of categories">{{category.categoryName}}</a>
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content>
+  <mat-sidenav-content class="content-padding">
     <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>

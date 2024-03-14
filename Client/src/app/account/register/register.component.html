@@ -1,57 +1,108 @@
-<div class="register-container">
-  <h2>Please sign up</h2>
-  <div class="register-field">
-    <table><tr>
-      <td><mat-form-field>
+<form class="register-container" [formGroup]="registerForm">
+  <mat-card class="form-card mat-mdc-elevation-specific mat-elevation-z8">
+    <mat-card-header>
+      <mat-card-title><h3>Create an account</h3></mat-card-title>
+    </mat-card-header>
+    <p class="error-text">{{errorMessage}}</p>
+    <mat-card-content class="register-field" >
+      <mat-form-field subscriptSizing="dynamic" class="form-field-margin">
         <mat-label>First name</mat-label>
-        <input matInput>
-      </mat-form-field></td>
-      <td><mat-form-field>
-        <mat-label>Last name</mat-label>
-        <input matInput>
-      </mat-form-field></td>
-    </tr></table>
-    <table><tr>
-      <td><mat-form-field>
-        <mat-label>User name</mat-label>
-        <input matInput>
-      </mat-form-field></td>
-      <td><form>
-        <mat-form-field class="full-width">
-          <mat-label>Email</mat-label>
-          <input type="email" matInput [formControl]="emailFormControl" placeholder="Ex. pat@example.com">
-          <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-            Please enter a valid email address
-          </mat-error>
-          <mat-error *ngIf="emailFormControl.hasError('required')">
-            Email is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-      </form></td>
-    </tr></table>
-    <form>
-      <mat-form-field class="full-width">
-        <mat-label>Telephone</mat-label>
-        <span matPrefix>+48 &nbsp;</span>
-        <input type="tel" matInput placeholder="555-555-123">
-        <mat-icon matSuffix>mode_edit</mat-icon>
+        <input matInput type="text" formControlName="firstName">
+        <mat-error *ngIf="registerForm.get('firstName')?.hasError('required')">
+          <small>First name must not be empty.</small>
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('firstName')?.hasError('incorrect')">
+          <small>{{registerForm.get('firstName')?.getError('incorrect')}}</small>
+        </mat-error>
       </mat-form-field>
-    </form>
-    <mat-form-field>
-      <mat-label>Password</mat-label>
-      <input matInput [type]="hide ? 'password' : 'text'">
-      <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-      </button>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Roles</mat-label>
-      <mat-select>
-        <mat-option *ngFor="let role of roles" [value]="role.value">
-          {{role.viewValue}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <button mat-raised-button color="primary">Sign up</button>
-</div>
+      <mat-form-field subscriptSizing="dynamic" class="form-field-margin">
+        <mat-label>Last name</mat-label>
+        <input matInput type="text" formControlName="lastName">
+        <mat-error *ngIf="registerForm.get('lastName')?.hasError('required')">
+          <small>Last name must not be empty.</small>
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('lastName')?.hasError('incorrect')">
+          <small>{{registerForm.get('lastName')?.getError('incorrect')}}</small>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field subscriptSizing="dynamic" class="form-field-margin">
+        <mat-label>User name</mat-label>
+        <input matInput type="text" formControlName="userName">
+        <mat-error *ngIf="registerForm.get('userName')?.hasError('required')">
+          <small>User name must not be empty.</small>
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('userName')?.hasError('pattern')">
+          <small>User name must consist of only letters and numbers.</small>
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('userName')?.hasError('incorrect')">
+          <small>{{registerForm.get('userName')?.getError('incorrect')}}</small>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field subscriptSizing="dynamic" class="form-field-margin">
+        <mat-label>Telephone</mat-label>
+        <input type="tel" formControlName="phoneNumber" matInput placeholder="+XXXXXXXXXX">
+        <mat-error *ngIf="registerForm.get('phoneNumber')?.hasError('required')">
+          <small>Telephone must not be empty.</small>
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('phoneNumber')?.hasError('pattern')">
+          <small>Telephone number must:
+            <br>* start with a country code
+            <br>* be at least 9 digits long
+          </small>
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('phoneNumber')?.hasError('incorrect')">
+          <small>{{registerForm.get('phoneNumber')?.getError('incorrect')}}</small>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field subscriptSizing="dynamic" class="form-field-margin">
+        <mat-label>Email</mat-label>
+        <input type="email" matInput formControlName="email" placeholder="Ex. pat@example.com">
+        <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+          <small>Email must not be empty.</small>
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('email')?.hasError('pattern')">
+          <small>Invalid email format.</small>
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('email')?.hasError('incorrect')">
+          <small>{{registerForm.get('email')?.getError('incorrect')}}</small>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field subscriptSizing="dynamic" class="form-field-margin" >
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+          <small>Password must not be empty.</small>
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('pattern')" >
+          <small>Password must:
+            <br>* contain one digit and one symbol
+            <br>* be at least 10 characters long
+            <br>* contain one uppercase letter
+            <br>* contain one lowercase letter
+          </small>
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('incorrect')">
+          <small>{{registerForm.get('password')?.getError('incorrect')}}</small>
+        </mat-error>
+      </mat-form-field>
+      <small class="register-field">
+        <mat-checkbox formControlName="policy">
+          <mat-hint class="hint-color" routerLink="/account/terms">Terms of Service</mat-hint>
+          and
+          <mat-hint class="hint-color"  routerLink="/account/policy">Privacy Policy</mat-hint>
+        </mat-checkbox>
+        <mat-checkbox formControlName="newsletter">Newsletter </mat-checkbox>
+      </small>
+    </mat-card-content>
+    <mat-card-footer >
+      <button  mat-raised-button color="primary" *ngIf="!isDataLoaded"  (click)="register()" [disabled]="!registerForm.valid" >Sign up</button>
+      <mat-progress-spinner *ngIf="isDataLoaded" matSuffix [mode]="'indeterminate'" [diameter]="20"></mat-progress-spinner>
+    </mat-card-footer>
+    <mat-card-actions>
+      <a mat-button routerLink="/account/login" ><small>Already have an account?</small></a>
+    </mat-card-actions>
+  </mat-card>
+</form>

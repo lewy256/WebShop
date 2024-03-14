@@ -10,7 +10,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddAzureAppConfiguration(options => {
-    options.Connect(builder.Configuration.GetValue<string>("AppConfig"))
+    options.Connect(builder.Configuration.GetValue<string>("AzureConfiguration"))
         .Select(KeyFilter.Any, nameof(IdentityApi) + builder.Environment.EnvironmentName);
 });
 
@@ -37,9 +37,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if(!app.Environment.IsDevelopment()) {
-    app.UseCustomExceptionHandler();
-}
+app.UseCustomExceptionHandler();
 
 app.UseSwagger();
 app.UseSwaggerUI(s => {

@@ -1,0 +1,13 @@
+{
+  "stryker-config": {
+    "concurrency": 6,
+    "mutation-level": "Standard",
+    "language-version": "latest",
+    "additional-timeout": 5000,
+    "mutate": [
+      "**/Services/*.cs",
+      "**/Endpoints/*.cs"
+    ],
+    "break-on-initial-test-failure": false
+  }
+}

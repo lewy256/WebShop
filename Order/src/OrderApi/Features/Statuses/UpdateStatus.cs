@@ -64,17 +64,13 @@ public static class UpdateStatus {
 public class UpdateStatusEndpoint : ICarterModule {
     public void AddRoutes(IEndpointRouteBuilder app) {
         app.MapPut("api/statuses/{id}",
-         [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        async (int id, [FromBody] StatusRequest? request, ISender sender) => {
-            if(request is null) {
-                return Results.BadRequest(new BadRequestResponse());
-            }
-
+        async (int id, [FromBody] StatusRequest request, ISender sender) => {
             var command = request.Adapt<UpdateStatus.Command>();
             command.Id = id;
 

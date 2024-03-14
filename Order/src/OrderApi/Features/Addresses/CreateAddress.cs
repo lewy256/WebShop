@@ -78,11 +78,7 @@ public class CreateAddressEndpoint : ICarterModule {
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        async ([FromBody] AddressRequest? request, ISender sender) => {
-            if(request is null) {
-                return Results.BadRequest(new BadRequestResponse());
-            }
-
+        async ([FromBody] AddressRequest request, ISender sender) => {
             var command = request.Adapt<CreateAddress.Command>();
 
             var results = await sender.Send(command);

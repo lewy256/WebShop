@@ -1,0 +1,42 @@
+.basket-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: 100%;
+  overflow-y:auto;
+  height: 100vh;
+
+}
+
+.input-margin{
+  margin: 20px;
+}
+
+.input-border{
+  padding-left: 10px;
+  border: 0;
+  width: 50px
+}
+
+.image-size{
+  display: flex;
+  max-width: max-content;
+}
+
+.card-field{
+  display: flex;
+  flex-direction: row;
+}
+
+img {
+  height: 60px;
+  object-fit: cover;
+}
+
+.responsive-grid {
+  width: auto;
+  display: inline-grid;
+  grid-template-columns: repeat(auto-fill, minmax(max-content, 1fr));
+  gap: 24px;
+}

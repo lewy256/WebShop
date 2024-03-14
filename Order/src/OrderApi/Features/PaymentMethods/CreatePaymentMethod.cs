@@ -59,17 +59,12 @@ public static class CreatePaymentMethod {
 public class CreateStatusEndpoint : ICarterModule {
     public void AddRoutes(IEndpointRouteBuilder app) {
         app.MapPost("api/payment-methods",
-                  [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(typeof(PaymentMethodDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-
-        async ([FromBody] PaymentMethodRequest? request, ISender sender) => {
-            if(request is null) {
-                return Results.BadRequest(new BadRequestResponse());
-            }
-
+        async ([FromBody] PaymentMethodRequest request, ISender sender) => {
             var command = request.Adapt<CreatePaymentMethod.Command>();
 
             var results = await sender.Send(command);

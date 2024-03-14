@@ -1,14 +1,44 @@
-<!--<h2>Product Details</h2>-->
+<div class="basket-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title >
+        Your basket
+        <p *ngIf="!basket.items.length">is empty</p>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="responsive-grid ">
+        <mat-list *ngFor="let item of basket?.items" class="card-field">
+          <mat-card-header>
+            <mat-card-title>{{ item.productName }} </mat-card-title>
+            <mat-card-subtitle>{{ item.price | currency }}</mat-card-subtitle>
+          </mat-card-header>
 
-<!--<div *ngIf="product">-->
-<!--  <h3>{{ product.name }}</h3>-->
-<!--  <h4>{{ product.price | currency }}</h4>-->
-<!--  <p>{{ product.description }}</p>-->
-<!--  <button type="button" (click)="addToCart(product)">Buy</button>-->
-<!--</div>-->
-<!--<h3>Cart</h3>-->
 
-<!--<div class="cart-item" *ngFor="let item of items">-->
-<!--  <span>{{ item.name }}</span>-->
-<!--  <span>{{ item.price | currency }}</span>-->
-<!--</div>-->
+          <img class="image-size" mat-card-image src="assets/images/neom-El92hmAt91o-unsplash.jpg" alt="image" />
+          <div class="input-margin">
+            <label >Quantity:</label>
+            <input class="input-border" type="number" placeholder="{{ item.quantity }}">
+          </div>
+
+
+          <mat-card-actions>
+            <button mat-button (click)="deleteBasketItem(item.id)">Delete from basket</button>
+
+          </mat-card-actions>
+          <mat-divider></mat-divider>
+        </mat-list>
+      </div>
+    </mat-card-content>
+    <mat-card-actions *ngIf="basket.items.length">
+      <p >Total price: {{basket.totalPrice|currency}}</p>
+    </mat-card-actions>
+    <mat-card-footer>
+
+      <button *ngIf="basket.items.length" mat-button (click)="deleteBasket()" >Clear basket</button>
+      <button *ngIf="basket.items.length" routerLink="/order" mat-button (click)="checkoutBasket()" >Checkout basket</button>
+
+    </mat-card-footer>
+
+  </mat-card>
+</div>

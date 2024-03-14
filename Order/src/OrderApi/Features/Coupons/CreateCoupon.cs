@@ -66,11 +66,7 @@ public class CreateCouponEndpoint : ICarterModule {
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        async ([FromBody] CouponRequest? request, ISender sender) => {
-            if(request is null) {
-                return Results.BadRequest(new BadRequestResponse());
-            }
-
+        async ([FromBody] CouponRequest request, ISender sender) => {
             var command = request.Adapt<CreateCoupon.Command>();
 
             var results = await sender.Send(command);

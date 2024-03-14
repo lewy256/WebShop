@@ -84,11 +84,7 @@ public class CreateSpecOrderStatusEndpoint : ICarterModule {
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        async ([FromBody] OrderStatusRequest? request, ISender sender) => {
-            if(request is null) {
-                return Results.BadRequest(new BadRequestResponse());
-            }
-
+        async ([FromBody] OrderStatusRequest request, ISender sender) => {
             var command = request.Adapt<CreateOrderStatus.Command>();
 
             var results = await sender.Send(command);

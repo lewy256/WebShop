@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {ProductComponent} from "./product/product.component";
-import {ReviewComponent} from "./review/review.component";
-import {PriceHistoryComponent} from "./price-history/price-history.component";
-import {CategoryComponent} from "./category/category.component";
+import {GetProductsComponent} from "./product/get-products/get-products.component";
+import {GetReviewComponent} from "./review/get-review/get-review.component";
+import {GetPricesHistoryComponent} from "./price-history/get-prices-history/get-prices-history.component";
+import {GetCategoriesComponent} from "./category/get-categories/get-categories.component";
+import {CreateProductComponent} from "./product/create-product/create-product.component";
+import {LoginComponent} from "../account/login/login.component";
 
 // const routes: Routes = [
 //   {
@@ -19,13 +21,15 @@ import {CategoryComponent} from "./category/category.component";
 // ];
 const routes: Routes = [
   {
-    path:"",component:ProductComponent,
+    path:"",component:GetProductsComponent,
     children:[
-      { path: "review", component: ReviewComponent },
-      { path: "price-history", component: PriceHistoryComponent},
-      { path: "category", component: CategoryComponent }
-    ]
-  }
+      { path: "review", component: GetReviewComponent },
+      { path: "price-history", component: GetPricesHistoryComponent},
+      { path: "category", component: GetCategoriesComponent }
+    ],
+  },
+  { path: "create-product", component: CreateProductComponent }
+
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

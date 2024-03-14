@@ -1,33 +1,69 @@
 import { Component } from '@angular/core';
+import {finalize, Observable} from "rxjs";
+import {FormBuilder, FormGroup, Validators,} from "@angular/forms";
+import {LoginService} from "../../services/shared/login.service";
 import {HttpClient} from "@angular/common/http";
-import {AuthenticationUserDto, IdentityApiService, TokenDto} from "../../services/identity-api.service";
-import {environment} from "../../../environments/environment";
-import {Observable} from "rxjs";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {ErrorMappingService} from "../../services/shared/error-mapping.service";
+import {AuthenticationUserDto, IdentityService, TokenDto} from "../../services/api/identity.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
-  hide:boolean = true;
-  identityService:IdentityApiService;
-  token:string="";
 
-  constructor(private httpClient:HttpClient,private formBuilder: FormBuilder) {
-    this.identityService=new IdentityApiService(this.httpClient,environment.urlAddress);
+export class LoginComponent {
+  hide: boolean = true;
+  private identityService: IdentityService;
+  errorMessage?:string;
+  isDataLoaded: boolean=false;
+
+  constructor(private httpClient: HttpClient,
+              private formBuilder: FormBuilder,
+              private loginService: LoginService,
+              private errorMappingService:ErrorMappingService,
+              private router : Router) {
+    this.identityService = new IdentityService(this.httpClient);
   }
 
-  loginForm = this.formBuilder.group({
-    userName: ['kowalski16', [Validators.required,Validators.minLength(3)]],
-    password: ['96RnP9}16XHl',[Validators.required,Validators.minLength(8)]]
+  loginForm:FormGroup = this.formBuilder.group({
+    userName: ['kowalski16', [Validators.required]],
+    password: ['96RnP9}16XHl', [Validators.required]],
+    updateOn: 'blur',
   });
 
-  login():void{
-    let tokenDto:Observable<TokenDto>=this.identityService.loginUser(
-      new AuthenticationUserDto({userName:this.loginForm.value.userName,password:this.loginForm.value.password as string}))
-    tokenDto.subscribe(x=>this.token=x.accessToken as string);
+  login(): void {
+    this.isDataLoaded = true
+
+    let tokenDto: Observable<TokenDto> = this.identityService.loginUser(
+      new AuthenticationUserDto(
+        this.loginForm.value.userName,
+        this.loginForm.value.password
+      ));
+
+    tokenDto
+      .pipe(finalize(() => this.isDataLoaded = false))
+      .subscribe({
+        next:(x) => {
+          this.loginService.setToken(x.accessToken as string)
+          this.loginService.setUserName(this.loginForm.value.userName);
+          this.loginForm.reset();
+          this.errorMessage='';
+          this.router.navigate(['product']);
+        },
+        error:(x)=>{
+          if(x.statusCode===422){
+            this.errorMappingService.MappingValidationError(x.errors,this.loginForm);
+          } else if(x.statusCode===401){
+            this.errorMessage=x.message;
+          } else{
+            this.errorMessage=x;
+          }
+        }
+      });
+
   }
 
 }
+

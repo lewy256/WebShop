@@ -65,11 +65,7 @@ public class CreateShipMethodEndpoint : ICarterModule {
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        async ([FromBody] ShipMethodRequest? request, ISender sender) => {
-            if(request is null) {
-                return Results.BadRequest(new BadRequestResponse());
-            }
-
+        async ([FromBody] ShipMethodRequest request, ISender sender) => {
             var command = request.Adapt<CreateShipMethod.Command>();
 
             var results = await sender.Send(command);

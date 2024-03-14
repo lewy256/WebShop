@@ -10,6 +10,7 @@ namespace ProductApi.Controllers.V1;
 
 [Route("api/categories/{categoryId}/products")]
 [Authorize(Roles = "Administrator")]
+[Produces("application/json")]
 [ApiExplorerSettings(GroupName = "v1")]
 [ApiController]
 public class ProductController : ControllerBase {

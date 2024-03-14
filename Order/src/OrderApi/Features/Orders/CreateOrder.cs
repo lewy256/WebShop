@@ -76,11 +76,7 @@ public class CreateOrderEndpoint : ICarterModule {
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        async ([FromBody] OrderRequest? request, ISender sender) => {
-            if(request is null) {
-                return Results.BadRequest(new BadRequestResponse());
-            }
-
+        async ([FromBody] OrderRequest request, ISender sender) => {
             var command = request.Adapt<CreateOrder.Command>();
 
             var results = await sender.Send(command);

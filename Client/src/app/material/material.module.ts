@@ -18,6 +18,9 @@ import {MatBadgeModule} from "@angular/material/badge";
 import {MatCardModule} from "@angular/material/card";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatSelectModule} from "@angular/material/select";
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatStepperModule} from "@angular/material/stepper";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [],
@@ -40,7 +43,10 @@ import {MatSelectModule} from "@angular/material/select";
     MatBadgeModule,
     MatCardModule,
     MatGridListModule,
-    MatSelectModule
+    MatSelectModule,
+    MatCheckboxModule,
+    MatStepperModule,
+    MatProgressSpinnerModule,
   ],
   exports: [
     MatTabsModule,
@@ -60,7 +66,10 @@ import {MatSelectModule} from "@angular/material/select";
     MatBadgeModule,
     MatCardModule,
     MatDrawerContainer,
-    MatSelectModule
+    MatSelectModule,
+    MatCheckboxModule,
+    MatStepperModule,
+    MatProgressSpinnerModule
   ]
 })
 export class MaterialModule { }

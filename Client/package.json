@@ -34,6 +34,7 @@
     "save-dev": "^0.0.1-security",
     "ts-node": "^10.9.2",
     "tslib": "^2.3.0",
+    "uuid": "^9.0.1",
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
@@ -45,6 +46,7 @@
     "@cypress/schematic": "^2.5.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
+    "@types/uuid": "^9.0.8",
     "cypress": "latest",
     "istanbul-lib-coverage": "^3.2.2",
     "jest-junit": "^16.0.0",

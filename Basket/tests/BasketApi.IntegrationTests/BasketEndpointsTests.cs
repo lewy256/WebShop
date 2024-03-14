@@ -23,12 +23,12 @@ public class BasketEndpointsTests : IAsyncLifetime {
             .Build();
 
     [Fact]
-    public async Task CreateBasket_WithValidModel_ReturnsCreated() {
+    public async Task UpdateBasket_WithValidModel_ReturnsCreated() {
         var basket = new BasketFaker().Generate();
-        var createBasketDto = basket.Adapt<CreateBasketDto>();
+        var updateBasketDto = basket.Adapt<UpdateBasketDto>();
         var expectedResponse = basket.Adapt<BasketDto>();
 
-        var response = await _client.PostAsJsonAsync("/api/basket", createBasketDto);
+        var response = await _client.PostAsJsonAsync("/api/basket", updateBasketDto);
         var basketDto = await response.Content.ReadFromJsonAsync<BasketDto>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -36,14 +36,14 @@ public class BasketEndpointsTests : IAsyncLifetime {
     }
 
     [Fact]
-    public async Task CreateBasket_WithInvalidModel_ReturnsBadRequest() {
+    public async Task UpdateBasket_WithInvalidModel_ReturnsBadRequest() {
         var response = await _client.PostAsync("/api/basket", null);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Fact]
-    public async Task CreateBasket_WithInvalidModel_ReturnsUnprocessableEntity() {
+    public async Task UpdateBasket_WithInvalidModel_ReturnsUnprocessableEntity() {
         var basket = new BasketFaker().Generate();
         basket.Id = default;
 
@@ -55,16 +55,16 @@ public class BasketEndpointsTests : IAsyncLifetime {
     }
 
     [Fact]
-    public async Task CheckoutBasket_WithInvalidId_ReturnsNotFound() {
+    public async Task CheckoutBasket_WithInvalidId_ReturnsBadRequest() {
         var response = await _client.PostAsync($"/api/basket/{Guid.NewGuid()}", null);
 
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Fact]
     public async Task CheckoutBasket_WithValidId_ReturnsAccepted() {
         var basket = new BasketFaker().Generate();
-        var createBasketDto = basket.Adapt<CreateBasketDto>();
+        var createBasketDto = basket.Adapt<UpdateBasketDto>();
         await _client.PostAsJsonAsync($"/api/basket", createBasketDto);
 
         var response = await _client.PostAsync($"/api/basket/{basket.Id}", null);
@@ -75,7 +75,7 @@ public class BasketEndpointsTests : IAsyncLifetime {
     [Fact]
     public async Task GetBasket_WithValidId_ReturnsOk() {
         var basket = new BasketFaker().Generate();
-        var createBasketDto = basket.Adapt<CreateBasketDto>();
+        var createBasketDto = basket.Adapt<UpdateBasketDto>();
         var expectedResponse = basket.Adapt<BasketDto>();
         await _client.PostAsJsonAsync("/api/basket", createBasketDto);
 
@@ -86,12 +86,21 @@ public class BasketEndpointsTests : IAsyncLifetime {
         basketDto.Should().BeEquivalentTo(expectedResponse, opt => opt.Excluding(b => b.TotalPrice));
     }
 
-    [Fact]
-    public async Task GetBasket_WithInvalidId_ReturnsNotFound() {
-        var response = await _client.GetAsync($"/api/basket/{Guid.NewGuid()}");
 
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    [Fact]
+    public async Task GetBasket_WithInvalidId_ReturnsOk() {
+        var expectedResponse = new BasketDto() {
+            Id = Guid.NewGuid(),
+            Items = []
+        };
+
+        var response = await _client.GetAsync($"/api/basket/{expectedResponse.Id}");
+        var basketDto = await response.Content.ReadFromJsonAsync<BasketDto>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        basketDto.Should().BeEquivalentTo(expectedResponse, opt => opt.Excluding(b => b.TotalPrice));
     }
+
 
     [Fact]
     public async Task DeleteBasket_WithValidId_ReturnsNoContent() {

@@ -12,13 +12,12 @@ public static class IdentityEndpoints {
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        async ([FromBody] RegistrationUserDto? userForRegistration, IdentityService identityService) => {
+        async ([FromBody] RegistrationUserDto userForRegistration, IdentityService identityService) => {
             var results = await identityService.RegisterUser(userForRegistration);
 
             return results.Match(
                 _ => Results.Created(),
-                validationFailed => Results.UnprocessableEntity(validationFailed),
-                modelIsNull => Results.BadRequest(modelIsNull));
+                validationFailed => Results.UnprocessableEntity(validationFailed));
         }).WithName("RegisterUser");
 
         group.MapPost("login",
@@ -26,14 +25,13 @@ public static class IdentityEndpoints {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        async ([FromBody] AuthenticationUserDto? user, IdentityService identityService) => {
+        async ([FromBody] AuthenticationUserDto user, IdentityService identityService) => {
             var results = await identityService.ValidateUser(user);
 
             return results.Match(
                tokenDto => Results.Ok(tokenDto),
                validationFailed => Results.UnprocessableEntity(validationFailed),
-               _ => Results.Unauthorized(),
-                modelIsNull => Results.BadRequest(modelIsNull));
+               _ => Results.Unauthorized());
         }).WithName("LoginUser");
     }
 }

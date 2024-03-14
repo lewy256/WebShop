@@ -9,6 +9,8 @@ import { PaymentMethodComponent } from './payment-method/payment-method.componen
 import { OrderStatusComponent } from './order-status/order-status.component';
 import {OrderRoutingModule} from "./order-routing.module";
 import {MaterialModule} from "../material/material.module";
+import {ReactiveFormsModule} from "@angular/forms";
+import {BasketModule} from "../basket/basket.module";
 
 
 
@@ -22,10 +24,12 @@ import {MaterialModule} from "../material/material.module";
     PaymentMethodComponent,
     OrderStatusComponent
   ],
-  imports: [
-    CommonModule,
-    OrderRoutingModule,
-    MaterialModule
-  ]
+    imports: [
+        CommonModule,
+        OrderRoutingModule,
+        MaterialModule,
+        ReactiveFormsModule,
+        BasketModule,
+    ]
 })
 export class OrderModule { }
