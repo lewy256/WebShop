@@ -6,11 +6,13 @@ EXPOSE 3180
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Basket/src/BasketApi/BasketApi.csproj", "Basket/src/BasketApi/"]
-RUN dotnet restore "./Basket/src/BasketApi/./BasketApi.csproj"
+COPY ["BasketApi.csproj", "BasketApi/"]
+RUN dotnet restore "BasketApi/BasketApi.csproj"
+
+WORKDIR "/src/BasketApi"
 COPY . .
-WORKDIR "/src/Basket/src/BasketApi"
-RUN dotnet build "./BasketApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+RUN dotnet build "BasketApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release

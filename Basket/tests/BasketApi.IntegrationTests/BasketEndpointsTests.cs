@@ -23,7 +23,7 @@ public class BasketEndpointsTests : IAsyncLifetime {
             .Build();
 
     [Fact]
-    public async Task UpdateBasket_WithValidModel_ReturnsCreated() {
+    public async Task UpdateBasket_WithValidModel_ReturnsOk() {
         var basket = new BasketFaker().Generate();
         var updateBasketDto = basket.Adapt<UpdateBasketDto>();
         var expectedResponse = basket.Adapt<BasketDto>();

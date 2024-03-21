@@ -6,11 +6,13 @@ EXPOSE 3170
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Identity/src/IdentityApi/IdentityApi.csproj", "Identity/src/IdentityApi/"]
-RUN dotnet restore "./Identity/src/IdentityApi/./IdentityApi.csproj"
+COPY ["IdentityApi.csproj", "IdentityApi/"]
+RUN dotnet restore "IdentityApi/IdentityApi.csproj"
+
+WORKDIR "/src/IdentityApi"
 COPY . .
-WORKDIR "/src/Identity/src/IdentityApi"
-RUN dotnet build "./IdentityApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+RUN dotnet build "IdentityApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release

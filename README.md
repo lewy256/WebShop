@@ -15,13 +15,12 @@ Project is created with:
 * Unit tests: Jest
 #### Databases: 
 * Redis, Azure SQL Database, Cosmos DB
-#### Continuous integration:
+#### CI/CD:
 * Azure DevOps
 
 ### Run this project locally
 ```
 docker compose up
 ```
-#### Or on Azure
-![Deploy to Azure](https://aka.ms/deploytoazurebutton)
-
+#### Or on Azure Kubernetes Service
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2Flewy256%2FWebShop%2Fblob%2Fmaster%2F.azure%2Finfrastructure%2Ftemplate.json)
