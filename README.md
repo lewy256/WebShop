@@ -1,5 +1,5 @@
 # E-commerce web app
-[![Build Status](https://dev.azure.com/lewy256/WebShop/_apis/build/status%2FRun%20Basket%20Api%20tests?branchName=master)](https://dev.azure.com/lewy256/WebShop/_build/latest?definitionId=36&branchName=master)
+[![Build Status](https://dev.azure.com/lewy64/WebShop/_apis/build/status%2Ftests%2FRun%20Basket%20Api%20tests?branchName=master)](https://dev.azure.com/lewy64/WebShop/_build/latest?definitionId=2&branchName=master)
 
 This is an e-commerce web application project divided into microservices.
 
@@ -23,4 +23,4 @@ Project is created with:
 docker compose up
 ```
 #### Or on Azure Kubernetes Service
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2Flewy256%2FWebShop%2Fblob%2Fmaster%2F.azure%2Finfrastructure%2Ftemplate.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Flewy256%2FWebShop%2Fmaster%2F.azure%2Finfrastructure%2Ftemplate.json)
