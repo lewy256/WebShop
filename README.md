@@ -1,7 +1,10 @@
 # E-commerce web app
-[![Build Status](https://dev.azure.com/lewy64/WebShop/_apis/build/status%2Ftests%2FRun%20Basket%20Api%20tests?branchName=master)](https://dev.azure.com/lewy64/WebShop/_build/latest?definitionId=2&branchName=master)
 
 This is an e-commerce web application project divided into microservices.
+
+| Tests  | [![Build Status](https://dev.azure.com/lewy64/WebShop/_apis/build/status%2Ftests%2FRun%20Basket%20Api%20tests?branchName=master)](https://dev.azure.com/lewy64/WebShop/_build/latest?definitionId=2&branchName=master) |
+| --------------- | --------------- |
+| Deployment  | [![Build Status](https://dev.azure.com/lewy64/WebShop/_apis/build/status%2Fdeployment%2FDeploy%20WebShop%20app?branchName=master)](https://dev.azure.com/lewy64/WebShop/_build/latest?definitionId=4&branchName=master) |
 
 ## Technologies
 Project is created with:
