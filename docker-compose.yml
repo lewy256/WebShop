@@ -34,5 +34,5 @@ services:
   webapp:
     image: ${DOCKER_REGISTRY-}webapp
     build:
-      context: Client
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Client/Dockerfile

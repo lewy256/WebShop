@@ -6,11 +6,13 @@ EXPOSE 3191
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["ReverseProxy/ReverseProxy/ReverseProxy.csproj", "ReverseProxy/ReverseProxy/"]
-RUN dotnet restore "./ReverseProxy/ReverseProxy/./ReverseProxy.csproj"
+COPY ["ReverseProxy.csproj", "ReverseProxy/"]
+RUN dotnet restore "ReverseProxy/ReverseProxy.csproj"
+
+WORKDIR "/src/ReverseProxy"
 COPY . .
-WORKDIR "/src/ReverseProxy/ReverseProxy"
-RUN dotnet build "./ReverseProxy.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+RUN dotnet build "ReverseProxy.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release

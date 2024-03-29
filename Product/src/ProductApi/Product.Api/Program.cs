@@ -12,7 +12,7 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddAzureAppConfiguration(options => {
-    options.Connect(builder.Configuration.GetValue<string>("AzureConfiguration"))
+    options.Connect(builder.Configuration.GetValue<string>("AZURECONFIGURATION"))
         .Select(KeyFilter.Any, nameof(ProductApi) + builder.Environment.EnvironmentName);
 });
 
