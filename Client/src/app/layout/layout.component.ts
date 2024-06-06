@@ -2,20 +2,20 @@ import {Component, EventEmitter, HostBinding, OnInit, Output} from '@angular/cor
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {OverlayContainer} from "@angular/cdk/overlay";
 import {catchError, Observable, startWith, throwError} from "rxjs";
-import {map} from "rxjs/operators";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {Category, ProductApiService} from "../services/api/product-api.service";
 import {environment} from "../../environments/environment";
-import {MatSlideToggleChange} from "@angular/material/slide-toggle";
-import {LoginService} from "../services/shared/login.service";
-import {CategoryService} from "../services/shared/category.service";
+import {LoginSharedService} from "../services/shared/login-shared.service";
+import {CategorySharedService} from "../services/shared/category-shared.service";
 import {Router} from "@angular/router";
 import {BasketSharedService} from "../services/shared/basket-shared.service";
+import {Category, ProductApiService} from "../services/api/product-api.service";
+import {LayoutSharedService} from "../services/shared/layout-shared.service";
+import {BasketApiService} from "../services/api/basket-api.service";
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.css']
+  styleUrls: ['./layout.component.scss']
 })
 
 export class LayoutComponent implements OnInit {
@@ -26,18 +26,19 @@ export class LayoutComponent implements OnInit {
   itemCount:number=0;
 
   searchForm:FormGroup = this.formBuilder.group({
-    query: ['', []],
-    updateOn: 'blur',
+    query: ['', []]
   });
 
   constructor(private overlay: OverlayContainer,
               private http: HttpClient,
-              private categoryService:CategoryService,
-              private loginService:LoginService,
+              private categoryService:CategorySharedService,
+              private loginService:LoginSharedService,
               private formBuilder: FormBuilder,
               private router: Router,
-              private basketSharedService:BasketSharedService) {
-    this.productService=new ProductApiService(this.http,environment.urlAddress);
+              private basketSharedService:BasketSharedService,
+              private basketApiService:BasketApiService,
+              private layoutSharedService:LayoutSharedService,) {
+    this.productService=new ProductApiService(this.http);
 
   }
 
@@ -51,8 +52,12 @@ export class LayoutComponent implements OnInit {
     this.productService.getCategories()
       .pipe(catchError(this.handleError))
       .subscribe({
-        next:(x) => this.categories=x,
-        error:(x)=>this.errorMessage=x
+        next:(x) => {
+          this.categories=x
+        },
+        error:(x)=>{
+          this.errorMessage=x
+        }
       });
   }
 
@@ -84,8 +89,6 @@ export class LayoutComponent implements OnInit {
   }
 
 
-
-  //@Output() sidenavToggle = new EventEmitter();
   toggleControl:FormControl = new FormControl(false);
   @HostBinding('class') className: string = '';
 
@@ -104,9 +107,11 @@ export class LayoutComponent implements OnInit {
       if (isActive) {
         this.overlay.getContainerElement().classList.add(darkMode);
         localStorage.setItem('mode', 'darkMode');
+        this.layoutSharedService.setDarkTheme(true);
       } else{
         this.overlay.getContainerElement().classList.remove(darkMode);
         localStorage.setItem('mode', 'none');
+        this.layoutSharedService.setDarkTheme(false);
       }
     });
 

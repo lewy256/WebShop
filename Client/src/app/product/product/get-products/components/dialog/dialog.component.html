@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>Images for product</h1>
+<div mat-dialog-content>
+  <mat-tab-group>
+    <mat-tab *ngFor="let image of data.images" >
+      <ng-template mat-tab-label>
+        <img  mat-card-image [ngSrc]="image" height="300" width="300" style="width: 30px;height: 30px;" alt="image"/>
+      </ng-template>
+      <img mat-card-image [ngSrc]="image" loading="eager" height="300" width="300" style="width: 300px;height: 300px; padding-top: 15px" alt="image"/>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+<div mat-dialog-actions style="display: flex;justify-content: end;">
+  <button mat-button (click)="onClose()">Close</button>
+</div>

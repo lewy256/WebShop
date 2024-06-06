@@ -1,0 +1,6 @@
+.responsive-grid {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(max-content, 1fr));
+  gap: 24px;
+}

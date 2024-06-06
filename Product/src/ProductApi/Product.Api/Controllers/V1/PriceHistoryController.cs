@@ -44,7 +44,8 @@ public class PriceHistoryController : ControllerBase {
 
         return results.Match<IActionResult>(
           result => {
-              Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(result.metaData));
+              Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(result.metaData,
+                  new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
               return Ok(result.pricesHistory);
           },
           notFound => NotFound(notFound),

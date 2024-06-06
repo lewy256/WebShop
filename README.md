@@ -27,3 +27,12 @@ docker compose up
 ```
 #### Or on Azure Kubernetes Service
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Flewy256%2FWebShop%2Fmaster%2F.azure%2Finfrastructure%2Ftemplate.json)
+
+<h3 align="center">Screenshots</h3>
+<p align="center">
+  <img src=https://github.com/lewy256/WebShop/blob/master/images/1.png width="80%">
+  <img src=https://github.com/lewy256/WebShop/blob/master/images/2.png width="80%">
+  <img src=https://github.com/lewy256/WebShop/blob/master/images/3.png width="20%">
+  <img src=https://github.com/lewy256/WebShop/blob/master/images/4.png width="80%">
+  <img src=https://github.com/lewy256/WebShop/blob/master/images/5.png width="80%">
+</p>

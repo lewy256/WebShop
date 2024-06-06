@@ -1,0 +1,32 @@
+@use '@angular/material' as mat;
+@import "../../../theming/theming.scss";
+
+.register-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  /*background-image: url(src/assets/images/neom-El92hmAt91o-unsplash.jpg);*/
+
+}
+.register-field{
+  display: flex;
+  flex-direction: column;
+}
+.error-text{
+  color: mat.get-color-from-palette($warn);
+  white-space: pre-wrap;
+}
+
+.form-card{
+  align-items: center;
+}
+
+.hint-color{
+  color: dodgerblue;
+}
+
+.form-field-margin{
+  margin-bottom: 20px
+}

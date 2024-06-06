@@ -1,0 +1,92 @@
+@use '@angular/material' as mat;
+@import "../../theming/palette.scss";
+@import "../../theming/typography.scss";
+
+.app-toolbar {
+  position:fixed;
+  width: 100%;
+  overflow: hidden;
+  z-index: 10;
+  height: 65px;
+}
+
+.main-content{
+  padding-top: 65px;
+  height: 100vh;
+}
+
+* {
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.category-form-field{
+
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  height: 75%;
+  max-width: 30em;
+  margin: auto;
+
+}
+
+.search-bar input {
+  padding-inline: 5px;
+
+}
+
+.search-btn {
+}
+
+.search-bar,
+.search-bar input:focus,
+.search-bar input:valid  {
+  width: 100%;
+
+}
+
+.search-bar input:focus,
+.search-bar input:not(:focus) {
+  outline: transparent;
+
+}
+
+.search-bar input:valid {
+  transform: scale(1);
+
+}
+
+.search-bar input:valid + .search-btn {
+  border-radius: 0 0.375em 0.375em 0;
+  height: 100%;
+
+}
+
+.icon-container{
+  align-items: center;
+  transform: scale(1.2);
+  display: flex;
+  justify-content: center;
+}
+
+.input-background{
+  background-color: map-get($dark-theme-background-palette,input);
+  color: map-get($dark-theme-foreground-palette,base);
+}
+
+@media screen and (max-width: 950px) {
+  .remove-on-mobile { display: none; }
+  .toolbar-mobile-padding {padding-inline: 0;}
+}
+
+
+
+
+.mat-toolbar h6{
+  @include mat.typography-level($typography-config,subtitle-1);
+}

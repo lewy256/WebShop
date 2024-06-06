@@ -1,6 +1,6 @@
 import {BehaviorSubject, Observable} from "rxjs";
 import {Injectable} from "@angular/core";
-import {ProductDto} from "../api/product2.service";
+import {ProductDto} from "../api/product-api.service";
 import {BasketDto, BasketItem} from "../api/basket-api.service";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -21,7 +21,7 @@ export class BasketSharedService {
 
   setProduct(product:ProductDto):void{
     const itemId:string = uuidv4();
-    this.basketItems.push(new BasketItem(itemId,product.id,product.productName,"dupa",1,product.price))
+    this.basketItems.push(new BasketItem(itemId,product.id,product.productName,product.imageUris[0],1,product.price))
     this.totalBasketItems.next(this.totalBasketItems.value+1);
   }
 

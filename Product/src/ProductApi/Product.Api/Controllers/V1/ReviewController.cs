@@ -44,10 +44,11 @@ public class ReviewController : ControllerBase {
         var results = await _reviewService.GetReviewsAsync(productId, reviewParameters);
 
         return results.Match<IActionResult>(
-          result => {
-              Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(result.metaData));
-              return Ok(result.reviews);
-          },
+            result => {
+                Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(result.metaData,
+                    new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
+                return Ok(result.reviews);
+            },
           notFound => NotFound(notFound),
           validationFailed => UnprocessableEntity(validationFailed));
     }

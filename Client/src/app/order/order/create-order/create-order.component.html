@@ -1,0 +1,91 @@
+<div style="width: 600px; max-width: 100%; margin: 0 auto;padding-block: 24px;" class="on-mobile">
+  <mat-stepper [linear]="false" #stepper orientation="vertical" style="">
+    <mat-step>
+      <ng-template matStepLabel>Confirm your order items</ng-template>
+      <ng-template matStepContent>
+        <mat-divider></mat-divider>
+        <div *ngFor="let item of basket?.items;index as i" class="card-content" style="padding-block: 30px;">
+
+
+          <p class="product-name remove-margin">{{i+1}}. {{ item.productName }}</p>
+
+          <img mat-card-image [ngSrc]="item.imageUrl" height="60" width="60" alt="image" />
+
+
+          <p class="remove-margin">Quantity: {{ item.quantity }}</p>
+
+          <p class="remove-margin">Price: {{ item.price | currency }}</p>
+
+
+
+
+
+        </div>
+
+        <mat-divider></mat-divider>
+        <div *ngIf="basket.items.length">
+          <div style="display: flex;flex-direction: row;align-items: center;gap: 15px;" >
+            <mat-form-field appearance="outline"  class="custom-form-field" style="padding-top: 5px">
+              <mat-label>Coupon</mat-label>
+              <input matInput>
+            </mat-form-field>
+
+            <button  mat-flat-button color="primary" style="height: 43px">Apply</button>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <h3 style="margin: 15px;">Total price:&nbsp;<b>{{basket.totalPrice|currency}}</b></h3>
+          <mat-divider></mat-divider>
+        </div>
+
+
+        <div style="padding-top: 30px;">
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </ng-template>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Fill out your address</ng-template>
+      <ng-template matStepContent>
+        <app-address style="padding: 30px;"></app-address>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </ng-template>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Choose your payment method</ng-template>
+      <ng-template matStepContent>
+        <app-payment-method style="padding: 30px;"></app-payment-method>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </ng-template>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Choose your ship method</ng-template>
+      <ng-template matStepContent>
+        <app-ship-method style="padding: 30px;"></app-ship-method>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </ng-template>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Done</ng-template>
+      <ng-template matStepContent>
+        <p style="padding-block: 30px;">You are now done.</p>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button (click)="stepper.reset()">Reset</button>
+          <button mat-button >Finalize</button>
+        </div>
+      </ng-template>
+    </mat-step>
+  </mat-stepper>
+</div>
+

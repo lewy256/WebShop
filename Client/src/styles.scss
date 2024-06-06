@@ -1,0 +1,25 @@
+@use '@angular/material' as mat;
+@import 'theming/theming.scss';
+@import "theming/palette.scss";
+@import "theming/typography.scss";
+
+@include mat.typography-hierarchy($typography-config);
+
+@include mat.all-component-themes($app-default-theme);
+
+.darkMode {
+  @include mat.all-component-colors($app-dark-theme);
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+
+
+.custom-form-field {
+  @include mat.private-form-field-density(-3);
+}
+

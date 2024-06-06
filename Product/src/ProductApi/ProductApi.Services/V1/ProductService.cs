@@ -37,7 +37,7 @@ public class ProductService : IProductService {
         _fileService = fileService;
     }
 
-    public async Task<ProductGetAllResponse> GetProductsAsync(Guid categoryId, ProductParameters productParameters) {
+    public async Task<ProductsGetResponse> GetProductsAsync(Guid categoryId, ProductParameters productParameters) {
         var validationResult = await _parametersValidator.ValidateAsync(productParameters);
 
         if(!validationResult.IsValid) {
@@ -54,6 +54,34 @@ public class ProductService : IProductService {
         var query = _productContext.Product
             .AsNoTracking()
             .Where(p => p.CategoryId.Equals(categoryId));
+
+        var products = await query
+            .SortProducts(productParameters.OrderBy)
+            .Skip((productParameters.PageNumber - 1) * productParameters.PageSize)
+            .Take(productParameters.PageSize)
+            .FilterProducts(productParameters)
+            .SearchProducts(productParameters.SearchTerm)
+            .ToListAsync();
+
+        var count = await query.CountAsync();
+
+        var productsDto = products.Adapt<List<ProductDto>>();
+
+        for(int i = 0; i < products.Count; i++) {
+            var images = products[i].Images;
+            var uris = _fileService.GetUrisForImages(images);
+            productsDto[i].ImageUris.AddRange(uris.AsT0);
+        }
+
+        return (products: productsDto, metaData: new MetaData() {
+            CurrentPage = productParameters.PageNumber,
+            PageSize = productParameters.PageSize,
+            TotalCount = count
+        });
+    }
+
+    public async Task<ProductsGetAllResponse> GetProductsAsync(ProductParameters productParameters) {
+        var query = _productContext.Product.AsNoTracking();
 
         var products = await query
             .SortProducts(productParameters.OrderBy)

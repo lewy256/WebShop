@@ -1,14 +1,24 @@
+import {HttpHeaders} from "@angular/common/http";
+
 export class ApiBase {
-  authToken = '';
-  protected constructor() {
+
+  protected httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      "Accept": "application/json",
+    }),
+  };
+
+  setAuthToken(token: string):void {
+    this.httpOptions={headers: this.httpOptions.headers.append('Authorization', `Bearer ${token}`)};
+
   }
 
-  setAuthToken(token: string) {
-    this.authToken = token;
+  setContentType(type:string):void{
+    this.httpOptions={headers: this.httpOptions.headers.set('Content-Type', type)};
   }
 
-  protected transformOptions(options: any): Promise<any> {
-    options.headers = options.headers.append('authorization', `Bearer ${this.authToken}`);
-    return Promise.resolve(options);
+  removeContentType():void{
+    this.httpOptions={headers: this.httpOptions.headers.delete('Content-Type')};
   }
 }

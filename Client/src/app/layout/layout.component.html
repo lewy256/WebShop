@@ -1,28 +1,62 @@
-<mat-toolbar class="app-toolbar" color="primary" >
-  <button mat-icon-button class="example-icon" (click)="sidenav.toggle()">
-
-    <mat-icon>menu</mat-icon>
-  </button>
+<mat-toolbar class="app-toolbar toolbar-mobile-padding" color="primary" >
   <button routerLink="/product" mat-icon-button>
     <mat-icon>shop</mat-icon>
   </button>
-  <span routerLink="/product">Web Shop</span>
-  <form [formGroup]="searchForm" (submit)="setSearchQuery()" class="search-bar">
 
-    <input type="search" formControlName="query" placeholder="search for anything" class="">
+  <h1 class="remove-on-mobile" routerLink="/product" style="padding-right: 10px;"><b>WebShop</b></h1>
 
-    <button routerLink="/product" mat-flat-button color="accent" class="search-btn" type="submit">
+
+  <form [formGroup]="searchForm" (submit)="setSearchQuery()"  class="search-bar">
+
+    <button mat-flat-button color="accent" style="border-radius: 0.375em 0 0 0.375em;height: 100%;padding: 0;width: 25%;white-space: normal;word-break: break-all;" [matMenuTriggerFor]="matMenu">
+      All categories
+    </button>
+
+
+      <mat-menu #matMenu>
+
+        <ng-template matMenuContent>
+          <button mat-menu-item  routerLink="product" (click)="setCategoryId(category.id!)" *ngFor="let category of categories">
+            {{category.categoryName}}
+          </button>
+          <button mat-menu-item [matMenuTriggerFor]="invertebrates">Invertebrates</button>
+        </ng-template>
+
+        <mat-menu #invertebrates="matMenu">
+          <button mat-menu-item>Insects</button>
+          <button mat-menu-item>Molluscs</button>
+          <button mat-menu-item>Crustaceans</button>
+          <button mat-menu-item>Corals</button>
+          <button mat-menu-item>Arachnids</button>
+          <button mat-menu-item>Velvet worms</button>
+          <button mat-menu-item>Horseshoe crabs</button>
+        </mat-menu>
+
+      </mat-menu>
+
+
+
+
+
+
+    <input class="mat-typography" type="search" [ngClass]="{'input-background': toggleControl.value}"
+           (blur)="setSearchQuery()" formControlName="query" placeholder=" search for anything">
+
+
+    <button routerLink="/product" mat-flat-button color="accent" class="search-btn" type="submit" style="width: 10%;min-width: 1%">
       <div class="icon-container">
         <mat-icon>search</mat-icon>
       </div>
     </button>
+
+
   </form>
-  <p *ngIf="!isAuthenticated()">
-    <span routerLink="/account/login">Hello, sign in</span>
-  </p>
-  <p *ngIf="isAuthenticated()">
-    <span>Hello, {{userName}}</span>
-  </p>
+  <h6 class="remove-on-mobile mat-typography" *ngIf="!isAuthenticated()" routerLink="/account/login" style="padding-left: 10px;">
+    Hello, sign in
+  </h6>
+  <h6 *ngIf="isAuthenticated()" class="mat-typography">
+    Hello, {{userName}}
+  </h6>
   <button mat-icon-button [matMenuTriggerFor]="menu" >
     <mat-icon>account_circle</mat-icon>
   </button>
@@ -55,23 +89,32 @@
     </button>
 
   </mat-menu>
-  <mat-icon class="mr-8">brightness_5</mat-icon>
-  <mat-slide-toggle [formControl]="toggleControl" class="mr-8">
-  </mat-slide-toggle>
-  <mat-icon>bedtime</mat-icon>
+
+  <div style="display: flex;flex-direction: row;align-items: center;">
+    <mat-icon  class="remove-on-mobile" >brightness_5</mat-icon>
+
+
+    <mat-slide-toggle [formControl]="toggleControl"></mat-slide-toggle>
+
+
+    <mat-icon class="remove-on-mobile" >bedtime</mat-icon>
+  </div>
+
+
+
+
+
+
+
+
+
 </mat-toolbar>
-<mat-sidenav-container hasBackdrop="false">
-  <mat-sidenav #sidenav mode="push" class="content-padding">
-<!--    <button mat-raised-button (click)="sidenav.toggle()">-->
-<!--      X-->
-<!--    </button>-->
-    <!--<h1>Categories</h1>-->
-    <!-- <app-product (sendCategories)="getData($event)"></app-product>-->
-    <mat-nav-list >
-      <a mat-list-item routerLink="product" (click)="setCategoryId(category.id!)"  *ngFor="let category of categories">{{category.categoryName}}</a>
-    </mat-nav-list>
-  </mat-sidenav>
-  <mat-sidenav-content class="content-padding">
+
+
+<mat-drawer-container>
+  <mat-drawer-content class="main-content mat-typography" >
     <ng-content></ng-content>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </mat-drawer-content>
+</mat-drawer-container>
+
+

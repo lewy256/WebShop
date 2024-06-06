@@ -1,46 +1,155 @@
-<!--<form class="login-container" [formGroup]="loginForm">-->
+<div class="login-container">
+  <mat-card class="form-card mat-mdc-elevation-specific mat-elevation-z8" >
+    <mat-card-header>
+      <mat-card-title><h3>Create product</h3></mat-card-title>
+    </mat-card-header>
 
-<!--  <mat-card class="form-card mat-mdc-elevation-specific mat-elevation-z8" >-->
-<!--    <mat-card-header>-->
-<!--      <mat-card-title><h3>Please sign in</h3></mat-card-title>-->
-<!--    </mat-card-header>-->
-<!--    <p class="error-text">{{errorMessage}}</p>-->
+    <p class="error-text">{{message}}</p>
+    <mat-card-content class="login-field">
+      <form  [formGroup]="productForm">
+        <div class="input-autocomplete-container">
+          <mat-form-field class="input-product-name">
+            <mat-label>Product name</mat-label>
+            <input matInput type="text" formControlName="productName">
+            <mat-error *ngIf="productForm.get('productName')?.hasError('required')">
+              <small>Product name must not be empty.</small>
+            </mat-error>
+            <mat-error *ngIf="productForm.get('productName')?.hasError('incorrect')">
+              <small>{{productForm.get('productName')?.getError('incorrect')}}</small>
+            </mat-error>
+          </mat-form-field>
 
-<!--    <mat-card-content class="login-field">-->
-<!--      <mat-form-field>-->
-<!--        <mat-label>User name</mat-label>-->
-<!--        <input matInput type="text" formControlName="userName">-->
-<!--        <mat-error *ngIf="loginForm.get('userName')?.hasError('required')">-->
-<!--          <small>User name must not be empty.</small>-->
-<!--        </mat-error>-->
-<!--        <mat-error *ngIf="loginForm.get('userName')?.hasError('incorrect')">-->
-<!--          <small>{{loginForm.get('userName')?.getError('incorrect')}}</small>-->
-<!--        </mat-error>-->
-<!--      </mat-form-field>-->
-<!--      <mat-form-field>-->
-<!--        <mat-label>Password</mat-label>-->
-<!--        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">-->
-<!--        <mat-error *ngIf="loginForm.get('password')?.hasError('required')">-->
-<!--          <small>Password must not be empty.</small>-->
-<!--        </mat-error>-->
-<!--        <mat-error *ngIf="loginForm.get('password')?.hasError('incorrect')">-->
-<!--          <small>{{loginForm.get('password')?.getError('incorrect')}}</small>-->
-<!--        </mat-error>-->
-<!--        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">-->
-<!--          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>-->
-<!--        </button>-->
-<!--      </mat-form-field>-->
-<!--    </mat-card-content>-->
-<!--    <mat-card-footer class="footer-card">-->
-<!--      <button  mat-raised-button color="primary" *ngIf="!isDataLoaded" (click)="login()" [disabled]="!loginForm.valid" >Sign in</button>-->
-<!--      <mat-progress-spinner *ngIf="isDataLoaded" matSuffix [mode]="'indeterminate'" [diameter]="20"></mat-progress-spinner>-->
-<!--    </mat-card-footer>-->
-<!--    <mat-card-actions>-->
-<!--      <a mat-button routerLink="/account/register" ><small>Register</small></a>-->
-<!--      <a mat-button routerLink="/account/reset-password" ><small>Reset password</small></a>-->
-<!--    </mat-card-actions>-->
-<!--  </mat-card>-->
-<!--</form>-->
+          <mat-form-field class="input-category-name">
+            <mat-label>Category</mat-label>
+            <mat-select formControlName="category">
+              <mat-option *ngFor="let category of categories" [value]="category.id">
+                {{category.categoryName}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="productForm.get('category')?.hasError('required')">
+              <small>Category must not be empty.</small>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <table class="example-full-width" cellspacing="0"><tr>
+          <td>
+            <mat-form-field>
+              <mat-label>Serial number</mat-label>
+              <input matInput type="text" formControlName="serialNumber">
+              <mat-error *ngIf="productForm.get('serialNumber')?.hasError('required')">
+                <small>Serial number must not be empty.</small>
+              </mat-error>
+              <mat-error *ngIf="productForm.get('serialNumber')?.hasError('incorrect')">
+                <small>{{productForm.get('serialNumber')?.getError('incorrect')}}</small>
+              </mat-error>
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field>
+              <mat-label>Price</mat-label>
+              <input matInput type="text" formControlName="price">
+              <mat-error *ngIf="productForm.get('price')?.hasError('required')">
+                <small>Price must not be empty.</small>
+              </mat-error>
+              <mat-error *ngIf="productForm.get('price')?.hasError('incorrect')">
+                <small>{{productForm.get('price')?.getError('incorrect')}}</small>
+              </mat-error>
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field>
+              <mat-label>Stock</mat-label>
+              <input matInput type="text" formControlName="price">
+              <mat-error *ngIf="productForm.get('stock')?.hasError('required')">
+                <small>Stock must not be empty.</small>
+              </mat-error>
+              <mat-error *ngIf="productForm.get('stock')?.hasError('incorrect')">
+                <small>{{productForm.get('stock')?.getError('incorrect')}}</small>
+              </mat-error>
+            </mat-form-field>
+          </td>
+        </tr>
+        </table>
+
+        <table class="example-full-width" cellspacing="0"><tr>
+          <td>
+            <mat-form-field>
+              <mat-label>Color</mat-label>
+              <input matInput type="text" formControlName="color">
+              <mat-error *ngIf="productForm.get('color')?.hasError('required')">
+                <small>Color must not be empty.</small>
+              </mat-error>
+              <mat-error *ngIf="productForm.get('color')?.hasError('incorrect')">
+                <small>{{productForm.get('color')?.getError('incorrect')}}</small>
+              </mat-error>
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field>
+              <mat-label>Weight</mat-label>
+              <input matInput type="text" formControlName="weight">
+              <mat-error *ngIf="productForm.get('weight')?.hasError('required')">
+                <small>Weight must not be empty.</small>
+              </mat-error>
+              <mat-error *ngIf="productForm.get('weight')?.hasError('incorrect')">
+                <small>{{productForm.get('weight')?.getError('incorrect')}}</small>
+              </mat-error>
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field>
+              <mat-label>Size</mat-label>
+              <input matInput type="text" formControlName="size">
+              <mat-error *ngIf="productForm.get('size')?.hasError('required')">
+                <small>Size must not be empty.</small>
+              </mat-error>
+              <mat-error *ngIf="productForm.get('size')?.hasError('incorrect')">
+                <small>{{productForm.get('size')?.getError('incorrect')}}</small>
+              </mat-error>
+            </mat-form-field>
+          </td>
+        </tr></table>
+
+
+        <mat-form-field class="text-area">
+          <mat-label>Description</mat-label>
+          <textarea matInput type="text" formControlName="description"></textarea>
+          <mat-error *ngIf="productForm.get('description')?.hasError('required')">
+            <small>Description must not be empty.</small>
+          </mat-error>
+          <mat-error *ngIf="productForm.get('description')?.hasError('incorrect')">
+            <small>{{productForm.get('description')?.getError('incorrect')}}</small>
+          </mat-error>
+        </mat-form-field>
+      </form>
+
+      <div>
+        <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload multiple accept="image/png">
+
+        <div  class="file-upload">
+          <button mat-mini-fab color="primary" class="upload-button" (click)="fileUpload.click()">
+            <mat-icon>attach_file</mat-icon>
+          </button>
+
+          {{ selectedFiles.length === 0 ? "No file uploaded yet." : selectedFiles.length }}
+
+        </div>
+      </div>
+
+    </mat-card-content>
+    <mat-card-footer class="footer-card">
+      <button  mat-raised-button color="primary" *ngIf="!isDataLoaded" (click)="createProduct()" [disabled]="!productForm.valid" >Create</button>
+      <mat-progress-spinner *ngIf="isDataLoaded" matSuffix [mode]="'indeterminate'" [diameter]="20"></mat-progress-spinner>
+    </mat-card-footer>
+    <mat-card-actions>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+
+
+
 
 
 

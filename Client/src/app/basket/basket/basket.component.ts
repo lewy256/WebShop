@@ -1,16 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {BasketDto, BasketItem, BasketApiService, UpdateBasketDto} from "../../services/api/basket-api.service";
 import {HttpClient} from "@angular/common/http";
 import {BasketSharedService} from "../../services/shared/basket-shared.service";
-import {ProductDto} from "../../services/api/product2.service";
+import {ProductDto} from "../../services/api/product-api.service";
 import {lastValueFrom, take} from "rxjs";
+import {LayoutSharedService} from "../../services/shared/layout-shared.service";
 
 
 
 @Component({
   selector: 'app-basket',
   templateUrl: './basket.component.html',
-  styleUrls: ['./basket.component.css']
+  styleUrls: ['./basket.component.scss']
 })
 
 export class BasketComponent implements OnInit{
@@ -18,14 +19,23 @@ export class BasketComponent implements OnInit{
   basket: BasketDto;
   private guid:string='57633a10-f144-4430-8acb-9de2a2495014';
 
-  constructor(private httpClient:HttpClient,private basketSharedService:BasketSharedService) {
+  constructor(private httpClient:HttpClient,
+              private basketSharedService:BasketSharedService,
+              private layoutSharedService: LayoutSharedService,) {
     this.basketApiService=new BasketApiService(this.httpClient)
     this.basket=new BasketDto(this.guid,[]);
   }
 
+  isDarkTheme:boolean=false;
+
   ngOnInit(): void {
     this.getBasket();
-
+    this.layoutSharedService.checkDarkTheme()
+      .subscribe({
+      next:(darkTheme: boolean):void => {
+        this.isDarkTheme=darkTheme;
+      }
+    });
   }
 
   private setTotalBasketItems(basketItems:BasketItem[]): void {

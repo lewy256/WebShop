@@ -1,0 +1,33 @@
+@use '@angular/material' as mat;
+@import "../../../../theming/palette.scss";
+@import "../../../../theming/typography.scss";
+
+mat-sidenav {
+  box-shadow: none !important;
+}
+
+mat-paginator{
+  @include mat.typography-level($typography-config,button);
+}
+
+@media screen and (min-width: 950px) {
+  .first-divider{ display: none !important; }
+
+}
+
+@media screen and (max-width: 950px) {
+  .third-divider{ display: none !important; }
+}
+
+
+@media screen and (min-width: 634px) {
+  .second-divider { display: none !important; }
+}
+
+@media screen and (max-width: 1270px) {
+  .remove-filter { display: none !important; }
+}
+
+@media screen and (min-width: 1270px) {
+  .display-button-filter { display: none !important; }
+}

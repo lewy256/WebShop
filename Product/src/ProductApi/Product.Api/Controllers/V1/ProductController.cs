@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using ProductApi.Filters;
 using ProductApi.Service.Interfaces;
 using ProductApi.Shared.Model.ProductDtos;
-using ProductApi.Shared.Model.ProductDtos.V1;
 using System.Text.Json;
+using ProductParameters = ProductApi.Shared.Model.ProductDtos.V1.ProductParameters;
 
 namespace ProductApi.Controllers.V1;
 
@@ -97,7 +97,7 @@ public class ProductController : ControllerBase {
     ///     }
     /// </remarks>
     /// <param name="categoryId">The ID of the category for product.</param>
-    /// <param name="product">The created rproduct information</param>
+    /// <param name="product">The created product information</param>
     /// <returns>A newly created product.</returns>
     /// <response code="201">Returns the newly created item</response>
     /// <response code="400">If the updated product is null.</response>
@@ -196,7 +196,32 @@ public class ProductController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetProductOptions() {
         Response.Headers.Add("Allow", "GET, OPTIONS, POST, PUT, DELETE");
-
         return Ok();
+    }
+
+
+    /// <summary>
+    /// Gets the list of all products.
+    /// </summary>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     GET api/products
+    /// </remarks>
+    /// <param name="productParameters">The container holds specific parameters for the product.</param>
+    /// <returns>A list of products.</returns>
+    /// <response code="200">Returns the list of products.</response>
+    [HttpGet("/api/products", Name = nameof(GetAllProducts))]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(List<ProductDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllProducts([FromQuery] ProductParameters productParameters) {
+        var results = await _productService.GetProductsAsync(productParameters);
+
+        return results.Match<IActionResult>(
+          products => {
+              Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(products.metaData,
+                  new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
+              return Ok(products.products);
+          });
     }
 }

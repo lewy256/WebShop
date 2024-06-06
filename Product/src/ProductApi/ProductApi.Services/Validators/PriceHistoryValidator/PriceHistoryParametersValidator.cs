@@ -13,7 +13,7 @@ public class PriceHistoryParametersValidator : AbstractValidator<PriceHistoryPar
         RuleFor(x => x.EndDate)
             .GreaterThan(x => x.StartDate);
         RuleFor(x => x.PageSize)
-            .InclusiveBetween(10, 50);
+            .LessThanOrEqualTo(50);
         RuleFor(x => x.OrderBy)
            .MaximumLength(20)
            .InOrNull("priceValue", "startDate", "endDate", "priceValue desc", "startDate desc", "endDate desc");

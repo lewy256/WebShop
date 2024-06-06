@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {finalize, Observable} from "rxjs";
 import {FormBuilder, FormGroup, Validators,} from "@angular/forms";
-import {LoginService} from "../../services/shared/login.service";
+import {LoginSharedService} from "../../services/shared/login-shared.service";
 import {HttpClient} from "@angular/common/http";
 import {ErrorMappingService} from "../../services/shared/error-mapping.service";
 import {AuthenticationUserDto, IdentityService, TokenDto} from "../../services/api/identity.service";
@@ -10,7 +10,7 @@ import {Router} from "@angular/router";
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.scss']
 })
 
 export class LoginComponent {
@@ -21,7 +21,7 @@ export class LoginComponent {
 
   constructor(private httpClient: HttpClient,
               private formBuilder: FormBuilder,
-              private loginService: LoginService,
+              private loginService: LoginSharedService,
               private errorMappingService:ErrorMappingService,
               private router : Router) {
     this.identityService = new IdentityService(this.httpClient);

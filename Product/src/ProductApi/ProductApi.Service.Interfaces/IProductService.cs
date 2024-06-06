@@ -8,7 +8,8 @@ using ProductApi.Shared.Model.Responses;
 namespace ProductApi.Service.Interfaces;
 
 public interface IProductService {
-    Task<ProductGetAllResponse> GetProductsAsync(Guid categoryId, ProductParameters productParameters);
+    Task<ProductsGetResponse> GetProductsAsync(Guid categoryId, ProductParameters productParameters);
+    Task<ProductsGetAllResponse> GetProductsAsync(ProductParameters productParameters);
     Task<ProductGetResponse> GetProductByIdAsync(Guid categoryId, Guid productId);
     Task<ProductCreateResponse> CreateProductAsync(Guid categoryId, CreateProductDto productDto);
     Task<ProductUpdateResponse> UpdateProductAsync(Guid categoryId, Guid productId, UpdateProductDto productDto);
@@ -34,5 +35,9 @@ public partial class ProductGetResponse : OneOfBase<ProductDto, NotFoundResponse
 }
 
 [GenerateOneOf]
-public partial class ProductGetAllResponse : OneOfBase<(IEnumerable<ProductDto> products, MetaData metaData), NotFoundResponse, ValidationResponse> {
+public partial class ProductsGetResponse : OneOfBase<(IEnumerable<ProductDto> products, MetaData metaData), NotFoundResponse, ValidationResponse> {
+}
+
+[GenerateOneOf]
+public partial class ProductsGetAllResponse : OneOfBase<(IEnumerable<ProductDto> products, MetaData metaData)> {
 }

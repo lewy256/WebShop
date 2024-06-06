@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import {LoginService} from "../../services/shared/login.service";
+import {LoginSharedService} from "../../services/shared/login-shared.service";
 
 @Component({
   selector: 'app-logout',
   templateUrl: './logout.component.html',
-  styleUrls: ['./logout.component.css']
+  styleUrls: ['./logout.component.scss']
 })
 export class LogoutComponent {
-  constructor(private loginService:LoginService) {
+  constructor(private loginService:LoginSharedService) {
     this.loginService.clearData();
   }
 }

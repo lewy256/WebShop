@@ -1,0 +1,48 @@
+@use '@angular/material' as mat;
+
+.example-full-width {
+  width: 100%;
+}
+
+td {
+  padding-right: 8px;
+}
+.mat-stepper-horizontal {
+  margin-top: 8px;
+}
+
+.mat-mdc-form-field {
+  margin-top: 16px;
+}
+
+.item-center{
+  justify-content: center;
+}
+.card-content{
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+  padding-block: 10px;
+  align-items: center;
+  gap: 15px;
+}
+.product-name{
+  text-overflow: ellipsis;
+  width:80px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.card-actions{
+  width:calc(750px - 50vw);
+  min-width:50%;
+  max-width:100%;
+}
+
+.remove-margin{
+  margin:0;
+}
+
+
+@media screen and (max-width: 950px) {
+  .on-mobile { padding-block: 0 !important }
+}

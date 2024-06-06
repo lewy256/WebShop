@@ -1,1 +1,12 @@
-<p>ship-method works!</p>
+<form [formGroup]="shipFormGroup">
+  <mat-form-field appearance="outline">
+    <mat-label>Ship methods</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let food of foods" [value]="food.value">
+        {{food.viewValue}}
+      </mat-option>
+    </mat-select>
+    <mat-icon matSuffix>local_shipping</mat-icon>
+  </mat-form-field>
+
+</form>

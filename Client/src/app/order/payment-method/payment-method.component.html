@@ -1,1 +1,12 @@
-<p>payment-method works!</p>
+<form [formGroup]="paymentFormGroup">
+  <mat-form-field appearance="outline">
+    <mat-label>Payment methods</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let food of foods" [value]="food.value">
+        {{food.viewValue}}
+      </mat-option>
+    </mat-select>
+    <mat-icon matSuffix>payment</mat-icon>
+  </mat-form-field>
+
+</form>

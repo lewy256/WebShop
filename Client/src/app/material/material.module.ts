@@ -21,6 +21,11 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatStepperModule} from "@angular/material/stepper";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {MatChipsModule} from "@angular/material/chips";
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
+import {MatExpansionModule} from "@angular/material/expansion";
+import {MatDatepickerModule} from "@angular/material/datepicker";
 
 @NgModule({
   declarations: [],
@@ -47,6 +52,11 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     MatCheckboxModule,
     MatStepperModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatChipsModule,
+    MatButtonToggleModule,
+    MatExpansionModule,
+    MatDatepickerModule
   ],
   exports: [
     MatTabsModule,
@@ -69,7 +79,12 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     MatSelectModule,
     MatCheckboxModule,
     MatStepperModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatChipsModule,
+    MatButtonToggleModule,
+    MatExpansionModule,
+    MatDatepickerModule
   ]
 })
 export class MaterialModule { }

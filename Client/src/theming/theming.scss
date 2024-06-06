@@ -1,0 +1,82 @@
+@use '@angular/material' as mat;
+@use 'sass:map';
+@use 'palette.scss';
+
+@import "typography.scss";
+
+@include mat.core();
+
+//override functions
+@function define-light-theme($config) {
+  $theme: mat.define-light-theme($config);
+  $color: map.get($theme, color);
+  $color: map.merge(
+      $color,
+      (
+        background: palette.$light-theme-background-palette,
+        foreground: palette.$light-theme-foreground-palette,
+      )
+  );
+  @return map.merge(
+      $theme,
+      (
+        color: $color,
+      )
+  );
+}
+
+@function define-dark-theme($config) {
+  $theme: mat.define-dark-theme($config);
+  $color: map.get($theme, color);
+  $color: map.merge(
+      $color,
+      (
+        background: palette.$dark-theme-background-palette,
+        foreground: palette.$dark-theme-foreground-palette,
+      )
+  );
+  @return map.merge(
+      $theme,
+      (
+        color: $color,
+      )
+  );
+}
+
+//create palettes
+$light-primary: mat.define-palette(mat.$blue-palette, 700, 100, 900);
+$light-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+$dark-primary: mat.define-palette(mat.$blue-palette,900);
+$dark-accent: mat.define-palette(mat.$pink-palette);
+
+$warn: mat.define-palette(mat.$red-palette);
+
+$app-default-theme: define-light-theme((
+      color: (
+        primary: $light-primary,
+        accent: $light-accent,
+        warn: $warn
+      ),
+      typography: $typography-config,
+));
+
+$app-dark-theme: define-dark-theme((
+      color: (
+        primary: $dark-primary,
+        accent: $dark-accent,
+        warn: $warn
+      ),
+      typography: $typography-config,
+));
+
+
+
+
+
+
+
+
+
+
+

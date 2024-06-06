@@ -272,7 +272,7 @@
                 }
             </remarks>
             <param name="categoryId">The ID of the category for product.</param>
-            <param name="product">The created rproduct information</param>
+            <param name="product">The created product information</param>
             <returns>A newly created product.</returns>
             <response code="201">Returns the newly created item</response>
             <response code="400">If the updated product is null.</response>
@@ -328,6 +328,19 @@
             <summary>
             Returns an Allow header containing the allowable HTTP methods.
             </summary>
+        </member>
+        <member name="M:ProductApi.Controllers.V1.ProductController.GetAllProducts(ProductApi.Shared.Model.ProductDtos.V1.ProductParameters)">
+            <summary>
+            Gets the list of all products.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                GET api/products
+            </remarks>
+            <param name="productParameters">The container holds specific parameters for the product.</param>
+            <returns>A list of products.</returns>
+            <response code="200">Returns the list of products.</response>
         </member>
         <member name="M:ProductApi.Controllers.V1.ReviewController.GetReviewsForProduct(System.Guid,ProductApi.Shared.Model.ReviewDtos.ReviewParameters)">
             <summary>

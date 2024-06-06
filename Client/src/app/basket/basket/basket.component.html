@@ -1,43 +1,45 @@
 <div class="basket-container">
   <mat-card>
-    <mat-card-header>
+    <mat-card-header class="center-content">
       <mat-card-title >
-        Your basket
-        <p *ngIf="!basket.items.length">is empty</p>
+        <h2 *ngIf="basket.items.length" ><b>Your shopping cart</b></h2>
+        <h2 *ngIf="!basket.items.length"><b>Your shopping cart is empty</b></h2>
       </mat-card-title>
     </mat-card-header>
-    <mat-card-content>
-      <div class="responsive-grid ">
-        <mat-list *ngFor="let item of basket?.items" class="card-field">
-          <mat-card-header>
-            <mat-card-title>{{ item.productName }} </mat-card-title>
-            <mat-card-subtitle>{{ item.price | currency }}</mat-card-subtitle>
-          </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content class="card-content" >
+      <div *ngFor="let item of basket?.items;index as i" class="basket-item" >
+
+        <p class="product-name remove-margin">{{i+1}}. {{ item.productName }}</p>
+
+        <div class="centring-image">
+          <img mat-card-image [ngSrc]="item.imageUrl" height="60" width="60" alt="image"/>
+        </div>
 
 
-          <img class="image-size" mat-card-image src="assets/images/neom-El92hmAt91o-unsplash.jpg" alt="image" />
-          <div class="input-margin">
-            <label >Quantity:</label>
-            <input class="input-border" type="number" placeholder="{{ item.quantity }}">
-          </div>
+        <div class="quantity">
+          <p class="remove-margin">Quantity:</p>
+          <input  class="mat-typography" appInputAutosize [minInputWidth]="30" [ngClass]="{'input-background': isDarkTheme}" type="number" placeholder="{{ item.quantity }}">
+        </div>
 
+        <p class="remove-margin">{{ item.price | currency }}</p>
 
-          <mat-card-actions>
-            <button mat-button (click)="deleteBasketItem(item.id)">Delete from basket</button>
+        <mat-divider class="vertical-divider" [vertical]="true"></mat-divider>
 
-          </mat-card-actions>
-          <mat-divider></mat-divider>
-        </mat-list>
+        <button  mat-icon-button class="button-scale remove-margin" (click)="deleteBasketItem(item.id)">
+          <mat-icon >delete</mat-icon>
+        </button>
       </div>
     </mat-card-content>
-    <mat-card-actions *ngIf="basket.items.length">
-      <p >Total price: {{basket.totalPrice|currency}}</p>
+    <mat-divider></mat-divider>
+    <mat-card-actions *ngIf="basket.items.length" class="card-actions">
+      <p></p>
+      <p class="center-content">Total price:&nbsp;<b>{{basket.totalPrice|currency}}</b></p>
     </mat-card-actions>
-    <mat-card-footer>
-
+    <mat-divider></mat-divider>
+    <mat-card-footer class="center-content">
       <button *ngIf="basket.items.length" mat-button (click)="deleteBasket()" >Clear basket</button>
       <button *ngIf="basket.items.length" routerLink="/order" mat-button (click)="checkoutBasket()" >Checkout basket</button>
-
     </mat-card-footer>
 
   </mat-card>

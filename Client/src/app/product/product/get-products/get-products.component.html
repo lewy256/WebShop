@@ -1,48 +1,140 @@
-<mat-drawer-container class="product-container">
-  <mat-drawer mode="side" opened class="filter-content" style="max-height: 300px">
-    <p>
-      <mat-form-field appearance="outline"  floatLabel="always">
-        <mat-label>Price from</mat-label>
-        <input matInput type="number" class="example-right-align" placeholder="0">
-        <span matTextPrefix>$&nbsp;</span>
-      </mat-form-field>
-    </p>
-    <p>
-      <mat-form-field appearance="outline" floatLabel="always">
-        <mat-label>Price to</mat-label>
-        <input matInput type="number" class="example-right-align" placeholder="0">
-        <span matTextPrefix>$&nbsp;</span>
-      </mat-form-field>
-    </p>
+<div *ngIf="products.length>0"  style="max-width: 100%; padding-block: 24px;display: flex;flex-flow: row wrap;justify-content: center">
+  <div style="width: 320px;padding-right:20px;background-color: transparent;">
 
-  </mat-drawer>
-  <mat-drawer-content>
-    <div class="responsive-grid">
-      <mat-card *ngFor="let product of products()" matSort matSortStart="desc">
-        <mat-card-header>
-          <mat-card-title>{{ product.productName }} </mat-card-title>
-          <mat-card-subtitle>{{ product.price}}$</mat-card-subtitle>
-        </mat-card-header>
-        <br />
-        <div style="display: flex; max-width: max-content;">
-          <img mat-card-image src="assets/images/neom-El92hmAt91o-unsplash.jpg" style="padding-right: 10px"  alt="image" />
-          <img mat-card-image src="assets/images/neom-El92hmAt91o-unsplash.jpg"  alt="image" />
+    <app-filter [ngClass]="{'remove-filter': !test}"  (isFilterClose)="closeFilter($event)">
+    </app-filter>
+
+  </div>
+
+  <div style="display:grid;grid-gap: 24px;width: 950px;">
+      <div style="display: flex;flex-flow: row wrap;">
+        <mat-card style="display: flex;flex-direction: row;align-items: center;box-shadow: none;">
+          <button mat-flat-button [matMenuTriggerFor]="matMenu">Sorting</button>
+          <mat-menu #matMenu>
+            <ng-template matMenuContent>
+              <button mat-menu-item (click)="sortProductsAsc()">ascending</button>
+              <button mat-menu-item (click)="sortProductsDesc()">descending</button>
+            </ng-template>
+
+          </mat-menu>
+          <button (click)="closeFilter(true)" mat-flat-button class="mat-display-large display-button-filter">Filtering</button>
+        </mat-card>
+        <div style="flex-grow: 1" >
+          <mat-paginator [pageSize]="itemsNumber"
+                         [pageSizeOptions]="[1, 2, 20,30]"
+                         (page)="change($event)"
+                         [showFirstLastButtons]="true"
+                         [length]="1">
+          </mat-paginator>
+        </div>
+      </div>
+
+      <mat-card *ngFor="let product of products" style="display: grid;grid-template-columns:repeat(auto-fill, 300px);padding: 10px;gap: 15px;justify-content: center;">
+
+        <img (click)="openDialog(product.imageUris)" mat-card-image [ngSrc]="product.imageUris[0]" height="300" width="300" style="width: 300px;height: 300px;  object-fit: cover;" alt="image"/>
+
+
+
+        <div style="width: 300px;display: flex;flex-direction: row;">
+          <div style="display: flex;flex-direction: column;width: 100%;">
+            <mat-divider class="second-divider"></mat-divider>
+
+            <h2>{{ product.productName }} </h2>
+            <button mat-button   routerLink="/product/review" style="width: fit-content;padding-inline:0;padding-top: 10px;padding-bottom: 20px;">
+              <div style="display: flex;flex-direction: row;align-items: center;">
+                <p style="padding-right:5px;margin: 0;">4.84</p>
+
+                <mat-icon style="color: orange;">star</mat-icon>
+                <mat-icon style="color: orange">star</mat-icon>
+                <mat-icon style="color: orange">star</mat-icon>
+                <mat-icon style="color: orange">star</mat-icon>
+                <mat-icon style="color: orange">star_half</mat-icon>
+                <p style="padding-left:5px;margin: 0;">44 reviews</p>
+              </div>
+            </button>
+
+            <div style="padding-top: 15px;">
+              <h4>Size: <b>{{product.size}}</b><br/></h4>
+              <h4>Color: <b>{{product.color}}</b><br/></h4>
+              <h4>Weight: <b>{{product.weight}}</b></h4>
+              <mat-expansion-panel style="box-shadow: none;width: fit-content;" hideToggle>
+                <mat-expansion-panel-header style="padding: 0;">
+                  <div style="display: flex;align-items: center;">
+                    <h4 style="margin: 0;">Description</h4>
+                    <mat-icon>expand_more</mat-icon>
+                  </div>
+
+                </mat-expansion-panel-header>
+
+                <ng-template matExpansionPanelContent>
+                  {{ product.description }}
+                </ng-template>
+
+              </mat-expansion-panel>
+            </div>
+
+          </div>
+
+          <mat-divider class="third-divider" style="height: 100%;flex-grow: 1;" [vertical]="true"></mat-divider>
+
         </div>
 
-        <mat-card-content>
-          <br />
-          <p>
-            {{ product.description }}
-          </p>
-        </mat-card-content>
-        <mat-card-actions>
-          <button (click)="addToBasket(product)" mat-button>Add to basket</button>
-          <button mat-button>Reviews</button>
-          <button mat-button>Price history</button>
-        </mat-card-actions>
+        <div style="display:flex;flex-direction: column;width: 300px">
+
+          <mat-divider class="first-divider" style="width: 100%"></mat-divider>
+          <div style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding-top: 10px;">
+            <h1 style="margin: 0"><b>{{ product.price}} $</b></h1>
+            <button mat-button   routerLink="/product/price-history" (click)="setProductId(product.id)" >
+              <div style="display: flex;flex-direction: row;align-items: center;gap:5px;">
+                <p style="margin: 0;">Price history</p>
+                <mat-icon> bar_chart</mat-icon>
+              </div>
+
+            </button>
+
+          </div>
+
+          <div style="padding-top: 30px;">
+            <h3>Company: Test</h3>
+            <h3>Delivery time: {{deliveryTime.toISOString().slice(0, 10)}}</h3>
+            <h3>Stock: {{product.stock}}</h3>
+          </div>
+
+
+          <div style="display: flex;flex-direction: row;align-items: flex-end;flex-grow: 1;">
+            <div style="padding-bottom: 5px;">
+              <button mat-flat-button color="accent" (click)="addToBasket(product)">
+                <div style="display: flex;flex-direction: row;align-items: center;gap: 10px;">
+                  <p style="margin: 0;">Add to shopping cart</p>
+                  <mat-icon>add_shopping_cart</mat-icon>
+                </div>
+              </button>
+            </div>
+
+            <div style="flex-grow: 1;display: flex;justify-content: center;align-items: center;">
+              <button mat-icon-button style="">
+                <mat-icon>favorite_border</mat-icon>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
       </mat-card>
-    </div>
-    <mat-paginator [pageSize]="2" [pageSizeOptions]="[2, 10, 20,30]" #paginator>
-    </mat-paginator>
-  </mat-drawer-content>
-</mat-drawer-container>
+
+      <div style="display: flex;justify-content: center;">
+        <mat-paginator style="width: 300px;background-color: transparent;" appPaginatorStyle [renderButtonsNumber]="1"
+                       [length]="20"
+                       [appCustomLength]="20"
+                       [pageSize]="3"
+                       [pageSizeOptions]="[3, 5, 10, 20]"
+                       [showFirstLastButtons]="true">
+        </mat-paginator>
+      </div>
+
+
+  </div>
+</div>
+
+

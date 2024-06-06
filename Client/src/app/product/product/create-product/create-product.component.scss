@@ -1,0 +1,58 @@
+.login-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: 100%;
+  overflow-y:auto;
+  height: 100vh;
+  /*background-image: url(src/assets/images/neom-El92hmAt91o-unsplash.jpg);*/
+
+}
+.login-field{
+  display: flex;
+  flex-direction: column;
+
+}
+.error-text{
+  color: red;
+  white-space: pre-wrap;
+}
+
+.form-card{
+  align-items: center;
+}
+
+.footer-card{
+  margin-top: 20px
+}
+
+.input_fileupload--hidden{
+  display:none;
+}
+
+.input-autocomplete-container{
+  display: flex;
+}
+
+.input-product-name{
+  width: 60%
+}
+
+.input-category-name{
+  align-items: end;
+  margin-left: 2px;
+  width: 40%;
+}
+
+.file-input {
+  display: none;
+}
+
+.upload-button{
+  box-shadow: none !important;
+}
+
+.text-area{
+  width: 100%;
+}

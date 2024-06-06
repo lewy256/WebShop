@@ -55,8 +55,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".azure", ".azure", "{4B123B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipelines", "pipelines", "{C454785B-883C-4922-B3EF-558C36E1E9FD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".images", ".images", "{89E643CE-70A5-425C-A549-365BC6362AFA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderApi.UnitTests", "Order\tests\OrderApi.UnitTests\OrderApi.UnitTests.csproj", "{2752533E-61DC-4B2C-8922-A485CAB45EF2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReverseProxy", "ReverseProxy", "{6D8D91DD-09B3-4DA2-959B-D9AEC7857B53}"
@@ -71,11 +69,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasketApi", "Basket\src\Bas
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3B620900-CA2E-4E54-B15B-D802FC4401C5}"
 	ProjectSection(SolutionItems) = preProject
-		.azure\pipelines\BasketApiTests.yml = .azure\pipelines\BasketApiTests.yml
-		.azure\pipelines\ClientTests.yml = .azure\pipelines\ClientTests.yml
-		.azure\pipelines\IdentityApiTests.yml = .azure\pipelines\IdentityApiTests.yml
-		.azure\pipelines\OrderApiTests.yml = .azure\pipelines\OrderApiTests.yml
-		.azure\pipelines\ProductApiTests.yml = .azure\pipelines\ProductApiTests.yml
+		.azure\pipelines\tests\BasketApiTests.yml = .azure\pipelines\tests\BasketApiTests.yml
+		.azure\pipelines\tests\ClientTests.yml = .azure\pipelines\tests\ClientTests.yml
+		.azure\pipelines\tests\IdentityApiTests.yml = .azure\pipelines\tests\IdentityApiTests.yml
+		.azure\pipelines\tests\OrderApiTests.yml = .azure\pipelines\tests\OrderApiTests.yml
+		.azure\pipelines\tests\ProductApiTests.yml = .azure\pipelines\tests\ProductApiTests.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{591B416A-9675-430C-989B-E7B27F7536C8}"
@@ -92,6 +90,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "manifests", "manifests", "{
 	ProjectSection(SolutionItems) = preProject
 		.azure\pipelines\deployment\manifests\deployment.yml = .azure\pipelines\deployment\manifests\deployment.yml
 		.azure\pipelines\deployment\manifests\service.yml = .azure\pipelines\deployment\manifests\service.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{1E7FB68A-0C8F-4075-810D-483063F5DF47}"
+	ProjectSection(SolutionItems) = preProject
+		images\1.png = images\1.png
+		images\2.png = images\2.png
+		images\3.png = images\3.png
+		images\4.png = images\4.png
+		images\5.png = images\5.png
 	EndProjectSection
 EndProject
 Global

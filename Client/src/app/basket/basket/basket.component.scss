@@ -1,0 +1,68 @@
+@use '@angular/material' as mat;
+@import "../../../theming/palette.scss";
+
+.basket-container{
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  height: 100%;
+  padding-block: 24px;
+}
+
+.input-background{
+  background-color: map-get($dark-theme-background-palette,input);
+  color: map-get($dark-theme-foreground-palette,base);
+}
+
+.center-content{
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.card-content{
+  margin: 5px;
+}
+
+.basket-item{
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+  padding-block: 10px;
+  align-items: center;
+  gap: 15px;
+}
+
+.product-name{
+  text-overflow: ellipsis;
+  width:80px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.quantity{
+  display: inline-flex;
+
+}
+
+.vertical-divider{
+  padding-top: 50px;
+}
+
+.card-actions{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.remove-margin{
+  margin:0;
+}
+
+.button-scale{
+  scale: 0.8;
+}
+
+.centring-image{
+  display: flex;
+  justify-content: center;
+}
