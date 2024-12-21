@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OrderApi.Models;
+using OrderApi.Infrastructure;
 using Serilog;
 
 namespace OrderApi.Extensions;

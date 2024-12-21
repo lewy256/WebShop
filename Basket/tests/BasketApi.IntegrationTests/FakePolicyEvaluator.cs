@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Contracts.Roles;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +13,7 @@ namespace BasketApi.IntegrationTests {
             claimsPrincipal.AddIdentity(new ClaimsIdentity([
                 new Claim(ClaimTypes.NameIdentifier, "39b74f0a-b286-4d7a-bdfd-56c81da8b895"),
                 new Claim(ClaimTypes.Name, "lewy256"),
-                new Claim(ClaimTypes.Role, "Administrator")
+                new Claim(ClaimTypes.Role, UserRole.Customer)
             ]));
 
             var ticket = new AuthenticationTicket(claimsPrincipal, "Test");

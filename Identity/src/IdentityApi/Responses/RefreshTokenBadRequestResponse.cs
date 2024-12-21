@@ -1,8 +1,10 @@
-﻿namespace IdentityApi.Responses;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class RefreshTokenBadRequestResponse : ApiBaseResponse {
-    public RefreshTokenBadRequestResponse()
-     : base(StatusCodes.Status400BadRequest,
-         "Invalid client request. The tokenDto has some invalid values.") {
+namespace IdentityApi.Responses;
+
+public class RefreshTokenBadRequestResponse : ProblemDetails {
+    public RefreshTokenBadRequestResponse() {
+        Detail = "Invalid client request. The tokenDto has some invalid values.";
+        Status = StatusCodes.Status400BadRequest;
     }
 }

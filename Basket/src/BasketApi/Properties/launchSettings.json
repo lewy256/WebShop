@@ -2,13 +2,13 @@
   "profiles": {
     "BasketApi": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7199;http://localhost:5000"
+      "applicationUrl": "https://localhost:7199;http://basketapi:3180"
     },
     "IIS Express": {
       "commandName": "IISExpress",

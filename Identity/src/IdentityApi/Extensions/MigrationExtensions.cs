@@ -1,4 +1,4 @@
-﻿using IdentityApi.Models;
+﻿using IdentityApi.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 

@@ -365,7 +365,7 @@ FodyWeavers.xsd
 # Clear Angular cache
 Client/.angular/
 
-# Delete WebStorm files
+# Delete files
 Client/.idea/
 /Client2
 /AngularProject1
@@ -378,3 +378,4 @@ Client/.idea/
 /Product/tests/ProductApi.IntegrationTests/Properties/launchSettings.json
 /Blob/src/BlobApi/appsettings.json
 /ApiGateway/ApiGateway/appsettings.json
+.env

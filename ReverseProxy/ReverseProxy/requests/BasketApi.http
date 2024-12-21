@@ -1,0 +1,34 @@
+@HostAddress = http://localhost:5184
+@JWT=token
+
+###
+
+GET {{HostAddress}}/api/basket
+Authorization: Bearer {{JWT}}
+
+###
+
+POST {{HostAddress}}/api/basket
+Content-Type: application/json
+Authorization: Bearer {{JWT}}
+
+{
+  "items": [
+    {
+      "id": "uuid",
+      "name": "string",
+      "imageUrl": "string",
+      "quantity": "integer",
+      "price": "decimal"
+    }
+  ]
+}
+
+###
+
+DELETE {{HostAddress}}/api/basket
+Authorization: Bearer {{JWT}}
+
+###
+
+OPTIONS {{HostAddress}}/api/basket

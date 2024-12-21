@@ -4,8 +4,10 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OrderApi.Models;
-using OrderApi.Shared;
+using OrderApi.Entities;
+using OrderApi.Infrastructure;
+using OrderApi.Shared.AddressDtos;
+using System.Security.Claims;
 
 namespace OrderApi.Features.Addresses;
 
@@ -14,13 +16,21 @@ public static class GetAddresses {
 
     internal sealed class Handler : IRequestHandler<Query, AddressesGetAllResponse> {
         private readonly OrderContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public Handler(OrderContext context) {
+        public Handler(OrderContext context, IHttpContextAccessor httpContextAccessor) {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async ValueTask<AddressesGetAllResponse> Handle(Query request, CancellationToken cancellationToken) {
-            var addressDtos = await _context.Address.AsNoTracking().ProjectToType<AddressDto>().ToListAsync();
+            var userId = new Guid(_httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+            var addressDtos = await _context.Address
+                .AsNoTracking()
+                .Where(x => x.CustomerId.Equals(userId))
+                .ProjectToType<AddressDto>()
+                .ToListAsync();
 
             return new AddressesGetAllResponse(addressDtos);
         }
@@ -30,7 +40,7 @@ public static class GetAddresses {
 public class GetAddressesEndpoint : ICarterModule {
     public void AddRoutes(IEndpointRouteBuilder app) {
         app.MapGet("api/addresses",
-         [Authorize(Roles = "Administrator, Customer")]
+        [Authorize(Policy = "RequireMultipleRoles")]
         [ProducesResponseType(typeof(IEnumerable<AddressDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         async (ISender sender) => {

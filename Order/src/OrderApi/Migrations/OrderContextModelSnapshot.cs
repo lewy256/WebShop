@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OrderApi.Models;
+using OrderApi.Infrastructure;
 
 #nullable disable
 
@@ -17,12 +17,182 @@ namespace OrderApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("OrderApi.Models.Address", b =>
+            modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.InboxState", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime?>("Consumed")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ConsumerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Delivered")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpirationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastSequenceNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("LockId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ReceiveCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Received")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Delivered");
+
+                    b.ToTable("InboxState");
+                });
+
+            modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.OutboxMessage", b =>
+                {
+                    b.Property<long>("SequenceNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SequenceNumber"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<Guid?>("ConversationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CorrelationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DestinationAddress")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("EnqueueTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpirationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FaultAddress")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Headers")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("InboxConsumerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("InboxMessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("InitiatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("OutboxId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("RequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ResponseAddress")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("SentTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SourceAddress")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("SequenceNumber");
+
+                    b.HasIndex("EnqueueTime");
+
+                    b.HasIndex("ExpirationTime");
+
+                    b.HasIndex("OutboxId", "SequenceNumber")
+                        .IsUnique()
+                        .HasFilter("[OutboxId] IS NOT NULL");
+
+                    b.HasIndex("InboxMessageId", "InboxConsumerId", "SequenceNumber")
+                        .IsUnique()
+                        .HasFilter("[InboxMessageId] IS NOT NULL AND [InboxConsumerId] IS NOT NULL");
+
+                    b.ToTable("OutboxMessage");
+                });
+
+            modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.OutboxState", b =>
+                {
+                    b.Property<Guid>("OutboxId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Delivered")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastSequenceNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("LockId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("OutboxId");
+
+                    b.HasIndex("Created");
+
+                    b.ToTable("OutboxState");
+                });
+
+            modelBuilder.Entity("OrderApi.Entities.Address", b =>
                 {
                     b.Property<int>("AddressId")
                         .ValueGeneratedOnAdd()
@@ -62,7 +232,7 @@ namespace OrderApi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Phone")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -79,7 +249,7 @@ namespace OrderApi.Migrations
                     b.ToTable("Address");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.Coupon", b =>
+            modelBuilder.Entity("OrderApi.Entities.Coupon", b =>
                 {
                     b.Property<int>("CouponId")
                         .ValueGeneratedOnAdd()
@@ -87,25 +257,35 @@ namespace OrderApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CouponId"));
 
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxUsage")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MinimumOrderAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UsedCount")
+                        .HasColumnType("int");
 
                     b.HasKey("CouponId");
 
                     b.ToTable("Coupon");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.Order", b =>
+            modelBuilder.Entity("OrderApi.Entities.Order", b =>
                 {
                     b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
@@ -122,6 +302,9 @@ namespace OrderApi.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
@@ -137,7 +320,7 @@ namespace OrderApi.Migrations
                     b.Property<int>("ShipMethodId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalPrice")
+                    b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OrderId");
@@ -153,7 +336,7 @@ namespace OrderApi.Migrations
                     b.ToTable("Order");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.OrderItem", b =>
+            modelBuilder.Entity("OrderApi.Entities.OrderItem", b =>
                 {
                     b.Property<int>("OrderItemId")
                         .ValueGeneratedOnAdd()
@@ -164,14 +347,18 @@ namespace OrderApi.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OrderItemId");
 
@@ -180,7 +367,7 @@ namespace OrderApi.Migrations
                     b.ToTable("OrderItem");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.PaymentMethod", b =>
+            modelBuilder.Entity("OrderApi.Entities.PaymentMethod", b =>
                 {
                     b.Property<int>("PaymentMethodId")
                         .ValueGeneratedOnAdd()
@@ -198,7 +385,7 @@ namespace OrderApi.Migrations
                     b.ToTable("PaymentMethod");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.ShipMethod", b =>
+            modelBuilder.Entity("OrderApi.Entities.ShipMethod", b =>
                 {
                     b.Property<int>("ShipMethodId")
                         .ValueGeneratedOnAdd()
@@ -206,13 +393,9 @@ namespace OrderApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShipMethodId"));
 
-                    b.Property<DateTime>("DeliveryTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -222,7 +405,7 @@ namespace OrderApi.Migrations
                     b.ToTable("ShipMethod");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.SpecOrderStatus", b =>
+            modelBuilder.Entity("OrderApi.Entities.SpecOrderStatus", b =>
                 {
                     b.Property<int>("SpecOrderStatusId")
                         .ValueGeneratedOnAdd()
@@ -248,7 +431,7 @@ namespace OrderApi.Migrations
                     b.ToTable("SpecOrderStatus");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.Status", b =>
+            modelBuilder.Entity("OrderApi.Entities.Status", b =>
                 {
                     b.Property<int>("StatusId")
                         .ValueGeneratedOnAdd()
@@ -266,23 +449,35 @@ namespace OrderApi.Migrations
                     b.ToTable("Status");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.Order", b =>
+            modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.OutboxMessage", b =>
                 {
-                    b.HasOne("OrderApi.Models.Address", "Address")
+                    b.HasOne("MassTransit.EntityFrameworkCoreIntegration.OutboxState", null)
+                        .WithMany()
+                        .HasForeignKey("OutboxId");
+
+                    b.HasOne("MassTransit.EntityFrameworkCoreIntegration.InboxState", null)
+                        .WithMany()
+                        .HasForeignKey("InboxMessageId", "InboxConsumerId")
+                        .HasPrincipalKey("MessageId", "ConsumerId");
+                });
+
+            modelBuilder.Entity("OrderApi.Entities.Order", b =>
+                {
+                    b.HasOne("OrderApi.Entities.Address", "Address")
                         .WithMany("Order")
                         .HasForeignKey("AddressId")
                         .IsRequired();
 
-                    b.HasOne("OrderApi.Models.Coupon", "Coupon")
+                    b.HasOne("OrderApi.Entities.Coupon", "Coupon")
                         .WithMany("Order")
                         .HasForeignKey("CouponId");
 
-                    b.HasOne("OrderApi.Models.PaymentMethod", "PaymentMethod")
+                    b.HasOne("OrderApi.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany("Order")
                         .HasForeignKey("PaymentMethodId")
                         .IsRequired();
 
-                    b.HasOne("OrderApi.Models.ShipMethod", "ShipMethod")
+                    b.HasOne("OrderApi.Entities.ShipMethod", "ShipMethod")
                         .WithMany("Order")
                         .HasForeignKey("ShipMethodId")
                         .IsRequired();
@@ -296,9 +491,9 @@ namespace OrderApi.Migrations
                     b.Navigation("ShipMethod");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.OrderItem", b =>
+            modelBuilder.Entity("OrderApi.Entities.OrderItem", b =>
                 {
-                    b.HasOne("OrderApi.Models.Order", "Order")
+                    b.HasOne("OrderApi.Entities.Order", "Order")
                         .WithMany("OrderItem")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -307,15 +502,15 @@ namespace OrderApi.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.SpecOrderStatus", b =>
+            modelBuilder.Entity("OrderApi.Entities.SpecOrderStatus", b =>
                 {
-                    b.HasOne("OrderApi.Models.Order", "Order")
+                    b.HasOne("OrderApi.Entities.Order", "Order")
                         .WithMany("SpecOrderStatus")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OrderApi.Models.Status", "Status")
+                    b.HasOne("OrderApi.Entities.Status", "Status")
                         .WithMany("SpecOrderStatus")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -326,34 +521,34 @@ namespace OrderApi.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.Address", b =>
+            modelBuilder.Entity("OrderApi.Entities.Address", b =>
                 {
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.Coupon", b =>
+            modelBuilder.Entity("OrderApi.Entities.Coupon", b =>
                 {
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.Order", b =>
+            modelBuilder.Entity("OrderApi.Entities.Order", b =>
                 {
                     b.Navigation("OrderItem");
 
                     b.Navigation("SpecOrderStatus");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.PaymentMethod", b =>
+            modelBuilder.Entity("OrderApi.Entities.PaymentMethod", b =>
                 {
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.ShipMethod", b =>
+            modelBuilder.Entity("OrderApi.Entities.ShipMethod", b =>
                 {
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("OrderApi.Models.Status", b =>
+            modelBuilder.Entity("OrderApi.Entities.Status", b =>
                 {
                     b.Navigation("SpecOrderStatus");
                 });

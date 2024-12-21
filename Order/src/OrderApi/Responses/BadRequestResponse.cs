@@ -1,7 +1,10 @@
-﻿namespace OrderApi.Responses;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class BadRequestResponse : ApiBaseResponse {
-    public BadRequestResponse(string message = "Object is null.")
-       : base(StatusCodes.Status400BadRequest, message) {
+namespace OrderApi.Responses;
+
+public class BadRequestResponse : ProblemDetails {
+    public BadRequestResponse() {
+        Detail = "patchDoc object sent from client is null.";
+        Status = StatusCodes.Status400BadRequest;
     }
 }

@@ -1,0 +1,239 @@
+@HostAddress = http://localhost:3150
+@JWT=token
+
+### Categories
+@categoryId=uuid
+
+GET {{HostAddress}}/api/categories
+Accept: application/json
+
+###
+
+OPTIONS {{HostAddress}}/api/categories
+
+###
+
+POST {{HostAddress}}/api/categories
+Content-Type: application/json
+Authorization: Bearer {{JWT}}
+
+{        
+    "categoryName ": "string"   
+}
+
+###
+
+DELETE {{HostAddress}}/api/categories/{{categoryId}}
+Authorization: Bearer {{JWT}}
+
+###
+
+GET {{HostAddress}}/api/categories/{{categoryId}}
+
+###
+
+PUT {{HostAddress}}/api/categories/{{categoryId}}
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{        
+    "categoryName": "string"   
+}
+
+### Files
+@productId=uuid
+@fileId=uuid
+
+POST {{HostAddress}}/api/products/{{productId}}/files
+Authorization: Bearer {{JWT}}
+Content-Type: image/png
+
+< ./path/to/image1.png
+
+###
+
+DELETE {{HostAddress}}/api/products/{{productId}}/files/collection/({{fileId}})
+Authorization: Bearer {{JWT}}
+
+### Price histories
+@productId=uuid
+
+GET {{HostAddress}}/api/products/{{productId}}/price-histories
+Accept: application/json
+
+###
+
+OPTIONS {{HostAddress}}/api/products/{{productId}}/price-histories
+###
+
+POST {{HostAddress}}/api/products/{productId}/price-histories
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+  "startDate": "dateTime",
+  "endDate": "dateTime",
+  "priceValue": "deciaml"
+}
+
+###
+
+@priceHistoryId=uuid
+@productId=uuid
+DELETE {{HostAddress}}/api/products/{{productId}}/price-histories/{{priceHistoryId}}
+Authorization: Bearer {{JWT}}
+
+###
+
+GET {{HostAddress}}/api/products/{{productId}}/price-histories/{{priceHistoryId}}
+
+###
+
+PUT {{HostAddress}}/api/products/{{productId}}/price-histories/{{priceHistoryId}}
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+  "startDate": "dateTime",
+  "endDate": "dateTime",
+  "priceValue": "deciaml"
+}
+
+### Products
+@categoryId=uuid
+@productId=uuid
+
+GET {{HostAddress}}/api/categories/{categoryId}/products
+Accept: application/json
+
+###
+
+OPTIONS {{HostAddress}}/api/categories/{{categoryId}}/products
+
+###
+
+POST {{HostAddress}}/api/categories/{categoryId}/products
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+  "productName": "string",
+  "serialNumber": "string",
+  "price": "decimal",
+  "stock": "integer",
+  "description": "string",
+  "colors": "string",
+  "weight": "long",
+  "measurements": "string",
+  "dispatchTime": "timeSpan",
+  "brand": "string"
+}
+
+###
+
+DELETE {{HostAddress}}/api/categories/{{categoryId}}/products/{{productId}}
+Authorization: Bearer {{JWT}}
+
+###
+
+GET {{HostAddress}}/api/categories/{{categoryId}}/products/{{productId}}
+
+###
+
+PUT {{HostAddress}}/api/categories/{{categoryId}}/products/{{productId}}
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+  "productName": "string",
+  "serialNumber": "string",
+  "price": "decimal",
+  "stock": "integer",
+  "description": "string",
+  "colors": "string",
+  "weight": "long",
+  "measurements": "string",
+  "dispatchTime": "timeSpan",
+  "brand": "string",
+  "files": [
+    {
+      "id": "uuid",
+      "uri": "string"
+    }
+  ]
+}
+
+###
+
+GET {{HostAddress}}/api/products
+
+### Reviews
+@reviewId=uuid
+@productId=uuid
+
+GET {{@HostAddress}}/api/products/{productId}/reviews
+Accept: application/json
+
+###
+
+OPTIONS {{HostAddress}}/api/products/{{productId}}/reviews
+
+###
+
+POST {{HostAddress}}/api/products/{productId}/reviews
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+    "description": "string"
+    "rating": "integer"
+}
+
+###
+
+DELETE {{HostAddress}}/api/products/{{productId}}/reviews/{{reviewId}}
+Authorization: Bearer {{JWT}}
+
+###
+
+GET {{HostAddress}}/api/products/{{productId}}/reviews/{{reviewId}}
+
+###
+
+PUT {{HostAddress}}/api/products/{{productId}}/reviews/{{reviewId}}
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+    "description": "string"
+    "rating": "integer"
+}
+
+### Root
+
+GET {{HostAddress}}/api
+Accept: application/vnd.lewy256.apiroot+json
+
+### Wishlists
+@productId=uuid
+@itemId=uuid
+
+GET {{HostAddress}}/api/wishlists
+Accept: application/json
+Authorization: Bearer {{JWT}}
+
+###
+
+DELETE {{HostAddress}}/api/wishlists/{{itemId}}
+Authorization: Bearer {{JWT}}
+
+###
+
+POST {{HostAddress}}/api/wishlists/{{productId}}
+Authorization: Bearer {{JWT}}
+
+###
+
+
+
+

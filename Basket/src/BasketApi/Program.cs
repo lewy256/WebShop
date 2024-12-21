@@ -1,5 +1,6 @@
 using BasketApi.Endpoints;
 using BasketApi.Extensions;
+using BasketApi.Infrastructure;
 using FluentValidation;
 using HealthChecks.UI.Client;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
@@ -10,25 +11,28 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddAzureAppConfiguration(options => {
-    options.Connect(builder.Configuration.GetValue<string>("AZURECONFIGURATION"))
+    options.Connect(builder.Configuration.GetValue<string>("AZURE_APP_CONFIGURATION"))
         .Select(KeyFilter.Any, nameof(BasketApi) + builder.Environment.EnvironmentName);
 });
 
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console());
 
-builder.Services.AddHealthChecks()
-    .AddRedis(builder.Configuration.GetConnectionString("Redis"));
-
-builder.Services.AddHttpContextAccessor();
+builder.Services.ConfigureHealthChecks(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.ConfigureProblemDetails();
+
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.ConfigureCors();
 
-builder.Services.AddStackExchangeRedisCache(options => {
-    options.Configuration = builder.Configuration.GetConnectionString("Redis");
-});
+builder.Services.ConfigureAuthorization();
+
+builder.Services.ConfigureRedis(builder.Configuration);
 
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
@@ -38,15 +42,15 @@ builder.Services.ConfigureMassTransit(builder.Configuration);
 
 builder.Services.ConfigureSwagger();
 
-builder.Services.AddFluentValidationRulesToSwagger();
-
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
 builder.Services.ConfigureJWT(builder.Configuration);
+
+builder.Services.AddFluentValidationRulesToSwagger();
 
 var app = builder.Build();
 
-app.UseCustomExceptionHandler();
+app.UseExceptionHandler();
+
+app.UseStatusCodePages();
 
 app.UseCors("CorsPolicy");
 

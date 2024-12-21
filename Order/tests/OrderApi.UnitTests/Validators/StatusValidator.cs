@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using FluentValidation.Validators;
 using Microsoft.EntityFrameworkCore.Metadata;
+using OrderApi.Entities;
 using OrderApi.Features.Statuses;
-using OrderApi.Models;
-using OrderApi.Models.Configurations;
+using OrderApi.Infrastructure.Configurations;
 using Xunit;
 
 namespace OrderApi.UnitTests.Validators;

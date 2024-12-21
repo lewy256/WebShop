@@ -1,8 +1,10 @@
-﻿namespace IdentityApi.Responses;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class NotFoundResponse : ApiBaseResponse {
-    public NotFoundResponse(Guid id, string entity)
-       : base(StatusCodes.Status404NotFound,
-           $"The {entity} with id: {id} doesn't exist in the database.") {
+namespace IdentityApi.Responses;
+
+public class NotFoundResponse : ProblemDetails {
+    public NotFoundResponse(Guid id, string entity) {
+        Detail = $"The {entity} with id: {id} doesn't exist in the database.";
+        Status = StatusCodes.Status404NotFound;
     }
 }

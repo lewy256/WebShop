@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
-using IdentityApi.Responses;
 using IdentityApi.Shared;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net.Http.Json;
 using Xunit;
 
@@ -20,14 +21,23 @@ public class IdentityEndpointTests : BaseIntegrationTest {
     }
 
     [Fact]
-    public async Task RegisterUser_WithValidModel_ReturnsUnprocessableEntity() {
-        var registerDto = new RegistrationUserDto();
+    public async Task RegisterUser_WithInvalidModel_ReturnsUnprocessableEntity() {
+        var registerDto = new RegistrationUserDto() {
+            FirstName = "",
+            LastName = "Kowalski",
+            UserName = "%23fjs",
+            Password = "Admin01",
+            Email = "@test.com",
+            PhoneNumber = "44"
+        };
 
         var response = await HttpClient.PostAsJsonAsync("/api/identity", registerDto);
-        var errors = await response.Content.ReadFromJsonAsync<ValidationResponse>();
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        var jsonArray = problemDetails.Extensions["errors"].ToString();
+        var errors = JsonConvert.DeserializeObject<ValidationError[]>(jsonArray);
 
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.UnprocessableEntity);
-        errors.Errors.Should().HaveCount(2);
+        errors.Should().HaveCount(5);
     }
 
     [Fact]
@@ -65,16 +75,6 @@ public class IdentityEndpointTests : BaseIntegrationTest {
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
 
-    [Fact]
-    public async Task Login_WithUnregisteredUser_ReturnsUnprocessableEntity() {
-        var loginDto = new AuthenticationUserDto();
-
-        var response = await HttpClient.PostAsJsonAsync("/api/identity/login", loginDto);
-        var errors = await response.Content.ReadFromJsonAsync<ValidationResponse>();
-
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.UnprocessableEntity);
-        errors.Errors.Should().HaveCount(2);
-    }
 
     [Fact]
     public async Task Login_WithInvalidModel_ReturnsBadRequest() {

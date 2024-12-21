@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using OrderApi.Models;
+using OrderApi.Infrastructure;
 using Respawn;
 using Testcontainers.MsSql;
 using Xunit;
@@ -33,8 +33,6 @@ public class OrderApiFactory : WebApplicationFactory<Program>, IAsyncLifetime {
 
             services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
         });
-
-        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
     }
 
 

@@ -1,8 +1,8 @@
 ﻿namespace OrderApi.Shared;
 
 public record OrderItemDto {
-    public int OrderItemId { get; init; }
-    public decimal Price { get; init; }
-    public int Quantity { get; init; }
-    public Guid ProductId { get; init; }
+    public Guid ProductId { get; set; }
+    public string ProductName { get; set; }
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
 }

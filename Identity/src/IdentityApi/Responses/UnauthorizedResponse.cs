@@ -1,8 +1,10 @@
-﻿namespace IdentityApi.Responses;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class UnauthorizedResponse : ApiBaseResponse {
-    public UnauthorizedResponse()
-        : base(StatusCodes.Status401Unauthorized,
-            "Authentication failed. Wrong user name or password.") {
+namespace IdentityApi.Responses;
+
+public class UnauthorizedResponse : ProblemDetails {
+    public UnauthorizedResponse() {
+        Detail = "Authentication failed. Wrong user name or password.";
+        Status = StatusCodes.Status401Unauthorized;
     }
 }

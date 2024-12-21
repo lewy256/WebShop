@@ -7,40 +7,65 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
-using OrderApi.Contracts;
-using OrderApi.Models;
+using OrderApi.Entities;
+using OrderApi.Infrastructure;
 using OrderApi.Responses;
 using OrderApi.Shared;
+using OrderApi.Shared.AddressDtos;
+using System.Security.Claims;
 
 namespace OrderApi.Features.Addresses;
 
 public static class UpdateAddress {
     public class Command : IRequest<AddressUpdateResponse> {
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string AddressLine1 { get; set; }
-        public string? AddressLine2 { get; set; }
-        public string PostalCode { get; set; }
-        public string Phone { get; set; }
-        public string Country { get; set; }
-        public string City { get; set; }
+        public string FirstName { get; init; }
+        public string LastName { get; init; }
+        public string AddressLine1 { get; init; }
+        public string AddressLine2 { get; init; }
+        public string PostalCode { get; init; }
+        public string PhoneNumber { get; init; }
+        public string Country { get; init; }
+        public string City { get; init; }
     }
 
     public class Validator : AbstractValidator<Command> {
         public Validator() {
             RuleFor(x => x.FirstName)
-              .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(50);
+            RuleFor(x => x.LastName)
+                .NotEmpty()
+                .MaximumLength(50);
+            RuleFor(x => x.AddressLine1)
+                .NotEmpty()
+                .MaximumLength(100);
+            RuleFor(x => x.AddressLine2)
+                .MaximumLength(100);
+            RuleFor(x => x.PostalCode)
+                .NotEmpty()
+                .MaximumLength(10);
+            RuleFor(x => x.PhoneNumber)
+                .NotEmpty()
+                .MaximumLength(20);
+            RuleFor(x => x.Country)
+                .NotEmpty()
+                .MaximumLength(50);
+            RuleFor(x => x.City)
+                .NotEmpty()
+                .MaximumLength(50);
         }
     }
 
     internal sealed class Handler : IRequestHandler<Command, AddressUpdateResponse> {
         private readonly OrderContext _context;
         private readonly IValidator<Command> _validator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public Handler(OrderContext orderContext, IValidator<Command> validator) {
+        public Handler(OrderContext orderContext, IValidator<Command> validator, IHttpContextAccessor httpContextAccessor) {
             _context = orderContext;
             _validator = validator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async ValueTask<AddressUpdateResponse> Handle(Command request, CancellationToken cancellationToken) {
@@ -53,10 +78,13 @@ public static class UpdateAddress {
                 return new ValidationResponse(vaildationFailed);
             }
 
-            var address = await _context.Address.SingleOrDefaultAsync(p => p.AddressId == request.Id);
+            var userId = new Guid(_httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+            var address = await _context.Address
+                .SingleOrDefaultAsync(x => x.AddressId == request.Id && x.CustomerId.Equals(userId));
 
             if(address is null) {
-                return new NotFoundResponse(request.Id, nameof(Address));
+                return new NotFoundResponse(request.Id.ToString(), nameof(Address));
             }
 
             request.Adapt(address);
@@ -71,14 +99,14 @@ public static class UpdateAddress {
 public class UpdateAddressEndpoint : ICarterModule {
     public void AddRoutes(IEndpointRouteBuilder app) {
         app.MapPut("api/addresses/{id}",
-        [Authorize(Roles = "Administrator, Customer")]
+        [Authorize(Policy = "RequireMultipleRoles")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        async (int id, [FromBody] AddressRequest request, ISender sender) => {
-            var command = request.Adapt<UpdateAddress.Command>();
+        async (int id, [FromBody] UpdateAddressDto address, ISender sender) => {
+            var command = address.Adapt<UpdateAddress.Command>();
 
             command.Id = id;
 
@@ -86,8 +114,8 @@ public class UpdateAddressEndpoint : ICarterModule {
 
             return results.Match(
                 _ => Results.NoContent(),
-                validationFailed => Results.UnprocessableEntity(validationFailed),
-                notfound => Results.NotFound(notfound));
+                validationFailed => Results.Problem(validationFailed),
+                notfound => Results.Problem(notfound));
 
         }).WithName(nameof(UpdateAddress)).WithTags(nameof(Address));
     }

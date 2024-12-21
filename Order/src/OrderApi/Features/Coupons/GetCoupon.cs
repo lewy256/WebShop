@@ -5,14 +5,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
-using OrderApi.Models;
+using OrderApi.Entities;
+using OrderApi.Infrastructure;
 using OrderApi.Responses;
 using OrderApi.Shared;
 
 namespace OrderApi.Features.Coupons;
 
 public static class GetCoupon {
-    public sealed record Query(int Id) : IRequest<CouponGetResponse>;
+    public sealed record Query(string code) : IRequest<CouponGetResponse>;
     internal sealed class Handler : IRequestHandler<Query, CouponGetResponse> {
         private readonly OrderContext _context;
 
@@ -21,10 +22,10 @@ public static class GetCoupon {
         }
 
         public async ValueTask<CouponGetResponse> Handle(Query request, CancellationToken cancellationToken) {
-            var couponDto = await _context.Coupon.AsNoTracking().ProjectToType<CouponDto>().SingleOrDefaultAsync(o => o.CouponId == request.Id);
+            var couponDto = await _context.Coupon.AsNoTracking().ProjectToType<CouponDto>().SingleOrDefaultAsync(o => o.Code == request.code);
 
             if(couponDto is null) {
-                return new NotFoundResponse(request.Id, nameof(Coupon));
+                return new NotFoundResponse(request.code, nameof(Coupon));
             }
 
             return couponDto;
@@ -34,19 +35,19 @@ public static class GetCoupon {
 
 public class GetStatusEndpoint : ICarterModule {
     public void AddRoutes(IEndpointRouteBuilder app) {
-        app.MapGet("api/coupons/{id}",
-        [Authorize(Roles = "Administrator")]
+        app.MapGet("api/coupons/{code}",
+        [Authorize(Policy = "RequireMultipleRoles")]
         [ProducesResponseType(typeof(CouponDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        async (int id, ISender sender) => {
-            var query = new GetCoupon.Query(id);
+        async (string code, ISender sender) => {
+            var query = new GetCoupon.Query(code);
 
             var results = await sender.Send(query);
 
             return results.Match(
                 coupon => Results.Ok(coupon),
-                notfound => Results.NotFound(notfound));
+                notfound => Results.Problem(notfound));
 
         }).WithName(nameof(GetCoupon)).WithTags(nameof(Coupon));
     }

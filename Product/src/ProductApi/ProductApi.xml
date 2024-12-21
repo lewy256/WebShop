@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ProductApi</name>
+    </assembly>
+    <members>
+        <member name="M:ProductApi.Controllers.CategoryController.GetCategories">
+            <summary>
+            Gets the list of all categories.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                GET api/categories
+            </remarks>
+            <returns>A list of categories.</returns>
+            <response code="200">Returns the list of categories.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.CategoryController.GetCategory(System.Guid)">
+            <summary>
+            Retrieves a specific category by its unique identifier.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                GET api/categories/8bc454b9-a196-431d-8980-d41df332dc70
+            </remarks>
+            <param name="categoryId">The ID of the category to retrieve.</param>
+            <returns>The requested category.</returns>
+            <response code="200">Returns the requested category.</response>
+            <response code="404">If the category with the given ID is not found.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.CategoryController.CreateCategory(ProductApi.Shared.CategoryDtos.CreateCategoryDto)">
+            <summary>
+            Creates a new category
+            </summary>
+            <remarks>
+            Sample request:
+            
+                POST api/categories
+                {        
+                    "categoryName ": "rockets"   
+                }
+            </remarks>
+            <param name="category"></param>
+            <returns>A newly created category</returns>
+            <response code="201">Returns the newly created item.</response>
+            <response code="400">If the item is null.</response>
+            <response code="422">If the model is invalid.</response>
+            <response code="401">If the request lacks valid authentication credentials.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.CategoryController.UpdateCategory(System.Guid,ProductApi.Shared.CategoryDtos.UpdateCategoryDto)">
+            <summary>
+            Updates a specific category by its unique identifier.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                PUT api/categories/8bc454b9-a196-431d-8980-d41df332dc70
+                {        
+                  "categoryName ": "rockets"         
+                }
+            </remarks>
+            <param name="categoryId">The ID of the category to update.</param>
+            <param name="category">The updated category information.</param>
+            <returns>The updated category.</returns>
+            <response code="204">If the category is successfully updated.</response>
+            <response code="400">If the updated category is null.</response>
+            <response code="404">If the category with the given ID is not found.</response>
+            <response code="422">If the model is invalid or the category information is incomplete.</response>
+            <response code="401">If the request lacks valid authentication credentials.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.CategoryController.DeleteCategory(System.Guid)">
+            <summary>
+            Deletes a specific category by its unique identifier.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                DELETE api/categories/8bc454b9-a196-431d-8980-d41df332dc70
+            </remarks>
+            <param name="categoryId">The ID of the category to delete.</param>
+            <returns>No content if successful, otherwise returns an error message.</returns>
+            <response code="204">If the category is successfully deleted.</response>
+            <response code="404">If the category with the given ID is not found.</response>
+            <response code="401">If the request lacks valid authentication credentials.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.CategoryController.GetCategoryOptions">
+            <summary>
+            Returns an Allow header containing the allowable HTTP methods.
+            </summary>
+        </member>
+        <member name="M:ProductApi.Controllers.FileController.DeleteFilesForProduct(System.Guid,System.Collections.Generic.IEnumerable{System.Guid})">
+            <summary>
+            Deletes specific files for the product.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                DELETE api/products/de985cbb-15cc-4d9a-b82f-09c630131943/files/collection/(06f35f8b-89d1-4abf-82a1-e7ebbecc1c59,941539bb-8e65-47df-9f7a-e90808183e48)
+            </remarks>
+            <returns>No content if successful, otherwise returns an error message.</returns>
+        </member>
+        <member name="M:ProductApi.Controllers.ReviewController.GetReviewsForProduct(System.Guid,ProductApi.Shared.ReviewDtos.ReviewParameters)">
+            <summary>
+            Gets the list of all reviews by product.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                GET api/products/d7840956-951b-4079-9e99-c09c1726d5d2/reviews
+            </remarks>
+            <param name="productId">The ID of the product for reviews to retrieve.</param>
+            <param name="reviewParameters">The container holds specific parameters for the review.</param>
+            <returns>A list of reviews.</returns>
+            <response code="200">Returns the list of reviews.</response>
+            <response code="404">If the product with the given ID is not found.</response>
+            <response code="422">If the review parameters validation fails.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.ReviewController.GetReviewForProduct(System.Guid,System.Guid)">
+            <summary>
+            Retrieves a specific review by its unique identifier.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                GET api/products/d7840956-951b-4079-9e99-c09c1726d5d2/reviews/844288e4-630d-42e7-9667-243bc655569f
+            </remarks>
+            <param name="productId">The ID of the product for review to retrieve.</param>
+            <param name="reviewId">The ID of the review.</param>
+            <returns>The requested review.</returns>
+            <response code="200">Returns the requested review.</response>
+            <response code="404">If the review or product with the given ID is not found.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.ReviewController.CreateReviewForProduct(System.Guid,ProductApi.Shared.ReviewDtos.CreateReviewDto)">
+            <summary>
+            Creates a new review.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                POST api/products/d7840956-951b-4079-9e99-c09c1726d5d2/reviews/844288e4-630d-42e7-9667-243bc655569f
+                {        
+                  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing",
+                  "rating": "4"
+                }
+            </remarks>
+            <param name="productId">The ID of the product for review.</param>
+            <param name="review">The created review information</param>
+            <returns>A newly created review.</returns>
+            <response code="201">Returns the newly created item.</response>
+            <response code="400">If the updated review is null.</response>
+            <response code="422">If the model is invalid or the review information is incomplete.</response>
+            <response code="401">If the request lacks valid authentication credentials.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.ReviewController.UpdateReviewForProduct(System.Guid,System.Guid,ProductApi.Shared.ReviewDtos.UpdateReviewDto)">
+            <summary>
+            Updates a specific review by its unique identifier.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                PUT api/products/d7840956-951b-4079-9e99-c09c1726d5d2/reviews
+                {        
+                  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing",
+                  "rating": "4"  
+                }
+            </remarks>
+            <param name="productId">The ID of the product for review.</param>
+            <param name="reviewId">The ID of the review to update.</param>
+            <param name="review">The updated review information.</param>
+            <returns>The updated review.</returns>
+            <response code="204">If the review is successfully updated.</response>
+            <response code="400">If the updated review is null.</response>
+            <response code="404">If the review or product with the given ID is not found.</response>
+            <response code="422">If the model is invalid or the review information is incomplete.</response>
+            <response code="401">If the request lacks valid authentication credentials.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.ReviewController.DeleteReviewForProduct(System.Guid,System.Guid)">
+            <summary>
+            Deletes a specific review by its unique identifier.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                DELETE api/products/d7840956-951b-4079-9e99-c09c1726d5d2/reviews/844288e4-630d-42e7-9667-243bc655569f
+            </remarks>
+            <param name="productId">The ID of the product for reviews.</param>
+            <param name="reviewId">The ID of the product to delete.</param>
+            <returns>No content if successful, otherwise returns an error message.</returns>
+            <response code="204">If the review is successfully deleted.</response>
+            <response code="404">If the review or product with the given ID is not found.</response>
+            <response code="401">If the request lacks valid authentication credentials.</response>
+        </member>
+        <member name="M:ProductApi.Controllers.ReviewController.GetReviewOptions">
+            <summary>
+            Returns an Allow header containing the allowable HTTP methods.
+            </summary>
+        </member>
+        <member name="M:ProductApi.Controllers.RootController.GetRoot(System.String)">
+            <summary>
+            Retrieves the root information of the API.
+            </summary>
+            <param name="mediaType"></param>
+            <returns>Returns the list of links.</returns>
+        </member>
+    </members>
+</doc>

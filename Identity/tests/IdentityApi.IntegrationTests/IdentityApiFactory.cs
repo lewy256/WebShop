@@ -1,4 +1,4 @@
-﻿using IdentityApi.Models;
+﻿using IdentityApi.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -26,8 +26,6 @@ public class IdentityApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.AddDbContext<IdentitytContext>(x =>
             x.UseSqlServer(_container.GetConnectionString()));
         });
-
-        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
     }
 
     public async Task InitializeAsync() {

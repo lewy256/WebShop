@@ -1,11 +1,13 @@
 ﻿using BasketApi.Shared;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BasketApi.Responses;
-public class ValidationResponse : ApiBaseResponse {
-    public IEnumerable<ValidationError> Errors { get; }
-    public ValidationResponse(IEnumerable<ValidationError> errors)
-        : base(StatusCodes.Status422UnprocessableEntity, "Model is invalid.") {
-
-        Errors = errors;
+public class ValidationResponse : ProblemDetails {
+    public ValidationResponse(IEnumerable<ValidationError> errors) {
+        Detail = "Model is invalid";
+        Status = StatusCodes.Status422UnprocessableEntity;
+        Extensions = new Dictionary<string, object?> {
+            { "errors",errors }
+        };
     }
 }

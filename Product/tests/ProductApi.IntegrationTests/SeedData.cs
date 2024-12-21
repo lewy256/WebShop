@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using ProductApi.Model.Entities;
+using ProductApi.Entities;
 
 namespace ProductApi.IntegrationTests;
 
@@ -20,9 +20,11 @@ public class ProductFaker : Faker<Product> {
         RuleFor(x => x.Stock, f => f.Random.Int(0, 10));
         RuleFor(x => x.CategoryId, f => Category.Id);
         RuleFor(x => x.Description, f => f.Commerce.ProductDescription().Substring(0, 10));
-        RuleFor(x => x.Color, f => f.Commerce.Color());
+        RuleFor(x => x.Colors, f => f.Commerce.Color());
         RuleFor(x => x.Weight, f => f.Random.Int(1, 10));
-        RuleFor(x => x.Size, f => f.Random.Int(1, 10).ToString());
+        RuleFor(x => x.Measurements, f => f.Random.Int(1, 10).ToString());
+        RuleFor(x => x.DispatchTime, f => f.Date.Timespan());
+        RuleFor(x => x.Brand, f => f.Company.CompanyName(1));
     }
 }
 
@@ -45,7 +47,7 @@ public class PriceHistoryFaker : Faker<PriceHistory> {
         RuleFor(x => x.Id, f => Guid.NewGuid());
         RuleFor(x => x.ProductId, f => Product.Id);
         RuleFor(x => x.StartDate, f => f.Date.Past());
-        RuleFor(x => x.EndDate, f => f.Date.Recent());
+        RuleFor(x => x.EndDate, f => f.Date.Future());
         RuleFor(x => x.PriceValue, f => f.Random.Decimal(0.00M, 100_000M));
         RuleFor(x => x.Discriminator, f => nameof(PriceHistory));
     }

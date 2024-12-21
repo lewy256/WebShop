@@ -1,0 +1,147 @@
+@HostAddress = http://localhost:3160
+@JWT=token
+
+### Addresses
+@addressId=integer
+
+GET {{@HostAddress}}/api/addresses
+Accept: application/json
+Authorization: Bearer {{JWT}}
+
+###
+
+POST {{HostAddress}}/api/addresses
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+  "firstName": "string",
+  "lastName": "string",
+  "addressLine1": "string",
+  "addressLine2": "string",
+  "postalCode": "string",
+  "phoneNumber": "string",
+  "country": "string",
+  "city": "string"
+}
+
+###
+
+DELETE {{HostAddress}}/api/addresse/{{addressId}}
+Authorization: Bearer {{JWT}}
+
+###
+
+GET {{HostAddress}}/api/addresse/{{addressId}}
+Authorization: Bearer {{JWT}}
+
+###
+
+PUT {{HostAddress}}/api/addresse/{{addressId}}
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+  "firstName": "string",
+  "lastName": "string",
+  "addressLine1": "string",
+  "addressLine2": "string",
+  "postalCode": "string",
+  "phoneNumber": "string",
+  "country": "string",
+  "city": "string"
+}
+
+### Coupons
+@couponCode=string
+
+GET {{@HostAddress}}/api/coupons/{{couponCode}}
+Accept: application/json
+Authorization: Bearer {{JWT}}
+
+###
+
+### Orders
+@orderId=integer
+
+GET {{@HostAddress}}/api/orders
+Authorization: Bearer {{JWT}}
+Accept: application/json
+
+###
+
+POST {{HostAddress}}/api/orders
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+  "paymentMethodId": integer,
+  "addressId": integer,
+  "shipMethodId": integer,
+  "notes": "string",
+  "couponCode": "string",
+  "items": [
+    {
+      "productId": "uuid",
+      "productName": "string",
+      "quantity": "ineger",
+      "unitPrice": "decimal"
+    }
+  ]
+}
+
+###
+
+DELETE {{HostAddress}}/api/orders/{{orderId}}
+Authorization: Bearer {{JWT}}
+
+###
+
+GET {{HostAddress}}/api/orders/{{orderId}}
+Authorization: Bearer {{JWT}}
+
+###
+
+PATCH {{HostAddress}}/api/products/{{productId}}/reviews/{{reviewId}}
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+[ 
+  { 
+    "op": "replace", 
+    "path": "", 
+    "value":  "" 
+  } 
+]
+
+###
+
+POST {{HostAddress}}/api/orders/preview
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+  "couponCode": "string",
+  "items": [
+    {
+      "productId": "uuid",
+      "productName": "string",
+      "quantity": "integer",
+      "unitPrice": "decimal"
+    }
+  ]
+}
+
+### PaymentMethods
+
+GET {{@HostAddress}}/api/payment-methods
+Accept: application/json
+Authorization: Bearer {{JWT}}
+
+### ShipMethods
+
+GET {{@HostAddress}}/api/ship-methods
+Accept: application/json
+Authorization: Bearer {{JWT}}
+
+###

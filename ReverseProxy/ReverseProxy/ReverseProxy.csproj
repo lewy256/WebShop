@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,8 +12,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
-    <PackageReference Include="Yarp.ReverseProxy" Version="2.1.0" />
+    <Compile Remove="requests\OrderApi\**" />
+    <Compile Remove="requests\ProductApi\**" />
+    <Content Remove="requests\OrderApi\**" />
+    <Content Remove="requests\ProductApi\**" />
+    <EmbeddedResource Remove="requests\OrderApi\**" />
+    <EmbeddedResource Remove="requests\ProductApi\**" />
+    <None Remove="requests\OrderApi\**" />
+    <None Remove="requests\ProductApi\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="2.2.0" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,8 @@
-﻿using BasketApi.Consumers.Messages;
-using BasketApi.Models;
+﻿using BasketApi.Entities;
 using BasketApi.Responses;
 using BasketApi.Shared;
 using FluentValidation;
 using Mapster;
-using MassTransit;
 using Microsoft.Extensions.Caching.Distributed;
 using OneOf;
 using OneOf.Types;
@@ -15,107 +13,104 @@ namespace BasketApi.Services;
 
 public class BasketService {
     private readonly IDistributedCache _redisCache;
-    private readonly IValidator<UpdateBasketDto> _validator;
-    private readonly IPublishEndpoint _publishEndpoint;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IValidator<UpsertBasketDto> _updateValidator;
+    private IHttpContextAccessor _httpContextAccessor;
 
-    public BasketService(IDistributedCache cache, IValidator<UpdateBasketDto> validator,
-        IPublishEndpoint publishEndpoint,
+    public BasketService(
+        IDistributedCache cache,
+        IValidator<UpsertBasketDto> updateValidator,
         IHttpContextAccessor httpContextAccessor) {
         _redisCache = cache;
-        _validator = validator;
-        _publishEndpoint = publishEndpoint;
+        _updateValidator = updateValidator;
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<BasketGetResponse> GetBasketAsync(Guid basketId) {
-        var value = await _redisCache.GetStringAsync(basketId.ToString());
+    public async Task<BasketGetResponse> GetBasketAsync() {
+        string userId = _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-        if(String.IsNullOrEmpty(value)) {
-            var basketDto = await UpdateBasketAsync(new UpdateBasketDto() {
-                Id = basketId,
-                Items = []
-            });
-            return basketDto.AsT0;
+        string? document = await _redisCache.GetStringAsync(userId);
 
+        if(String.IsNullOrEmpty(document)) {
+            return new NotFoundResponse(nameof(Basket));
         }
 
-        var basket = JsonSerializer.Deserialize<Basket>(value);
+        var basket = JsonSerializer.Deserialize<Basket>(document);
 
         var basketToReturn = basket.Adapt<BasketDto>();
 
         return basketToReturn;
     }
 
-    public async Task<BasketUpdateResponse> UpdateBasketAsync(UpdateBasketDto basket) {
-        var validationResult = await _validator.ValidateAsync(basket);
+    private decimal CountTotalPrice(List<BasketItem> items) {
+        decimal totalprice = 0;
+
+        foreach(var item in items) {
+            totalprice += item.Price * item.Quantity;
+        }
+
+        return totalprice;
+    }
+
+    public async Task<BasketUpsertResponse> UpsertBasketAsync(UpsertBasketDto basketDto) {
+        var validationResult = await _updateValidator.ValidateAsync(basketDto);
 
         if(!validationResult.IsValid) {
-
-            var vaildationFailed = validationResult.Errors.Adapt<IEnumerable<ValidationError>>();
+            var vaildationFailed = validationResult.Errors.Select(x => new ValidationError() {
+                PropertyName = x.PropertyName.Split('.')[1],
+                ErrorMessage = x.ErrorMessage
+            });
 
             return new ValidationResponse(vaildationFailed);
         }
 
-        var basketToSave = basket.Adapt<Basket>();
+        string userId = _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-        decimal totalprice = 0;
+        string? document = await _redisCache.GetStringAsync(userId);
 
-        foreach(var item in basketToSave.Items) {
-            totalprice += item.Price * item.Quantity;
+        Basket basket;
+
+        if(String.IsNullOrEmpty(document)) {
+            basket = new Basket() {
+                Id = userId,
+                Items = basketDto.Items,
+                TotalPrice = CountTotalPrice(basketDto.Items)
+            };
+        }
+        else {
+            basket = JsonSerializer.Deserialize<Basket>(document);
+            basket.Items = basketDto.Items;
+            basket.TotalPrice = CountTotalPrice(basketDto.Items);
         }
 
-        basketToSave.TotalPrice = totalprice;
+        await _redisCache.SetStringAsync(basket.Id.ToString(), JsonSerializer.Serialize(basket));
 
-        await _redisCache.SetStringAsync(basketToSave.Id.ToString(), JsonSerializer.Serialize(basketToSave));
-
-        var basketToReturn = basketToSave.Adapt<BasketDto>();
+        var basketToReturn = basket.Adapt<BasketDto>();
 
         return basketToReturn;
     }
 
-    public async Task<BasketCheckoutResponse> CheckoutBasketAsync(Guid basketId) {
-        var basketEntity = await GetBasketAsync(basketId);
+    public async Task<BasketDeleteResponse> DeleteBasketAsync() {
+        string userId = _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-        if(basketEntity.AsT0.Items.Count == 0) {
-            return new BadRequestResponse($"The basket with id: {basketId} is empty.");
+        var document = await _redisCache.GetStringAsync(userId);
+
+        if(String.IsNullOrEmpty(document)) {
+            return new NotFoundResponse(nameof(Basket));
         }
 
-        var basket = basketEntity.Adapt<Basket>();
-
-        var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-        basket.UserId = new Guid(userId);
-
-        await _publishEndpoint.Publish(new BasketCreated {
-            Basket = basket
-        });
-
-        return new Success();
-    }
-
-    public async Task<BasketDeleteResponse> DeleteBasketAsync(Guid basketId) {
-        var basket = await _redisCache.GetStringAsync(basketId.ToString());
-
-        if(String.IsNullOrEmpty(basket)) {
-            return new NotFoundResponse(basketId, nameof(Basket));
-        }
-
-        await _redisCache.RemoveAsync(basketId.ToString());
+        await _redisCache.RemoveAsync(userId);
 
         return new Success();
     }
 }
 
+
 [GenerateOneOf]
-public partial class BasketCheckoutResponse : OneOfBase<Success, BadRequestResponse> {
-}
-[GenerateOneOf]
-public partial class BasketGetResponse : OneOfBase<BasketDto> {
+public partial class BasketGetResponse : OneOfBase<BasketDto, NotFoundResponse> {
 }
 [GenerateOneOf]
 public partial class BasketDeleteResponse : OneOfBase<Success, NotFoundResponse> {
 }
 [GenerateOneOf]
-public partial class BasketUpdateResponse : OneOfBase<BasketDto, ValidationResponse> {
+public partial class BasketUpsertResponse : OneOfBase<BasketDto, ValidationResponse, NotFoundResponse> {
 }

@@ -1,8 +1,9 @@
 ﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Contracts.Roles;
 using FluentValidation;
 using IdentityApi.Configurations;
-using IdentityApi.Models;
+using IdentityApi.Entities;
 using IdentityApi.Responses;
 using IdentityApi.Shared;
 using Mapster;
@@ -10,32 +11,26 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using OneOf;
 using OneOf.Types;
+using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace IdentityApi.Service;
 
 public class IdentityService {
     private readonly UserManager<User> _userManager;
-    private readonly IConfiguration _configuration;
-    private readonly IValidator<TokenDto> _tokenDtoValidator;
     private readonly IValidator<RegistrationUserDto> _registrationUserDtoValidator;
-    private readonly IValidator<AuthenticationUserDto> _authUserDtoValidator;
     private readonly JwtConfiguration _jwtConfiguration;
 
     private User? _user;
 
     public IdentityService(UserManager<User> userManager, IConfiguration configuration,
-        IValidator<TokenDto> tokenDtoValidator,
-        IValidator<RegistrationUserDto> registrationUserDtoValidator,
-        IValidator<AuthenticationUserDto> authUserDtoValidator) {
+        IValidator<RegistrationUserDto> registrationUserDtoValidator) {
         _userManager = userManager;
-        _configuration = configuration;
-        _tokenDtoValidator = tokenDtoValidator;
         _registrationUserDtoValidator = registrationUserDtoValidator;
-        _authUserDtoValidator = authUserDtoValidator;
 
         _jwtConfiguration = new JwtConfiguration();
         configuration.Bind(JwtConfiguration.Section, _jwtConfiguration);
@@ -44,49 +39,54 @@ public class IdentityService {
     public async Task<UserRegisterResponse> RegisterUser(RegistrationUserDto registrationUserDto) {
         var validationResult = await _registrationUserDtoValidator.ValidateAsync(registrationUserDto);
 
+        var validationErrors = new List<ValidationError>();
+
         if(!validationResult.IsValid) {
             var vaildationFailed = validationResult.Errors.Adapt<IEnumerable<ValidationError>>();
 
-            return new ValidationResponse(vaildationFailed);
+            validationErrors.AddRange(vaildationFailed);
         }
 
-        List<ValidationError> passwordErrors = new List<ValidationError>();
+        var user = registrationUserDto.Adapt<User>();
 
-        var validators = _userManager.PasswordValidators;
-
-        foreach(var validator in validators) {
-            var results = await validator.ValidateAsync(_userManager, null, registrationUserDto.Password);
-
-            if(!results.Succeeded) {
-                foreach(var error in results.Errors) {
-                    passwordErrors.Add(new ValidationError() {
-                        PropertyName = nameof(RegistrationUserDto.Password),
+        foreach(var validator in _userManager.UserValidators) {
+            var result = await validator.ValidateAsync(_userManager, user);
+            if(!result.Succeeded) {
+                foreach(var error in result.Errors) {
+                    validationErrors.Add(new ValidationError() {
+                        PropertyName = Regex.Match(error.Code, "UserName|Email").Value,
                         ErrorMessage = error.Description
                     });
                 }
             }
         }
 
-        if(passwordErrors.Count > 0) {
-            return new ValidationResponse(passwordErrors);
+        foreach(var validator in _userManager.PasswordValidators) {
+            var result = await validator.ValidateAsync(_userManager, null, registrationUserDto.Password);
+            if(!result.Succeeded) {
+                foreach(var error in result.Errors) {
+                    validationErrors.Add(new ValidationError() {
+                        PropertyName = nameof(registrationUserDto.Password),
+                        ErrorMessage = error.Description
+                    });
+                }
+            }
         }
 
-        var user = registrationUserDto.Adapt<User>();
-        var result = await _userManager.CreateAsync(user, registrationUserDto.Password);
-
-        if(result.Succeeded) {
-            await _userManager.AddToRolesAsync(user, registrationUserDto.Roles);
+        if(validationErrors.Any()) {
+            return new ValidationResponse(validationErrors);
         }
+
+        await _userManager.CreateAsync(user, registrationUserDto.Password);
+        await _userManager.AddToRolesAsync(user, [UserRole.Customer]);
 
         return new Success();
     }
+
     public async Task<UserValidateResponse> ValidateUser(AuthenticationUserDto authenticationUserDto) {
-        var validationResult = await _authUserDtoValidator.ValidateAsync(authenticationUserDto);
-
-        if(!validationResult.IsValid) {
-            var vaildationFailed = validationResult.Errors.Adapt<IEnumerable<ValidationError>>();
-
-            return new ValidationResponse(vaildationFailed);
+        if(String.IsNullOrEmpty(authenticationUserDto.UserName)
+            || String.IsNullOrEmpty(authenticationUserDto.Password)) {
+            return new UnauthorizedResponse();
         }
 
         _user = await _userManager.FindByNameAsync(authenticationUserDto.UserName);
@@ -107,15 +107,16 @@ public class IdentityService {
     }
 
     public async Task<TokenRefreshResponse> RefreshToken(TokenDto tokenDto) {
-        var validationResult = await _tokenDtoValidator.ValidateAsync(tokenDto);
+        ClaimsPrincipal principal;
 
-        if(!validationResult.IsValid) {
-            var vaildationFailed = validationResult.Errors.Adapt<IEnumerable<ValidationError>>();
-
-            return new ValidationResponse(vaildationFailed);
+        try {
+            principal = await GetPrincipalFromExpiredToken(tokenDto.AccessToken);
+        }
+        catch(Exception ex) {
+            Log.Error(ex, "Exception occurred: {Message}", ex.Message);
+            return new RefreshTokenBadRequestResponse();
         }
 
-        var principal = GetPrincipalFromExpiredToken(tokenDto.AccessToken);
 
         var user = await _userManager.FindByNameAsync(principal.Identity.Name);
         if(user is null || user.RefreshToken != tokenDto.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now) {
@@ -129,7 +130,7 @@ public class IdentityService {
     }
 
     private async Task<TokenDto> CreateToken(bool populateExp) {
-        var signingCredentials = GetSigningCredentials();
+        var signingCredentials = await GetSigningCredentials();
         var claims = await GetClaims();
         var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
 
@@ -154,23 +155,17 @@ public class IdentityService {
         }
     }
 
-    private ClaimsPrincipal GetPrincipalFromExpiredToken(string token) {
-        var secret = "";
+    private async Task<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token) {
+        var client = new SecretClient(new Uri(_jwtConfiguration.KeyVaultUri),
+            new DefaultAzureCredential());
 
-        if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development")) {
-            secret = _configuration.GetValue<string>("SECRET");
-        }
-        else {
-            var client = new SecretClient(new Uri(_jwtConfiguration.KeyVaultUri),
-                new DefaultAzureCredential(includeInteractiveCredentials: true));
-            secret = client.GetSecret(_jwtConfiguration.SecretName).Value.Value;
-        }
+        var secret = await client.GetSecretAsync(_jwtConfiguration.SecretName);
 
         var tokenValidationParameters = new TokenValidationParameters {
             ValidateAudience = true,
             ValidateIssuer = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret.Value.Value)),
             ValidateLifetime = true,
             ValidIssuer = _jwtConfiguration.ValidIssuer,
             ValidAudience = _jwtConfiguration.ValidAudience
@@ -178,7 +173,9 @@ public class IdentityService {
 
         var tokenHandler = new JwtSecurityTokenHandler();
         SecurityToken securityToken;
+
         var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+
 
         var jwtSecurityToken = securityToken as JwtSecurityToken;
         if(jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
@@ -189,19 +186,13 @@ public class IdentityService {
         return principal;
     }
 
-    private SigningCredentials GetSigningCredentials() {
-        var secret = "";
+    private async Task<SigningCredentials> GetSigningCredentials() {
+        var client = new SecretClient(new Uri(_jwtConfiguration.KeyVaultUri),
+            new DefaultAzureCredential());
 
-        if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development")) {
-            secret = _configuration.GetValue<string>("SECRET");
-        }
-        else {
-            var client = new SecretClient(new Uri(_jwtConfiguration.KeyVaultUri),
-                new DefaultAzureCredential(includeInteractiveCredentials: true));
-            secret = client.GetSecret(_jwtConfiguration.SecretName).Value.Value;
-        }
+        var secret = await client.GetSecretAsync(_jwtConfiguration.SecretName);
 
-        return new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+        return new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret.Value.Value)),
             SecurityAlgorithms.HmacSha256);
     }
 
@@ -233,10 +224,10 @@ public class IdentityService {
 }
 
 [GenerateOneOf]
-public partial class TokenRefreshResponse : OneOfBase<TokenDto, ValidationResponse, RefreshTokenBadRequestResponse> {
+public partial class TokenRefreshResponse : OneOfBase<TokenDto, RefreshTokenBadRequestResponse> {
 }
 [GenerateOneOf]
-public partial class UserValidateResponse : OneOfBase<TokenDto, ValidationResponse, UnauthorizedResponse> {
+public partial class UserValidateResponse : OneOfBase<TokenDto, UnauthorizedResponse> {
 }
 [GenerateOneOf]
 public partial class UserRegisterResponse : OneOfBase<Success, ValidationResponse> {

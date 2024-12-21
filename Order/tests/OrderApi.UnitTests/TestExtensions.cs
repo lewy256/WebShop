@@ -4,7 +4,7 @@ using FluentValidation.Validators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using OrderApi.Models;
+using OrderApi.Infrastructure;
 using System.Linq.Expressions;
 
 namespace OrderApi.UnitTests;

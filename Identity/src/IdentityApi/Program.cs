@@ -2,6 +2,7 @@ using FluentValidation;
 using HealthChecks.UI.Client;
 using IdentityApi.Endpoints;
 using IdentityApi.Extensions;
+using IdentityApi.Infrastructure;
 using MicroElements.NSwag.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
@@ -10,7 +11,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddAzureAppConfiguration(options => {
-    options.Connect(builder.Configuration.GetValue<string>("AZURECONFIGURATION"))
+    options.Connect(builder.Configuration.GetValue<string>("AZURE_APP_CONFIGURATION"))
         .Select(KeyFilter.Any, nameof(IdentityApi) + builder.Environment.EnvironmentName);
 });
 
@@ -19,6 +20,10 @@ builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console());
 builder.Services.ConfigureHealthCheck(builder.Configuration);
 
 builder.Services.ConfigureCors();
+
+builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.ConfigureProblemDetails();
 
 builder.Services.ConfigureDbContext(builder.Configuration);
 
@@ -37,7 +42,9 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseCustomExceptionHandler();
+app.UseExceptionHandler();
+
+app.UseStatusCodePages();
 
 app.UseSwagger();
 app.UseSwaggerUI(s => {

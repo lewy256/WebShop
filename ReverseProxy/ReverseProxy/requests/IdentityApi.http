@@ -1,0 +1,41 @@
+@HostAddress = http://localhost:5184
+
+POST {{HostAddress}}/api/identity/login
+Content-Type: application/json
+
+{
+  "userName": "string",
+  "password": "string"
+}
+
+###
+
+POST {{HostAddress}}/api/identity
+Content-Type: application/json
+
+{
+  "firstName": "string",
+  "lastName": "string",
+  "userName": "string",
+  "password": "string",
+  "email": "string",
+  "phoneNumber": "string"
+}
+
+###
+
+POST {{HostAddress}}/api/token
+Content-Type: application/json
+
+{
+  "accessToken": "string",
+  "refreshToken": "string"
+}
+
+###
+
+OPTIONS {{HostAddress}}/api/identity
+
+###
+
+OPTIONS {{HostAddress}}/api/token

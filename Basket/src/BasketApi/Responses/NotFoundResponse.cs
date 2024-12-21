@@ -1,7 +1,9 @@
-﻿namespace BasketApi.Responses;
-public class NotFoundResponse : ApiBaseResponse {
-    public NotFoundResponse(Guid id, string entity)
-       : base(StatusCodes.Status404NotFound,
-           $"The {entity} with id: {id} doesn't exist in the database.") {
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace BasketApi.Responses;
+public class NotFoundResponse : ProblemDetails {
+    public NotFoundResponse(string entity) {
+        Detail = $"The {entity} doesn't exist in the database.";
+        Status = StatusCodes.Status404NotFound;
     }
 }

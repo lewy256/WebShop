@@ -1,8 +1,11 @@
-﻿using IdentityApi.Models;
+﻿using IdentityApi.Entities;
+using IdentityApi.Infrastructure;
 using IdentityApi.Service;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Diagnostics;
 
 namespace IdentityApi.Extensions;
 
@@ -75,4 +78,17 @@ public static class ServiceExtensions {
         .AddDefaultTokenProviders();
     }
 
+    public static void ConfigureProblemDetails(this IServiceCollection services) {
+        services.AddProblemDetails(options => {
+            options.CustomizeProblemDetails = context => {
+                context.ProblemDetails.Instance =
+                    $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+
+                context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+
+                Activity? activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+                context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
+            };
+        });
+    }
 }

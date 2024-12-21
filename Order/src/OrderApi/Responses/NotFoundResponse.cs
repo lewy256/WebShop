@@ -1,13 +1,15 @@
-﻿namespace OrderApi.Responses;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class NotFoundResponse : ApiBaseResponse {
-    public NotFoundResponse(int id, string entity)
-       : base(StatusCodes.Status404NotFound,
-           $"The {entity} with id: {id} doesn't exist in the database.") {
+namespace OrderApi.Responses;
+
+public class NotFoundResponse : ProblemDetails {
+    public NotFoundResponse(string id, string entity) {
+        Detail = $"The {entity} with id: {id} doesn't exist in the database.";
+        Status = StatusCodes.Status404NotFound;
     }
 
-    public NotFoundResponse(Guid id, string entity)
-     : base(StatusCodes.Status404NotFound,
-         $"The {entity} with id: {id} doesn't exist in the database.") {
+    public NotFoundResponse(string entity) {
+        Detail = $"The {entity} doesn't exist in the database.";
+        Status = StatusCodes.Status404NotFound;
     }
 }

@@ -1,12 +1,15 @@
 ﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Contracts.Roles;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using OrderApi.Configurations;
-using OrderApi.Models;
+using OrderApi.Infrastructure;
+using OrderApi.Infrastructure.Configurations.AppSettings;
+using System.Diagnostics;
 using System.Text;
 
 namespace OrderApi.Extensions;
@@ -67,52 +70,68 @@ public static class ServiceExtensions {
 
     public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration) {
         var jwtConfiguration = new JwtConfiguration();
-
         configuration.Bind(JwtConfiguration.Section, jwtConfiguration);
 
-        var secret = "";
+        var client = new SecretClient(new Uri(jwtConfiguration.KeyVaultUri),
+            new DefaultAzureCredential());
 
-        if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development")) {
-            secret = configuration.GetValue<string>("SECRET");
-        }
-        else {
-            var keyVaultConfiguration = new KeyVaultConfiguration();
+        var secret = client.GetSecret(jwtConfiguration.SecretName);
 
-            configuration.Bind(KeyVaultConfiguration.Section, keyVaultConfiguration);
+        services
+            .AddAuthentication(opt => {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options => {
+                options.TokenValidationParameters = new TokenValidationParameters {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
 
-            var client = new SecretClient(new Uri(keyVaultConfiguration.KeyVaultUri), new DefaultAzureCredential(includeInteractiveCredentials: true));
-            secret = client.GetSecret(keyVaultConfiguration.SecretName).Value.Value;
-        }
+                    ValidIssuer = jwtConfiguration.ValidIssuer,
+                    ValidAudience = jwtConfiguration.ValidAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret.Value.Value))
+                };
+            });
+    }
 
-        services.AddAuthentication(opt => {
-            opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options => {
-            options.TokenValidationParameters = new TokenValidationParameters {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
+    public static void ConfigureMassTransit(this IServiceCollection services, IConfiguration configuration) {
+        services.AddMassTransit(x => {
+            //x.AddEntityFrameworkOutbox<OrderContext>(o => {
+            //    o.QueryDelay = TimeSpan.FromSeconds(1);
+            //    o.UsePostgres().UseBusOutbox();
+            //});
 
-                ValidIssuer = jwtConfiguration.ValidIssuer,
-                ValidAudience = jwtConfiguration.ValidAudience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+            x.UsingAzureServiceBus((context, configurator) => {
+                configurator.Host(configuration.GetConnectionString("AzureServiceBus"));
+                configurator.ConfigureEndpoints(context);
+            });
+        });
+    }
+
+    public static void ConfigureProblemDetails(this IServiceCollection services) {
+        services.AddProblemDetails(options => {
+            options.CustomizeProblemDetails = context => {
+                context.ProblemDetails.Instance =
+                    $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+
+                context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+
+                Activity? activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+                context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
             };
         });
     }
 
-    public static void ConfigureMassTransit(this IServiceCollection services, IConfiguration configuration) {
-        var azureServiceBusConfiguration = new AzureServiceBusConfiguration();
-        configuration.Bind(AzureServiceBusConfiguration.Section, azureServiceBusConfiguration);
-
-        services.AddMassTransit(busConfigurator => {
-            busConfigurator.SetKebabCaseEndpointNameFormatter();
-
-            busConfigurator.UsingAzureServiceBus((context, configurator) => {
-                configurator.Host(azureServiceBusConfiguration.ConnectionString);
-                configurator.ConfigureEndpoints(context);
-            });
+    public static void ConfigureAuthorization(this IServiceCollection services) {
+        services.AddAuthorization(options => {
+            options.AddPolicy("RequireMultipleRoles", policy =>
+                    policy.RequireRole(UserRole.Administrator, UserRole.Customer));
+            options.AddPolicy("RequireAdministratorRole", policy =>
+                    policy.RequireRole(UserRole.Administrator));
+            options.AddPolicy("RequireCustomerRole", policy =>
+                    policy.RequireRole(UserRole.Customer));
         });
     }
 }

@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Angular Debug",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:4200",
+            "webRoot": "${workspaceFolder}/Client",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack:///./*": "${webRoot}/*"
+            },
+        },
+        {
+            "name": "Angular Serve",
+            "command": "ng serve --open",
+            "request": "launch",
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}/Client",
+        },
+    ],
+    "compounds": [
+        {
+          "name": "Angular Launch",
+          "configurations": ["Angular Serve", "Angular Debug"]
+        }
+      ]
+}

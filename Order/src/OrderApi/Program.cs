@@ -5,6 +5,7 @@ using MicroElements.NSwag.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using OrderApi.Extensions;
+using OrderApi.Infrastructure;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +23,14 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.ConfigureHealthCheck(builder.Configuration);
 
+builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.ConfigureProblemDetails();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+MappingConfig.ConfigureMapster();
 
 builder.Services.ConfigureDbContext(builder.Configuration);
 
@@ -38,13 +45,16 @@ builder.Services.ConfigureSwagger();
 
 builder.Services.AddFluentValidationRulesToSwagger();
 
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
 builder.Services.ConfigureJWT(builder.Configuration);
+builder.Services.ConfigureAuthorization();
+
+
 
 var app = builder.Build();
 
-app.UseCustomExceptionHandler();
+app.UseExceptionHandler();
+
+app.UseStatusCodePages();
 
 if(app.Environment.IsProduction()) {
     app.UseHsts();

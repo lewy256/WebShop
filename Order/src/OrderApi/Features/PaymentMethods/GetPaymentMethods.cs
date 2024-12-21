@@ -4,7 +4,8 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OrderApi.Models;
+using OrderApi.Entities;
+using OrderApi.Infrastructure;
 using OrderApi.Shared;
 
 namespace OrderApi.Features.PaymentMethods;
@@ -30,7 +31,7 @@ public static class GetPaymentMethods {
 public class GetPaymentMethodsEndpoint : ICarterModule {
     public void AddRoutes(IEndpointRouteBuilder app) {
         app.MapGet("api/payment-methods",
-        [Authorize(Roles = "Administrator, Customer")]
+        [Authorize(Policy = "RequireMultipleRoles")]
         [ProducesResponseType(typeof(IEnumerable<PaymentMethodDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         async (ISender sender) => {

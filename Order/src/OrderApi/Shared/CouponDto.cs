@@ -1,8 +1,11 @@
 ﻿namespace OrderApi.Shared;
 
 public record CouponDto {
-    public int CouponId { get; init; }
-    public string Code { get; init; }
-    public string Description { get; init; }
-    public int Amount { get; init; }
+    public string Code { get; set; }
+    public decimal DiscountAmount { get; set; }
+    public DateTime ExpirationDate { get; set; }
+    public int MaxUsage { get; set; }
+    public int UsedCount { get; set; }
+    public decimal MinimumOrderAmount { get; set; }
+    public bool IsActive { get; set; }
 }

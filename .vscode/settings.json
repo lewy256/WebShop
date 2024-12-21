@@ -1,0 +1,14 @@
+{
+    "rest-client.environmentVariables": {
+
+        "$shared": {},
+        "dev":{
+            "TOKEN":""
+        },
+        "prod":{
+            "TOKEN":""
+           
+        }
+
+    }
+}

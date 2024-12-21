@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -7,8 +8,8 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ProductApi.Model;
-using ProductApi.Service.Configurations;
+using ProductApi.Infrastructure;
+using ProductApi.Infrastructure.Configurations.AppSettings;
 using Testcontainers.Azurite;
 using Testcontainers.CosmosDb;
 using Xunit;
@@ -17,17 +18,17 @@ namespace ProductApi.IntegrationTests;
 
 public class ProductApiFactory : WebApplicationFactory<Program>, IAsyncLifetime {
     private readonly CosmosDbContainer _cosmosContainer = new CosmosDbBuilder()
-        .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator")
+        .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
         .WithName("azure-cosmos-emulator")
         .WithEnvironment("AZURE_COSMOS_EMULATOR_ARGS", "/Port=8081")
         .WithPortBinding(8081, 8081)
-        .WithEnvironment("AZURE_COSMOS_EMULATOR_PARTITION_COUNT", "30")
+        .WithEnvironment("AZURE_COSMOS_EMULATOR_PARTITION_COUNT", "5")
         .WithEnvironment("AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE", "127.0.0.1")
-        .WithEnvironment("AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE", "true")
+        .WithEnvironment("AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE", "false")
         .Build();
 
     private readonly AzuriteContainer _storageContainer = new AzuriteBuilder()
-        .WithImage("mcr.microsoft.com/azure-storage/azurite")
+        .WithImage("mcr.microsoft.com/azure-storage/azurite:3.33.0")
         .WithName("azurite")
         .Build();
 
@@ -38,6 +39,8 @@ public class ProductApiFactory : WebApplicationFactory<Program>, IAsyncLifetime 
             services.RemoveAll<DbContextOptions<ProductContext>>();
             services.RemoveAll<ProductContext>();
 
+            services.AddMassTransitTestHarness();
+
             services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
 
             services.AddDbContext<ProductContext>(options => {
@@ -46,7 +49,13 @@ public class ProductApiFactory : WebApplicationFactory<Program>, IAsyncLifetime 
                     "Shop",
                     (clientOptions) => {
                         clientOptions.HttpClientFactory(() => {
-                            return _cosmosContainer.HttpClient;
+                            HttpMessageHandler httpMessageHandler = new HttpClientHandler() {
+                                //ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+                                ServerCertificateCustomValidationCallback =
+                                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                            };
+
+                            return new HttpClient(httpMessageHandler);
                         });
                         clientOptions.ConnectionMode(ConnectionMode.Gateway);
                     }
@@ -58,7 +67,6 @@ public class ProductApiFactory : WebApplicationFactory<Program>, IAsyncLifetime 
                 opts.Container = _blobContainerName;
             });
         });
-        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
     }
 
     public async Task InitializeAsync() {
